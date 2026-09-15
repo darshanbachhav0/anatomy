@@ -13,6 +13,7 @@ const eslintConfig = defineConfig([
     "build/**",
     ".vinext/**",
     ".wrangler/**",
+    ".atlas-reference/**",
     "public/basis/**",
     "public/draco/**",
     "next-env.d.ts",

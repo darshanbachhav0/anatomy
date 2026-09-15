@@ -2,12 +2,15 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import gsap from "gsap";
 import type { Hotspot } from "../anatomy-data";
+import type { DissectionConfig } from "../dissection-data";
 import { AnatomyAssetManager, type LoadedOrgan } from "./loaders";
 import { HotspotLayer } from "./hotspots";
+import { DissectionEngine, type DissectionSnapshot } from "./dissection-engine";
 
 type ViewerCallbacks = {
   onLoading: (loading: boolean, progress: number) => void;
   onSelect: (hotspot: Hotspot | null) => void;
+  onDissectionChange: (snapshot: DissectionSnapshot) => void;
 };
 
 const DOT_PIXELS = 34;
@@ -27,6 +30,7 @@ export class AnatomyViewer {
   private controls: OrbitControls;
   private assets: AnatomyAssetManager;
   private hotspots = new HotspotLayer();
+  private dissection: DissectionEngine;
   private callbacks: ViewerCallbacks;
   private container: HTMLElement;
   private organ: LoadedOrgan | null = null;
@@ -42,6 +46,7 @@ export class AnatomyViewer {
   private depthMaterial = new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: true, depthTest: true });
   private crossSection = false;
   private isolated = false;
+  private layersEnabled = false;
 
   private width = 1;
   private height = 1;
@@ -70,6 +75,14 @@ export class AnatomyViewer {
   constructor(container: HTMLElement, callbacks: ViewerCallbacks) {
     this.container = container;
     this.callbacks = callbacks;
+    this.dissection = new DissectionEngine(
+      (snapshot) => {
+        this.hotspots.setDissectionContext(snapshot.enabled, snapshot.removedStructureIds, snapshot.activeStage);
+        this.callbacks.onDissectionChange(snapshot);
+        this.dirty = true;
+      },
+      (seconds = 0.1) => this.busy(seconds),
+    );
 
     const lowPower = window.matchMedia("(max-width: 780px)").matches || (navigator.hardwareConcurrency ?? 8) < 6;
     // Fixed, decided once. A dynamic controller used to live here and it was a
@@ -239,9 +252,12 @@ export class AnatomyViewer {
     this.assets.prefetch(url);
   }
 
-  async setOrgan(modelUrl: string, hotspots: Hotspot[], accent: string) {
+  async setOrgan(modelUrl: string, hotspots: Hotspot[], accent: string, dissectionConfig: DissectionConfig | null = null) {
     const request = ++this.loadRequest;
     this.select(null);
+    this.dissection.detach();
+    this.applyClipping(this.crossSection);
+    this.applyLayerState();
     this.callbacks.onLoading(true, 0);
 
     const outgoing = this.organ;
@@ -286,7 +302,9 @@ export class AnatomyViewer {
     // Anchor the dots while the organ is still invisible, then play the intro.
     this.hotspots.attach(organ.pivot, hotspots, organ.meshes);
     this.hotspots.setPixelSize(DOT_PIXELS, this.height, CAMERA_FOV);
+    this.dissection.attach(organ.pivot, organ.meshes, dissectionConfig);
     if (this.crossSection) this.applyClipping(true);
+    this.applyLayerState();
 
     const glow = this.scene.getObjectByName("organ-glow") as THREE.PointLight | undefined;
     glow?.color.set(accent);
@@ -463,12 +481,25 @@ export class AnatomyViewer {
     this.dragged = false;
     if (wasDragging) return;
     const marker = this.hotspots.pick(event.offsetX, event.offsetY, this.camera, this.width, this.height);
-    this.select(marker && marker.hotspot.id !== this.selectedId ? marker.hotspot.id : null);
+    if (marker) {
+      this.dissection.select(null);
+      this.select(marker.hotspot.id !== this.selectedId ? marker.hotspot.id : null);
+      return;
+    }
+    if (this.dissection.isEnabled()) {
+      const structureId = this.dissection.pick(event.offsetX, event.offsetY, this.camera, this.width, this.height);
+      const selectedStructureId = this.dissection.snapshot().selectedStructureId;
+      this.select(null);
+      this.dissection.select(structureId && structureId !== selectedStructureId ? structureId : null);
+      return;
+    }
+    this.select(null);
   };
 
   private onPointerLeave = () => {
     this.pointerId = null;
     this.hoverProbe = null;
+    this.dissection.hover(null);
     if (this.hoveredId) {
       this.hoveredId = null;
       this.dirty = true;
@@ -481,9 +512,14 @@ export class AnatomyViewer {
     if (!probe) return;
     const marker = this.hotspots.pick(probe.x, probe.y, this.camera, this.width, this.height);
     const id = marker?.hotspot.id ?? null;
-    if (id === this.hoveredId) return;
+    const structureId = id ? null : this.dissection.pick(probe.x, probe.y, this.camera, this.width, this.height);
+    this.dissection.hover(structureId);
+    if (id === this.hoveredId) {
+      this.renderer.domElement.style.cursor = id || structureId ? "pointer" : "";
+      return;
+    }
     this.hoveredId = id;
-    this.renderer.domElement.style.cursor = id ? "pointer" : "";
+    this.renderer.domElement.style.cursor = id || structureId ? "pointer" : "";
     this.dirty = true;
   }
 
@@ -497,6 +533,7 @@ export class AnatomyViewer {
 
   clearSelection() {
     this.select(null);
+    this.dissection.select(null);
   }
 
   /** The callout is positioned imperatively so tracking a spinning model never
@@ -522,7 +559,7 @@ export class AnatomyViewer {
     if (event.key === "ArrowRight" && pivot) pivot.rotation.y += 0.08;
     if (event.key === "+") this.camera.position.z = Math.max(4.8, this.camera.position.z - 0.35);
     if (event.key === "-") this.camera.position.z = Math.min(12, this.camera.position.z + 0.35);
-    if (event.key === "Escape") this.select(null);
+    if (event.key === "Escape") this.clearSelection();
     this.dirty = true;
   };
 
@@ -535,7 +572,8 @@ export class AnatomyViewer {
   }
 
   reset() {
-    this.select(null);
+    this.clearSelection();
+    if (this.dissection.isEnabled()) this.dissection.reset();
     this.tween(this.camera.position, { ...HOME_CAMERA, duration: 0.8, ease: "power3.out" });
     this.tween(this.controls.target, { ...HOME_TARGET, duration: 0.8, ease: "power3.out" });
     if (this.organ) this.tween(this.organ.pivot.rotation, { x: 0.05, y: -0.28, z: 0, duration: 0.8, ease: "power3.out" });
@@ -587,15 +625,76 @@ export class AnatomyViewer {
 
   toggleLayers() {
     if (!this.organ) return false;
-    let enabled = false;
+    this.layersEnabled = !this.layersEnabled;
+    this.applyLayerState();
+    this.dirty = true;
+    return this.layersEnabled;
+  }
+
+  private applyLayerState() {
+    if (!this.organ) return;
     this.materials(this.organ).forEach((material) => {
       if (material instanceof THREE.MeshStandardMaterial) {
-        material.wireframe = !material.wireframe;
-        enabled = material.wireframe;
+        material.wireframe = this.layersEnabled;
+        material.needsUpdate = true;
       }
     });
-    this.dirty = true;
-    return enabled;
+  }
+
+  setDissectionEnabled(enabled: boolean) {
+    const result = this.dissection.setEnabled(enabled);
+    this.applyClipping(this.crossSection);
+    this.applyLayerState();
+    if (!result) this.renderer.domElement.style.cursor = "";
+    return result;
+  }
+
+  selectDissectionStructure(structureId: string) {
+    this.select(null);
+    this.dissection.select(structureId);
+  }
+
+  removeDissectionStructure(structureId: string) {
+    return this.dissection.remove(structureId);
+  }
+
+  restoreDissectionStructure(structureId: string) {
+    return this.dissection.restore(structureId);
+  }
+
+  undoDissection() {
+    return this.dissection.undo();
+  }
+
+  redoDissection() {
+    return this.dissection.redo();
+  }
+
+  resetDissection() {
+    this.dissection.reset();
+  }
+
+  setDissectionStage(stage: number) {
+    return this.dissection.applyStage(stage);
+  }
+
+  isolateDissectionStructure(structureId: string) {
+    return this.dissection.isolate(structureId);
+  }
+
+  focusDissectionStructure(structureId: string) {
+    const center = this.dissection.structureCenter(structureId);
+    if (!center) return false;
+    const shift = center.clone().sub(this.controls.target);
+    this.tween(this.controls.target, { x: center.x, y: center.y, z: center.z, duration: 0.65, ease: "power2.out" });
+    this.tween(this.camera.position, {
+      x: this.camera.position.x + shift.x,
+      y: this.camera.position.y + shift.y,
+      z: this.camera.position.z + shift.z,
+      duration: 0.65,
+      ease: "power2.out",
+    });
+    return true;
   }
 
   dispose() {
@@ -617,6 +716,7 @@ export class AnatomyViewer {
     canvas.removeEventListener("pointerleave", this.onPointerLeave);
     canvas.removeEventListener("keydown", this.onKeyDown);
 
+    this.dissection.dispose();
     this.hotspots.dispose();
     this.depthMaterial.dispose();
     this.assets.dispose();

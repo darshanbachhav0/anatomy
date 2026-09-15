@@ -1,7 +1,8 @@
-import { BookOpen, BrainCircuit, Compass, LibraryBig, NotebookPen } from "lucide-react";
+import { BookOpen, BrainCircuit, Compass, Layers3, LibraryBig, NotebookPen } from "lucide-react";
 
 export type MainView =
   | "explore"
+  | "atlas"
   | "systems"
   | "lessons"
   | "library"
@@ -13,6 +14,7 @@ export type MainView =
 
 const ITEMS = [
   { id: "explore", label: "Explorar", icon: Compass },
+  { id: "atlas", label: "Atlas 3D", icon: Layers3 },
   { id: "systems", label: "Sistemas", icon: BrainCircuit },
   { id: "lessons", label: "Lecciones", icon: BookOpen },
   { id: "library", label: "Biblioteca", icon: LibraryBig },
@@ -28,6 +30,7 @@ export function MainNavigation({ active, onNavigate }: { active: MainView; onNav
           key={id}
           className={active === id ? "active" : ""}
           onClick={() => onNavigate(id)}
+          aria-label={label}
           aria-current={active === id ? "page" : undefined}
         >
           <Icon size={17} /> <span>{label}</span>
@@ -46,6 +49,7 @@ export function MobileNavigation({ active, onNavigate }: { active: MainView; onN
           key={id}
           className={active === id ? "active" : ""}
           onClick={() => onNavigate(id)}
+          aria-label={label}
           aria-current={active === id ? "page" : undefined}
         >
           <Icon size={18} /><span>{label}</span>

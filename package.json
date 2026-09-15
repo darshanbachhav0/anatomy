@@ -10,8 +10,11 @@
     "build": "vinext build",
     "build:next": "next build",
     "start": "vinext start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs",
+    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/atlas.test.mjs",
+    "test:atlas": "node --test tests/atlas.test.mjs",
+    "import:atlas": "node scripts/import-human-atlas.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
+    "inspect:heart": "node scripts/inspect-glb.mjs public/models/heart.glb",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {

@@ -571,6 +571,7 @@ button:focus-visible, input:focus-visible, canvas:focus-visible {
 }
 .tool-button { height: 60px; border: 0; border-radius: 12px; background: transparent; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; cursor: pointer; font: 500 9px/1 var(--font-serif), serif; }
 .tool-button.active { color: var(--uma-pink); background: var(--uma-pink-soft); }
+.tool-button:disabled { opacity: .32; cursor: not-allowed; }
 .tool-button:nth-last-child(1) { border-top: 1px solid var(--line); border-radius: 0 0 12px 12px; }
 
 .tip-note {
@@ -636,6 +637,68 @@ button:focus-visible, input:focus-visible, canvas:focus-visible {
 @keyframes callout-in { from { opacity: 0; transform: translateX(-6px) scale(.96); } }
 
 .hotspot-index { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+.dissection-panel {
+  position: absolute;
+  z-index: 7;
+  top: 14px;
+  right: 14px;
+  width: min(278px, calc(100% - 98px));
+  max-height: calc(100% - 92px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(229,21,79,.22);
+  border-radius: 18px;
+  background: rgba(255,253,254,.95);
+  backdrop-filter: blur(20px);
+  box-shadow: 0 20px 48px rgba(71,0,24,.16);
+}
+.dissection-panel > header { min-height: 65px; padding: 12px 12px 11px 15px; display: flex; align-items: center; justify-content: space-between; gap: 9px; border-bottom: 1px solid var(--line); background: linear-gradient(135deg, #fff4f7, rgba(255,255,255,.72)); }
+.dissection-panel > header div { display: flex; flex-direction: column; gap: 4px; }
+.dissection-panel > header span { display: flex; align-items: center; gap: 5px; color: var(--uma-pink-dark); font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .09em; }
+.dissection-panel > header strong { font: 600 19px/1 var(--font-serif), serif; }
+.dissection-collapse { width: 34px; height: 34px; flex: none; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.72); cursor: pointer; }
+.dissection-panel.collapsed { width: 230px; max-height: 66px; }
+.dissection-panel.collapsed .dissection-collapse svg { transform: rotate(180deg); }
+.dissection-panel-body { min-height: 0; padding: 13px; overflow-y: auto; scrollbar-width: thin; }
+.dissection-panel-body > p { margin: 0 0 10px; color: var(--muted); font: 500 11px/1.4 var(--font-serif), serif; }
+.dissection-model-warning { padding: 10px; display: flex; flex-direction: column; gap: 4px; border: 1px solid rgba(229,21,79,.15); border-radius: 11px; background: #fff4f7; }
+.dissection-model-warning b { color: var(--uma-pink-dark); font-size: 10px; }
+.dissection-model-warning span { color: #6f4d58; font-size: 9px; line-height: 1.38; }
+.dissection-panel h3 { margin: 13px 0 7px; color: var(--muted); font-size: 9px; text-transform: uppercase; letter-spacing: .11em; }
+.dissection-stages, .dissection-structures { display: flex; flex-direction: column; gap: 4px; }
+.dissection-stages > button, .dissection-structures > button { width: 100%; min-height: 42px; display: grid; align-items: center; gap: 7px; border: 1px solid transparent; border-radius: 10px; background: transparent; text-align: left; cursor: pointer; }
+.dissection-stages > button { grid-template-columns: 12px 1fr; padding: 6px 8px; }
+.dissection-stages > button i { width: 8px; height: 8px; border: 1px solid #9d8c92; border-radius: 50%; }
+.dissection-stages > button.active { border-color: rgba(229,21,79,.22); background: var(--uma-pink-soft); }
+.dissection-stages > button.active i { border-color: var(--uma-pink); background: var(--uma-pink); box-shadow: 0 0 0 3px rgba(229,21,79,.11); }
+.dissection-stages > button span { display: flex; flex-direction: column; gap: 2px; }
+.dissection-stages b { font-size: 10px; }
+.dissection-stages small { color: var(--muted); font-size: 8px; }
+.dissection-structures > button { grid-template-columns: 15px 1fr auto; padding: 7px 8px; }
+.dissection-structures > button > span { color: var(--uma-pink); }
+.dissection-structures > button b { font: 500 11px/1.2 var(--font-serif), serif; }
+.dissection-structures > button small { color: var(--muted); font-size: 8px; }
+.dissection-structures > button.active { border-color: rgba(229,21,79,.32); background: #fff3f6; }
+.dissection-structures > button.removed { opacity: .68; }
+.dissection-structures > button:disabled { opacity: .42; cursor: not-allowed; }
+.dissection-structure-info { margin-top: 11px; padding: 11px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.76); }
+.dissection-structure-info > span { color: var(--uma-pink-dark); font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; }
+.dissection-structure-info h3 { margin: 5px 0 4px; color: var(--ink); font: 600 17px/1.1 var(--font-serif), serif; text-transform: none; letter-spacing: 0; }
+.dissection-structure-info > p { margin: 0 0 9px; color: var(--muted); font-size: 9px; line-height: 1.4; }
+.dissection-structure-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.dissection-structure-actions button, .dissection-panel footer button { min-height: 34px; display: inline-flex; align-items: center; justify-content: center; gap: 5px; border: 1px solid var(--line); border-radius: 9px; background: #fff; cursor: pointer; color: #4f3b42; font-size: 8px; }
+.dissection-structure-actions button.active { border-color: rgba(229,21,79,.35); background: var(--uma-pink-soft); color: var(--uma-pink-dark); }
+.dissection-locked-copy { display: block; margin-top: 8px; color: #805463; font-size: 8px; line-height: 1.4; }
+.dissection-info-grid { margin: 9px 0 0; display: flex; flex-direction: column; gap: 7px; }
+.dissection-info-grid div { padding-top: 6px; border-top: 1px solid var(--line); }
+.dissection-info-grid dt { color: var(--uma-pink-dark); font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; }
+.dissection-info-grid dd { margin: 3px 0 0; color: #554a4e; font-size: 9px; line-height: 1.4; }
+.dissection-panel footer { margin-top: 12px; display: flex; flex-direction: column; gap: 5px; }
+.dissection-panel footer > div { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
+.dissection-panel footer button:disabled { opacity: .35; cursor: not-allowed; }
+.dissection-panel footer .dissection-exit { border-color: rgba(229,21,79,.28); background: var(--uma-pink-soft); color: var(--uma-pink-dark); }
 
 .auto-rotate {
   position: absolute;
@@ -828,6 +891,10 @@ button.organ-card-image:focus-visible { outline: 2px solid var(--uma-pink); outl
   .global-search.open .search-results { left: 0; right: 0; width: 100%; }
 }
 
+@media (min-width: 1041px) and (max-width: 1500px) {
+  .main-nav button { padding-inline: 8px; gap: 6px; }
+}
+
 @media (max-width: 1040px) {
   .topbar { grid-template-columns: 1fr auto auto auto; }
   .main-nav button span { display: none; }
@@ -846,6 +913,16 @@ button.organ-card-image:focus-visible { outline: 2px solid var(--uma-pink); outl
   .sheet-facts { grid-template-columns: repeat(2, 1fr); }
   .notes-layout { grid-template-columns: 270px 1fr; }
   .about-facts { grid-template-columns: 1fr; }
+  .dissection-panel { width: min(238px, calc(100% - 88px)); }
+}
+
+/* A 768 px tablet still uses the desktop workspace, but the narrow viewer is
+   better served by a bottom sheet than by covering its right-hand half. */
+@media (min-width: 761px) and (max-width: 820px) {
+  .dissection-panel { top: auto; right: 10px; bottom: 14px; left: 80px; width: auto; max-height: 44%; border-radius: 18px; }
+  .dissection-panel.collapsed { right: 10px; left: auto; width: 224px; max-height: 66px; }
+  .viewer-shell:has(.dissection-panel) .auto-rotate { top: 10px; right: 10px; bottom: auto; }
+  .viewer-shell:has(.dissection-panel) .view-caption { top: 15px; bottom: auto; left: 12px; max-width: 180px; }
 }
 
 @media (max-width: 760px) {
@@ -858,7 +935,7 @@ button.organ-card-image:focus-visible { outline: 2px solid var(--uma-pink); outl
   .main-nav { display: none; }
   .profile span { width: 34px; height: 34px; }
   .mobile-library-trigger { display: flex; }
-  .mobile-nav { position: fixed; z-index: 35; left: 8px; right: 8px; bottom: 8px; min-height: 62px; display: grid; grid-template-columns: repeat(5, 1fr); padding: 5px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.94); backdrop-filter: blur(18px); box-shadow: 0 16px 45px rgba(50,0,18,.16); }
+  .mobile-nav { position: fixed; z-index: 35; left: 8px; right: 8px; bottom: 8px; min-height: 62px; display: grid; grid-template-columns: repeat(6, 1fr); padding: 5px; border: 1px solid var(--line); border-radius: 18px; background: rgba(255,255,255,.94); backdrop-filter: blur(18px); box-shadow: 0 16px 45px rgba(50,0,18,.16); }
   .mobile-nav button { min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; border: 0; border-radius: 12px; background: transparent; color: var(--muted); cursor: pointer; font-size: 8px; }
   .mobile-nav button.active { background: var(--uma-pink-soft); color: var(--uma-pink); }
   .study-resume { margin-top: 6px; align-items: stretch; gap: 7px; overflow-x: auto; }
@@ -886,8 +963,8 @@ button.organ-card-image:focus-visible { outline: 2px solid var(--uma-pink); outl
   .learning-cards { grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 10px; --art-max: 320px; }
   .learning-cards article { border-radius: 20px; }
   .curiosity-card { display: none !important; }
-  .viewer-tools { top: auto; bottom: 12px; left: 10px; right: 10px; transform: none; width: auto; height: 61px; flex-direction: row; justify-content: space-around; padding: 4px; border-radius: 15px; }
-  .tool-button { width: 51px; height: 51px; }
+  .viewer-tools { top: auto; bottom: 12px; left: 10px; right: 10px; transform: none; width: auto; height: 61px; flex-direction: row; justify-content: flex-start; gap: 1px; padding: 4px; overflow-x: auto; border-radius: 15px; scrollbar-width: none; }
+  .tool-button { min-width: 42px; width: auto; height: 51px; flex: 1 0 42px; }
   .tool-button:nth-last-child(1) { border: 0; border-radius: 12px; }
   .tool-button span { display: none; }
   .auto-rotate { bottom: 82px; right: 10px; }
@@ -895,6 +972,10 @@ button.organ-card-image:focus-visible { outline: 2px solid var(--uma-pink); outl
   .tip-note { width: 130px; min-height: 113px; padding: 11px; }
   .tip-note p { font-size: 12px; }
   .callout-body { width: 148px; top: -26px; }
+  .dissection-panel { top: auto; right: 10px; bottom: 82px; left: 10px; width: auto; max-height: 48%; border-radius: 18px; }
+  .dissection-panel.collapsed { right: 10px; left: auto; width: 224px; max-height: 66px; }
+  .viewer-shell:has(.dissection-panel) .auto-rotate { top: 10px; right: 10px; bottom: auto; }
+  .viewer-shell:has(.dissection-panel) .view-caption { top: 15px; bottom: auto; left: 12px; max-width: 180px; }
   .compare-strip { grid-template-columns: 1fr auto 1fr auto; }
   .compare-strip dl { display: none; }
   .section-placeholder { min-height: 58vh; margin: 10px 0; padding: 28px; }

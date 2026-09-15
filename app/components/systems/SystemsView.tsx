@@ -7,10 +7,12 @@ export function SystemsView({
   selectedSystem,
   onSelectSystem,
   onViewOrgan,
+  onOpenAtlas,
 }: {
   selectedSystem: string | null;
   onSelectSystem: (systemId: string | null) => void;
   onViewOrgan: (organId: OrganId) => void;
+  onOpenAtlas?: () => void;
 }) {
   const system = anatomySystems.find((item) => item.id === selectedSystem);
 
@@ -23,6 +25,7 @@ export function SystemsView({
           <span className="content-kicker">{system.icon} Sistema anatómico</span>
           <h1 id="system-detail-title">{system.name}</h1>
           <p>{system.description}</p>
+          {onOpenAtlas && <button className="card-primary" type="button" onClick={onOpenAtlas}><Box size={16} /> Ver capas del cuerpo completo</button>}
         </header>
         <div className="system-fact-grid">
           <article><span>Función principal</span><p>{system.primaryFunction}</p></article>
@@ -49,6 +52,7 @@ export function SystemsView({
         <span className="content-kicker"><HeartPulse size={15} /> Anatomía por sistemas</span>
         <h1 id="systems-title">Sistemas del cuerpo humano</h1>
         <p>Comprende cómo los órganos se organizan y colaboran para mantener las funciones vitales.</p>
+        {onOpenAtlas && <button className="card-primary" type="button" onClick={onOpenAtlas}><Box size={16} /> Explorar los 15 sistemas en el atlas 3D</button>}
       </header>
       <div className="system-grid">
         {anatomySystems.map((systemItem) => {

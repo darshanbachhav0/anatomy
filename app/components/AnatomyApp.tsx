@@ -1,7 +1,7 @@
 "use client";
 /* eslint-disable @next/next/no-img-element -- The local UMA logo is served as an already optimized static asset. */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import {
   ArrowRight,
@@ -39,11 +39,15 @@ import { AboutView } from "./profile/AboutView";
 import { matchesSearch } from "../lib/search";
 
 type Modal = "lesson" | "quiz" | "animation" | "system" | null;
+const FullBodyAtlas = lazy(() => import("./atlas/FullBodyAtlas"));
 
 export function AnatomyApp() {
   const student = useUmaStudentData();
   const { data } = student;
   const [activeView, setActiveView] = useState<MainView>("explore");
+  const [atlasScope, setAtlasScope] = useState<"body" | "heart">("body");
+  const openAtlas = (scope: "body" | "heart" = "body") => { setAtlasScope(scope); setActiveView("atlas"); };
+  const navigate = (view: MainView) => { if (view === "atlas") setAtlasScope("body"); setActiveView(view); };
   const [organId, setOrganId] = useState<OrganId>("heart");
   const [compare, setCompare] = useState(false);
   const [modal, setModal] = useState<Modal>(null);
@@ -107,6 +111,7 @@ export function AnatomyApp() {
 
   const viewLabels: Record<MainView, string> = {
     explore: "Explorar",
+    atlas: "Atlas 3D",
     systems: "Sistemas",
     lessons: "Lecciones",
     library: "Biblioteca",
@@ -132,7 +137,7 @@ export function AnatomyApp() {
           <span className="brand-mark"><img src="/uma-logo.jpg" alt="UMA Universidad María Auxiliadora" /></span>
           <span className="brand-copy"><strong>Atlas Anatómico 3D</strong><em>Facultad de Ciencias de la Salud</em></span>
         </button>
-        <MainNavigation active={activeView} onNavigate={setActiveView} />
+        <MainNavigation active={activeView} onNavigate={navigate} />
         <GlobalSearch
           onViewOrgan={selectOrgan}
           onViewSystem={(systemId) => { setSelectedSystem(systemId); setActiveView("systems"); }}
@@ -217,6 +222,7 @@ export function AnatomyApp() {
           showTips={data.settings.showViewerTips}
           compare={compare}
           onCompare={() => setCompare(!compare)}
+          onOpenAtlas={() => openAtlas("heart")}
         />
 
         <aside className="info-panel" ref={contentRef}>
@@ -311,8 +317,12 @@ export function AnatomyApp() {
           <button onClick={() => setModal("system")}>Ver el sistema <ArrowRight size={14} /></button>
         </article>
       </section>
-      </> : activeView === "systems" ? (
-        <SystemsView selectedSystem={selectedSystem} onSelectSystem={setSelectedSystem} onViewOrgan={selectOrgan} />
+      </> : activeView === "atlas" ? (
+        <Suspense fallback={<section className="content-view" role="status">Cargando el laboratorio anatómico…</section>}>
+          <FullBodyAtlas initialScope={atlasScope} onBack={() => setActiveView("explore")} onViewOrgan={selectOrgan} />
+        </Suspense>
+      ) : activeView === "systems" ? (
+        <SystemsView selectedSystem={selectedSystem} onSelectSystem={setSelectedSystem} onViewOrgan={selectOrgan} onOpenAtlas={() => openAtlas()} />
       ) : activeView === "lessons" ? (
         <LessonsView
           selectedOrganId={organId}
@@ -381,7 +391,7 @@ export function AnatomyApp() {
         />
       )}
       {mobileLibrary && <button className="drawer-backdrop" aria-label="Cerrar biblioteca" onClick={() => setMobileLibrary(false)} />}
-      <MobileNavigation active={activeView} onNavigate={setActiveView} />
+      <MobileNavigation active={activeView} onNavigate={navigate} />
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </main>
   );

@@ -15,6 +15,10 @@ export type Hotspot = {
   detail: string;
   position: [number, number, number];
   color: string;
+  visibleInNormalMode?: boolean;
+  visibleInDissection?: boolean;
+  requiredRemovedStructures?: string[];
+  requiredStage?: number;
 };
 
 export type Organ = {
@@ -71,7 +75,7 @@ export const organs: Organ[] = [
       { id: "right-atrium", label: "Aurícula derecha", detail: "Recibe sangre venosa", position: [-0.9, 0.35, 0.55], color: "#6393d8" },
       { id: "left-ventricle", label: "Ventrículo izquierdo", detail: "Bombea hacia el cuerpo", position: [0.7, -0.75, 0.65], color: "#f2a33b" },
       { id: "right-ventricle", label: "Ventrículo derecho", detail: "Bombea hacia los pulmones", position: [-0.65, -0.68, 0.66], color: "#e5154f" },
-      { id: "mitral", label: "Válvula mitral", detail: "Evita el retroceso de la sangre", position: [0.18, -1.35, 0.48], color: "#be185d" },
+      { id: "mitral", label: "Válvula mitral", detail: "Evita el retroceso de la sangre", position: [0.18, -1.35, 0.48], color: "#be185d", visibleInDissection: false },
     ],
   },
   {

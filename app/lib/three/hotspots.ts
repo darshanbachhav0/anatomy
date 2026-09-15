@@ -101,6 +101,9 @@ export class HotspotLayer {
   private time = 0;
   private selectedAt = -PULSE_SECONDS;
   private lastSelectedId: string | null = null;
+  private dissectionEnabled = false;
+  private removedStructures = new Set<string>();
+  private dissectionStage = 0;
 
   private readonly world = new THREE.Vector3();
   private readonly toCamera = new THREE.Vector3();
@@ -183,6 +186,22 @@ export class HotspotLayer {
     });
   }
 
+  setDissectionContext(enabled: boolean, removedStructureIds: string[], stage: number) {
+    this.dissectionEnabled = enabled;
+    this.removedStructures = new Set(removedStructureIds);
+    this.dissectionStage = stage;
+  }
+
+  private isAvailable(hotspot: Hotspot) {
+    if (this.dissectionEnabled) {
+      if (hotspot.visibleInDissection === false) return false;
+      if (hotspot.requiredStage !== undefined && this.dissectionStage < hotspot.requiredStage) return false;
+      if (hotspot.requiredRemovedStructures?.some((id) => !this.removedStructures.has(id))) return false;
+      return true;
+    }
+    return hotspot.visibleInNormalMode !== false;
+  }
+
   /**
    * Fades markers that have rotated to the far side and animates the selected
    * ring. Returns false while values are still easing so the viewer knows it
@@ -217,7 +236,7 @@ export class HotspotLayer {
       const radius = this.outward.length();
       this.toCamera.copy(camera.position).sub(this.world).normalize();
       const facing = radius > 1e-4 ? this.outward.divideScalar(radius).dot(this.toCamera) : 1;
-      const target = THREE.MathUtils.smoothstep(facing, -0.05, 0.3);
+      const target = this.isAvailable(marker.hotspot) ? THREE.MathUtils.smoothstep(facing, -0.05, 0.3) : 0;
 
       const active = marker.hotspot.id === selectedId || marker.hotspot.id === hoveredId;
       const emphasisTarget = active ? 1 : 0;
@@ -255,7 +274,7 @@ export class HotspotLayer {
     let best: Marker | null = null;
     let bestDistance = radius;
     for (const marker of this.markers) {
-      if (marker.opacity < 0.35) continue;
+      if (!this.isAvailable(marker.hotspot) || marker.opacity < 0.35) continue;
       marker.dot.getWorldPosition(this.projected).project(camera as THREE.PerspectiveCamera);
       if (this.projected.z > 1) continue;
       const px = (this.projected.x * 0.5 + 0.5) * width;

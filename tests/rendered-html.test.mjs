@@ -88,3 +88,33 @@ test("incluye navegación funcional, módulos educativos y persistencia versiona
   assert.match(profile, /Mi progreso/);
   assert.match(profile, /Configuración/);
 });
+
+test("integra un modo disección reutilizable sin inventar estructuras ausentes", async () => {
+  const [data, engine, viewer, panel, organViewer, hotspots, inspector] = await Promise.all([
+    readFile(new URL("../app/lib/dissection-data.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/lib/three/dissection-engine.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/lib/three/viewer.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/dissection/DissectionPanel.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/OrganViewer.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/lib/three/hotspots.ts", import.meta.url), "utf8"),
+    readFile(new URL("../scripts/inspect-glb.mjs", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(data, /meshCount: 1/);
+  assert.match(data, /internalStructures: \[\]/);
+  assert.match(data, /removable: false/);
+  assert.match(data, /tripo_node_9c16954f-d29a-4a4b-baf4-ba02eda23201/);
+  assert.match(data, /No existen piezas internas separadas/);
+  for (const operation of ["remove", "restore", "undo", "redo", "applyStage", "isolate", "structureCenter"]) {
+    assert.match(engine, new RegExp(`\\b${operation}\\(`));
+  }
+  assert.match(viewer, /setDissectionEnabled/);
+  assert.match(viewer, /focusDissectionStructure/);
+  assert.match(panel, /Modo disección activo/);
+  assert.match(panel, /config\.organLabel/);
+  assert.match(organViewer, /Disección próximamente disponible/);
+  assert.match(organViewer, /accessibleHotspots/);
+  assert.match(hotspots, /setDissectionContext/);
+  assert.match(inspector, /Jerarquía completa/);
+  assert.match(inspector, /Nodos con malla/);
+});
