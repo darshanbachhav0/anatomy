@@ -35,8 +35,11 @@ Catalog corrections applied by `scripts/import-human-atlas.mjs`:
   FJ2420 and FJ2432; aortic cusps are not presented as mitral leaflets.
 - Ventricular wall FJ2428 included in the heart study assembly FMA7088.
 
-Not every specialized source label has a curated Spanish translation. Original
-English names and FMA/FJ identifiers remain visible and searchable. Cavity meshes
+All 3,432 distinct source names now have locally stored Spanish labels generated
+from an explicit anatomical lexicon and composition rules. Original English names
+remain in source data and the search index; FMA/FJ identifiers remain visible.
+Regional Spanish synonyms are searchable. Terminology should undergo faculty
+review before formal assessment use; coverage tests are not clinical validation. Cavity meshes
 represent reference volumes, not solid tissue. Hiding a mesh is not a simulated
 surgical incision. Clinical validation has not been performed.
 

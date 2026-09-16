@@ -12,6 +12,8 @@
     "start": "vinext start",
     "test": "npm run build && node --test tests/rendered-html.test.mjs tests/atlas.test.mjs",
     "test:atlas": "node --test tests/atlas.test.mjs",
+    "atlas:translate": "node scripts/build-atlas-spanish.mjs",
+    "check:spanish": "node scripts/build-atlas-spanish.mjs --check",
     "import:atlas": "node scripts/import-human-atlas.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "inspect:heart": "node scripts/inspect-glb.mjs public/models/heart.glb",

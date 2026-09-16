@@ -79,7 +79,7 @@ npm run lint
 npm test
 ```
 
-`npm run test:atlas` ejecuta solo las nueve pruebas del nuevo módulo. Cubren todos
+`npm run test:atlas` ejecuta las diez pruebas del atlas. Cubren todos
 los binarios, descompresión, índices, límites, jerarquía, búsqueda, visibilidad,
 historial, despiece sin solapamiento, gestos y herramientas opcionales.
 Las cuatro pruebas originales también se mantienen.
@@ -93,9 +93,14 @@ No se realizó una prueba visual en navegador ni en dispositivos táctiles físi
 ## Límites del recurso
 
 - Referencia adulta masculina; no representa todas las estructuras ni variaciones.
-- Interfaz en español y traducciones curadas para órganos y estructuras comunes.
-  Los términos especializados aún no traducidos conservan el original, identificado
-  en la ficha; siguen siendo buscables mediante inglés o identificadores.
+- Interfaz en español de Perú y catálogo local con traducciones para los 3.432
+  nombres únicos. Los originales se conservan en los datos y el índice de búsqueda,
+  pero no se muestran como nombres de estructuras. Se admiten sinónimos como
+  peroné/fíbula, cúbito/ulna y escápula/omóplato.
+- `npm run atlas:translate` regenera las etiquetas desde el léxico anatómico explícito
+  de `scripts/atlas-spanish.mjs`; `npm run check:spanish` comprueba su vigencia.
+  Las pruebas verifican cobertura, lateralidad, concordancia y búsquedas. Se recomienda
+  revisión docente de la terminología antes de emplearla en evaluaciones formales.
 - Las cavidades son volúmenes de referencia, no tejido. Ocultar paredes no produce
   cortes, deformaciones ni una simulación quirúrgica.
 - Las descripciones genéricas se identifican como contexto del sistema.

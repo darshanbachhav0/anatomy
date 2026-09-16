@@ -50,7 +50,7 @@ export const organs: Organ[] = [
   {
     id: "heart",
     name: "Corazón",
-    scientificName: "Cor",
+    scientificName: "Corazón",
     system: "Sistema cardiovascular",
     model: "/models/heart.glb",
     icon: "♥",
@@ -81,7 +81,7 @@ export const organs: Organ[] = [
   {
     id: "brain",
     name: "Cerebro",
-    scientificName: "Encephalon",
+    scientificName: "Encéfalo",
     system: "Sistema nervioso",
     model: "/models/brain.glb",
     icon: "◉",
@@ -140,7 +140,7 @@ export const organs: Organ[] = [
   {
     id: "liver",
     name: "Hígado",
-    scientificName: "Hepar",
+    scientificName: "Hígado",
     system: "Sistema digestivo",
     model: "/models/liver.glb",
     icon: "≈",
@@ -168,7 +168,7 @@ export const organs: Organ[] = [
   {
     id: "kidneys",
     name: "Riñones",
-    scientificName: "Renes",
+    scientificName: "Riñones",
     system: "Sistema urinario",
     model: "/models/kidneys.glb",
     icon: "∞",
@@ -196,7 +196,7 @@ export const organs: Organ[] = [
   {
     id: "eyeball",
     name: "Ojo",
-    scientificName: "Oculus",
+    scientificName: "Globo ocular",
     system: "Sistema sensorial",
     model: "/models/eyeball.glb",
     icon: "⊙",
@@ -224,7 +224,7 @@ export const organs: Organ[] = [
   {
     id: "intestine",
     name: "Intestino",
-    scientificName: "Intestinum",
+    scientificName: "Intestinos",
     system: "Sistema digestivo",
     model: "/models/intestine.glb",
     icon: "§",
@@ -252,7 +252,7 @@ export const organs: Organ[] = [
   {
     id: "pancreas",
     name: "Páncreas",
-    scientificName: "Pancreas",
+    scientificName: "Páncreas",
     system: "Sistema endocrino",
     model: "/models/pancreas.glb",
     icon: "◈",
@@ -281,7 +281,7 @@ export const organs: Organ[] = [
   {
     id: "skin",
     name: "Piel",
-    scientificName: "Integumentum",
+    scientificName: "Sistema tegumentario",
     system: "Sistema tegumentario",
     model: "/models/skin.glb",
     icon: "▦",

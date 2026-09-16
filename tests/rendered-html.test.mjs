@@ -29,7 +29,7 @@ test("renderiza la experiencia anatómica de UMA en español", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<html lang="es">/i);
+  assert.match(html, /<html lang="es-PE">/i);
   assert.match(html, /<title>Atlas Anatómico 3D \| UMA<\/title>/i);
   assert.match(html, /src="\/uma-logo\.jpg"/i);
   assert.match(html, /UMA Universidad María Auxiliadora/);
@@ -59,7 +59,7 @@ test("mantiene centralizados el contenido en español y la identidad UMA", async
   assert.match(data, /name: "Hígado"/);
   assert.match(data, /name: "Riñones"/);
   assert.match(css, /--uma-pink: #e5154f/);
-  assert.match(layout, /<html lang="es">/);
+  assert.match(layout, /<html lang="es-PE">/);
   assert.match(layout, /url: "\/og-uma\.png"/);
 });
 

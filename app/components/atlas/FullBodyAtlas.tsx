@@ -30,8 +30,8 @@ export default function FullBodyAtlas(props: Props) {
             if (!abort.signal.aborted)
                 setAtlas(data);
         })
-            .catch(reason => { if (!abort.signal.aborted)
-            setError(reason instanceof Error ? reason.message : 'Error al cargar el atlas.'); });
+            .catch(() => { if (!abort.signal.aborted)
+            setError('No se pudo cargar el catálogo anatómico. Comprueba tu conexión e inténtalo nuevamente.'); });
         return () => abort.abort();
     }, [attempt]);
     if (!atlas)
@@ -128,7 +128,7 @@ function AtlasWorkspace({ atlas, initialScope = 'body', onBack, onViewOrgan }: P
         <div className="atlas-search"><label htmlFor="atlas-search">Buscar una estructura <kbd>/</kbd></label><div><Search size={17}/><input ref={searchInput} id="atlas-search" type="search" placeholder="Corazón, fémur, FMA…" value={query} onChange={event => { setQuery(event.target.value); setResultLimit(30); }}/></div></div>
         <div className="atlas-results" aria-label="Resultados anatómicos">
           <span className="atlas-subtitle">{query.trim() ? `${number(results.length)} resultados` : 'Exploraciones sugeridas'}</span>
-          {results.length === 0 && <p>No hay coincidencias. Prueba el nombre original en inglés o el identificador FMA/FJ.</p>}
+          {results.length === 0 && <p>No encontramos esa estructura. Prueba otro nombre en español, un sinónimo o su identificador FMA/FJ.</p>}
           {results.slice(0, resultLimit).map(result => <button type="button" key={result.id} className={selected?.id === result.id ? 'is-selected' : ''} onClick={() => { choose(result, true); setPanelsOpen(false); }}><span>{result.label}<small>{result.id} · {number(result.elements.length)} {result.elements.length === 1 ? 'pieza' : 'piezas'}</small></span><Focus size={15}/></button>)}
           {results.length > resultLimit && <button type="button" className="atlas-more" onClick={() => setResultLimit(value => value + 30)}>Mostrar 30 más</button>}
         </div>
@@ -165,16 +165,16 @@ function AtlasWorkspace({ atlas, initialScope = 'body', onBack, onViewOrgan }: P
 
       {selected && <aside className="atlas-inspector" aria-labelledby="atlas-selection-title">
         <div className="atlas-inspector-top"><span className="atlas-kicker">Estructura seleccionada</span><button type="button" aria-label="Cerrar selección" onClick={() => { setSelected(null); setState(previous => ({ ...previous, selected: [], isolate: false })); }}><X size={18}/></button></div>
-        <h2 id="atlas-selection-title">{displayName(selected.name)}</h2><p className="atlas-source-name">Nombre original del catálogo: <span lang="en">{selected.name}</span></p>
+        <h2 id="atlas-selection-title">{displayName(selected.name)}</h2><p className="atlas-source-name">Nombre anatómico en español · Catálogo BodyParts3D</p>
         <div className="atlas-selection-meta"><code>{selected.id}</code><span>{selected.elements.length} {selected.elements.length === 1 ? 'pieza' : 'piezas'}</span></div>
         {system && <><h3>{EXPLANATIONS[selected.name.toLowerCase()] ? 'Descripción' : `Contexto: ${system.name}`}</h3><p>{explanation(selected.name, system.id)}</p></>}
         {selectedParts.some(part => HEART_CAVITIES.includes(part.id)) && <p className="atlas-notice">Las cavidades se representan como volúmenes sólidos de referencia; no son tejido. Ocúltalas para observar las estructuras internas.</p>}
         <div className="atlas-selection-actions"><button type="button" className="atlas-primary" disabled={!selectedVisible.length} onClick={() => setState(previous => ({ ...previous, isolate: !previous.isolate, rotate: false }))}><Focus size={16}/>{state.isolate ? 'Mostrar contexto' : 'Aislar selección'}</button><button type="button" disabled={!ready || !selectedVisible.length} onClick={() => setState(previous => ({ ...previous, focus: previous.focus + 1, rotate: false }))}>Centrar cámara</button><button type="button" disabled={!selectedVisible.length} onClick={() => hide(selected.elements)}><EyeOff size={16}/> Ocultar selección</button>{linkedOrgan && <button type="button" onClick={() => onViewOrgan(linkedOrgan)}>Abrir ficha y visor del órgano <ArrowLeft className="atlas-forward" size={16}/></button>}</div>
         <h3>Piezas de esta estructura</h3><div className="atlas-members">{selectedParts.slice(0, memberLimit).map(part => <div key={part.id}><button type="button" onClick={() => choose({ id: part.id, name: part.name, elements: [part.id] })}><span>{displayName(part.name)}</span><small>{part.id}</small></button><button type="button" aria-label={`${history.present.includes(part.id) ? 'Restaurar' : 'Ocultar'} ${displayName(part.name)}`} onClick={() => history.present.includes(part.id) ? restore(part.id) : hide([part.id])}>{history.present.includes(part.id) ? <EyeOff size={16}/> : <Eye size={16}/>}</button></div>)}</div>
         {selectedParts.length > memberLimit && <button type="button" className="atlas-more" onClick={() => setMemberLimit(value => value + 30)}>Mostrar 30 piezas más</button>}
-        <p className="atlas-hint"><Check size={14}/> Cada pieza corresponde a geometría real del catálogo. Los nombres especializados aún no traducidos se conservan en inglés.</p>
+        <p className="atlas-hint"><Check size={14}/> Cada pieza corresponde a una estructura del catálogo. Sus nombres se muestran en español y sus identificadores originales se conservan como referencia.</p>
       </aside>}
     </div>
-    <details className="atlas-credits"><summary>Fuentes, licencias y alcance educativo</summary><p>Geometría: BodyParts3D, © The Database Center for Life Science, <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noreferrer">CC BY 4.0</a>. Visor adaptado de <a href="https://github.com/ashemag/human-atlas" target="_blank" rel="noreferrer">Human Atlas</a> (<a href="/atlas/LICENSE.txt" target="_blank" rel="noreferrer">MIT</a>), con interfaz UMA, traducciones, ajustes de catálogo y controles de ocultamiento.</p><p>Referencia anatómica adulta masculina, simplificada para la web. No incluye todas las variaciones anatómicas ni sustituye la enseñanza clínica. <a href="/atlas/ATTRIBUTION.md" target="_blank" rel="noreferrer">Créditos y modificaciones completos</a>.</p></details>
+    <details className="atlas-credits"><summary>Fuentes, licencias y alcance educativo</summary><p>Geometría: BodyParts3D, © The Database Center for Life Science, <a href="https://creativecommons.org/licenses/by/4.0/deed.es" target="_blank" rel="noreferrer">CC BY 4.0</a>. Visor adaptado de <a href="https://github.com/ashemag/human-atlas" target="_blank" rel="noreferrer">Human Atlas</a> (<a href="/atlas/LICENSE.txt" target="_blank" rel="noreferrer">licencia MIT original</a>), con interfaz UMA, traducciones, ajustes de catálogo y controles de ocultamiento.</p><p>Referencia anatómica adulta masculina, simplificada para la web. No incluye todas las variaciones anatómicas ni sustituye la enseñanza clínica. <a href="/atlas/ATRIBUCION.md" target="_blank" rel="noreferrer">Créditos y modificaciones completos en español</a>.</p></details>
   </section>;
 }

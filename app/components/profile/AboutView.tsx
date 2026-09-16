@@ -9,7 +9,7 @@ export function AboutView() {
       <h1 id="about-title">Simulador de Anatomía 3D</h1>
       <p className="about-lead">Herramienta interactiva diseñada para apoyar el aprendizaje y la exploración de anatomía mediante modelos tridimensionales.</p>
       <div className="about-facts"><article><GraduationCap size={20} /><div><b>Universidad María Auxiliadora</b><span>Comunidad universitaria UMA</span></div></article><article><MapPin size={20} /><div><b>Lima, Perú</b><span>Experiencia de aprendizaje digital</span></div></article><article><HeartPulse size={20} /><div><b>Exploración anatómica</b><span>Nueve modelos de órganos y un atlas corporal con 2.234 piezas</span></div></article></div>
-      <p>El atlas corporal integra geometría de BodyParts3D (CC BY 4.0) y un visor adaptado de Human Atlas (MIT). <a href="/atlas/ATTRIBUTION.md" target="_blank" rel="noreferrer">Fuentes, licencias y modificaciones</a>.</p>
+      <p>El atlas corporal integra geometría de BodyParts3D (CC BY 4.0) y un visor adaptado de Human Atlas (MIT). <a href="/atlas/ATRIBUCION.md" target="_blank" rel="noreferrer">Fuentes, licencias y modificaciones</a>.</p>
       <aside>Este simulador es un recurso educativo complementario. No sustituye la enseñanza clínica, el criterio profesional ni la orientación médica.</aside>
     </section>
   );

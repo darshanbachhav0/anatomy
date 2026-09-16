@@ -44,6 +44,7 @@ export const metadata: Metadata = {
     shortcut: "/favicon.svg",
   },
   openGraph: {
+    locale: "es_PE",
     type: "website",
     siteName: "Atlas Anatómico 3D UMA",
     title: "Atlas Anatómico 3D | UMA",
@@ -68,7 +69,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
+    <html lang="es-PE">
       <body
         className={`${sans.variable} ${serif.variable}`}
       >

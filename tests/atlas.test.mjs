@@ -7,6 +7,12 @@ import ts from 'typescript';
 const moduleCache = new Map();
 async function moduleUrl(name) {
   if (moduleCache.has(name)) return moduleCache.get(name);
+  if (name.endsWith('.json')) {
+    const json = await readFile(new URL(`../app/components/atlas/${name}`, import.meta.url), 'utf8');
+    const url = `data:text/javascript;base64,${Buffer.from(`export default ${json}`).toString('base64')}`;
+    moduleCache.set(name, url);
+    return url;
+  }
   const source = await readFile(new URL(`../app/components/atlas/${name}.ts`, import.meta.url), 'utf8');
   let { outputText } = ts.transpileModule(source, { compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext } });
   for (const match of [...outputText.matchAll(/from ['"]\.\/([^'"]+)['"]/g)]) {
@@ -87,7 +93,28 @@ test('search finds Spanish names without accents, original English, concepts and
   assert.equal(catalog.displayName('Left femur'), 'Fémur izquierdo');
   assert.equal(catalog.displayName('Right clavicle'), 'Clavícula derecha');
   assert.equal(catalog.displayName('Left 3rd rib'), '3.ª costilla izquierda');
-  assert.equal(catalog.displayName('Untranslated source term'), 'Untranslated source term');
+  assert.equal(catalog.displayName('Untranslated source term'), 'Estructura sin traducción disponible');
+});
+
+test('all catalog names have Spanish labels, with regional synonyms and grammatical agreement', () => {
+  const names = new Set([...atlas.parts, ...atlas.concepts].map(item => item.name.toLowerCase()));
+  assert.equal(names.size, 3432);
+  for (const name of names) {
+    assert.ok(catalog.hasSpanishName(name), `Falta traducción: ${name}`);
+    const label = catalog.displayName(name);
+    assert.ok(label.length > 1);
+    assert.doesNotMatch(label, /\b(left|right|of|with|branch|artery|vein|muscle|bone|tooth|upper|lower|first|second|third)\b/i, name);
+    assert.notEqual(label, 'Estructura sin traducción disponible');
+  }
+  assert.equal(catalog.displayName('Left hip'), 'Cadera izquierda');
+  assert.equal(catalog.displayName('Left fibula'), 'Peroné izquierdo');
+  assert.equal(catalog.displayName('Right ulna'), 'Cúbito derecho');
+  assert.equal(catalog.displayName('Third ventricle'), 'Tercer ventrículo cerebral');
+  assert.equal(catalog.displayName('Coronary sinus tree'), 'Árbol del seno coronario');
+  assert.ok(!catalog.displayName('Anterior tributary of right hepatic biliary tree').includes('venoso'));
+  for (const [query, original] of [['cerebro', 'brain'], ['fibula izquierda', 'left fibula'], ['ulna derecha', 'right ulna'], ['omoplato izquierdo', 'left scapula'], ['circunvolucion angular', 'angular gyrus']]) {
+    assert.ok(catalog.searchCatalog(index, query).some(item => item.name.toLowerCase() === original), query);
+  }
 });
 
 test('cardiac study retains actual walls, valves and papillary muscles without cerebral ventricles', () => {

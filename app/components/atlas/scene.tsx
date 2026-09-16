@@ -183,10 +183,10 @@ export default function AnatomyScene({ atlas, state, onSelect, onProgress, onErr
                 dirty = true;
             }
         }
-        catch (e) {
+            catch {
             abort.abort();
             if (!disposed)
-                onError(e instanceof Error ? e.message : 'No se pudo cargar la anatomía.');
+                onError('No se pudo cargar la anatomía completa. Comprueba la conexión y pulsa Reintentar visor.');
         } })();
         const fit = (view: string, selectionOnly = false) => {
             const s = latest.current, visibleIds = new Set(visibleParts(atlas, s).map(p => p.id)), selection = new Set(s.selected), box = new T.Box3();
