@@ -1,0 +1,33 @@
+/* UMA adaptation. Anatomy materials retain their educational tissue colors. */
+:root {
+  --bg-0: #f6f6f8;
+  --bg-1: #fff8fa;
+  --stage-0: #ede6e9;
+  --stage-1: #f8f5f7;
+  --panel: rgba(255, 255, 255, .95);
+  --panel-solid: #fff;
+  --panel-border: rgba(92, 30, 51, .16);
+  --panel-shadow: 0 8px 24px rgba(56, 15, 30, .07);
+  --ink: #352630;
+  --muted: #6c5e66;
+  --accent: #e5154f;
+  --accent-soft: rgba(229, 21, 79, .09);
+  --accent-glow: rgba(229, 21, 79, .4);
+  --highlight: #e5154f;
+  --focus: #a90035;
+  --radius-lg: 16px;
+  --radius: 10px;
+}
+:root[data-theme='dark'] {
+  --bg-0: #1b1319;
+  --bg-1: #281b23;
+  --panel: rgba(43, 29, 37, .95);
+  --panel-solid: #2b1d25;
+  --accent: #ff7b9e;
+  --accent-ink: #2c0813;
+  --accent-soft: rgba(255, 123, 158, .14);
+  --accent-glow: rgba(255, 123, 158, .4);
+  --highlight: #ff7b9e;
+  --focus: #ff9eb8;
+}
+.ds-title { color: var(--accent); }

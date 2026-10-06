@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#091522"><meta name="description" content="Explora el cuerpo humano en 3D. Sistemas anatómicos, estructuras seleccionables y 58 movimientos para estudiar anatomía.">
+  <title>UMA · Exploración y movimientos anatómicos</title>
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./uma.css">
+  <script>if(new URLSearchParams(location.search).get('embedded')==='1')document.documentElement.classList.add('uma-embedded');</script>
+  <script type="importmap">{"imports":{"three":"./vendor/three/three.module.js","three/addons/":"./vendor/three/addons/"}}</script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Atlas, inicio"><span class="brand-mark">A<span>+</span></span><span>ATLAS<small>ESTUDIO ANATÓMICO</small></span></a>
+    <nav class="main-nav" aria-label="Modo de estudio"><button class="nav-tab active" data-mode="explore">Exploración</button><button class="nav-tab" data-mode="motion">Movimientos <span class="badge">58</span></button></nav>
+    <div class="header-actions"><span class="library-count" id="header-count">Biblioteca anatómica 3D</span><button id="help-button" class="icon-button" title="Ayuda y controles" aria-label="Ayuda y controles">?</button></div>
+  </header>
+  <main class="workspace">
+    <aside class="library-panel" id="library-panel" aria-label="Biblioteca anatómica">
+      <div class="panel-heading"><h1 id="panel-title">Explorar anatomía</h1><button class="icon-button mobile-close" id="close-library" aria-label="Cerrar biblioteca">×</button></div>
+      <label class="search"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 4 4"/></svg><input id="search" type="search" placeholder="Buscar una estructura…" autocomplete="off"><kbd>/</kbd></label>
+      <div id="explore-controls"><label class="field-label" for="scene-select">VISTA ANATÓMICA</label><select id="scene-select" aria-label="Vista anatómica"><option>Cuerpo completo</option></select><div class="section-label"><span>SISTEMAS</span><button id="show-all-systems" class="text-button">Ver todos</button></div><div id="system-list" class="system-list"></div><div class="section-label"><span>PREPARACIONES</span></div><div id="specimen-list" class="specimen-list"></div></div>
+      <div id="motion-controls" hidden><label class="field-label" for="region-filter">REGIÓN DEL MOVIMIENTO</label><select id="region-filter"><option value="all">Todas las regiones</option></select></div>
+      <div id="library-controls" hidden><label class="field-label" for="kind-filter">TIPO DE RECURSO</label><select id="kind-filter"><option value="all">Todos los recursos</option><option value="model">Mallas individuales</option><option value="group">Conjuntos ensamblados</option><option value="marker">Marcadores de inserción</option></select></div>
+      <div id="results-heading" class="section-label" hidden><span id="result-count"></span></div><div id="resource-list" class="resource-list" aria-live="polite"></div><button id="more-results" class="secondary-button" hidden>Mostrar más resultados</button>
+      <div class="library-footer"><span class="small-cross">✚</span><span id="library-footer-text">Atlas anatómico · biblioteca completa</span></div>
+    </aside>
+    <section class="viewport" id="viewport" aria-label="Visor anatómico tridimensional">
+      <div id="canvas-host"></div>
+      <div class="scene-heading"><button class="icon-button mobile-open" id="open-library" aria-label="Abrir biblioteca">☰</button><div><div class="eyebrow" id="scene-category">EXPLORACIÓN ANATÓMICA</div><h2 id="scene-title">Cuerpo completo</h2><div class="scene-subtitle" id="scene-subtitle">Sistemas muscular y esquelético</div></div></div>
+      <div class="orientation"><span id="view-name">Vista anterior</span><select id="camera-view" aria-label="Orientación de la cámara"><option value="front">Anterior</option><option value="oblique">3/4</option><option value="back">Posterior</option><option value="left">Lateral izquierda</option><option value="right">Lateral derecha</option><option value="top">Superior</option></select></div>
+      <div class="view-toolbar" role="toolbar" aria-label="Controles del visor">
+        <button class="tool-button" id="fit-view" title="Encuadrar modelo (F)" aria-label="Encuadrar modelo"><svg viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13-5v5h-5M8 8h8v8H8z"/></svg></button>
+        <button class="tool-button" id="auto-rotate" title="Giro automático" aria-label="Giro automático" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M20 7v5h-5M4 17v-5h5M5.2 7a8 8 0 0 1 13-2L20 8M4 16l1.8 3a8 8 0 0 0 13-2"/></svg></button>
+        <button class="tool-button" id="toggle-grid" title="Mostrar cuadrícula" aria-label="Mostrar cuadrícula" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="M3 3h18v18H3zM3 9h18M3 15h18M9 3v18M15 3v18"/></svg></button>
+        <button class="tool-button" id="toggle-section" title="Corte anatómico" aria-label="Corte anatómico" aria-pressed="false"><svg viewBox="0 0 24 24"><path d="m12 3 8 5v8l-8 5-8-5V8zM12 3v18M4 8l8 5 8-5"/></svg></button>
+        <span class="toolbar-divider"></span><button class="tool-button" id="reset-view" title="Restablecer vista (R)" aria-label="Restablecer vista"><svg viewBox="0 0 24 24"><path d="M3 11a9 9 0 1 1 2.6 7M3 4v7h7"/></svg></button>
+        <button class="tool-button" id="save-image" title="Guardar imagen" aria-label="Guardar imagen"><svg viewBox="0 0 24 24"><path d="M4 7h4l2-3h4l2 3h4v13H4z"/><circle cx="12" cy="13" r="4"/></svg></button>
+        <button class="tool-button" id="fullscreen" title="Pantalla completa" aria-label="Pantalla completa"><svg viewBox="0 0 24 24"><path d="M8 3H3v5m13-5h5v5M3 16v5h5m13 0h5v-5"/></svg></button>
+      </div>
+      <div id="selection-label" class="selection-label" hidden></div>
+      <div id="load-overlay" class="load-overlay"><div class="loading-mark"></div><strong id="load-title">Preparando el atlas</strong><span id="load-message">Cargando la biblioteca anatómica…</span><progress id="load-progress" max="100" value="0"></progress><button id="retry-load" class="secondary-button" hidden>Volver a intentar</button></div>
+      <div id="section-controls" class="section-controls" hidden><label for="section-position">Plano de corte</label><select id="section-axis" aria-label="Plano de corte"><option value="x">Sagital</option><option value="y">Transversal</option><option value="z">Coronal</option></select><input id="section-position" type="range" min="0" max="100" value="50" aria-label="Posición del corte"><button id="flip-section" class="text-button">Invertir</button></div>
+      <div id="animation-dock" class="animation-dock" hidden><button id="play-animation" class="play-button" aria-label="Reproducir animación">▶</button><div class="timeline"><div class="timeline-caption"><strong id="clip-title">Movimiento</strong><span id="clip-time">0:00 / 0:00</span></div><input id="timeline" type="range" min="0" max="1000" value="0" aria-label="Posición de la animación"></div><select id="playback-speed" aria-label="Velocidad de reproducción"><option value="0.25">0,25×</option><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="1.5">1,5×</option><option value="2">2×</option></select><button id="loop-animation" class="tool-button active" title="Repetir" aria-label="Repetir animación" aria-pressed="true">↻</button></div>
+      <div class="viewport-bottom"><span class="gesture-help">Arrastra para girar <span>·</span> Rueda para acercar <span>·</span> Clic para seleccionar</span><span id="render-status">Visor 3D</span></div>
+      <button class="mobile-inspector" id="open-inspector" aria-label="Abrir detalles de la estructura">Detalles</button>
+    </section>
+    <aside class="inspector-panel" id="inspector-panel" aria-label="Detalles de la estructura"><div class="panel-heading"><span class="eyebrow">ESTRUCTURA</span><button id="close-inspector" class="icon-button mobile-close" aria-label="Cerrar detalles">×</button></div><div id="inspector-content"><div class="empty-inspector"><div class="selection-symbol">⌖</div><h2>Explora cada detalle</h2><p>Selecciona una estructura del modelo para identificarla, aislarla y estudiarla.</p></div></div><div class="scene-structures"><div class="section-label"><span>EN ESTA VISTA</span><span id="visible-count">—</span></div><label class="search compact"><input id="structure-search" type="search" placeholder="Filtrar estructuras de la vista…" aria-label="Filtrar estructuras de la vista"></label><div id="structure-list"></div></div></aside>
+  </main>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <dialog id="help-dialog"><form method="dialog"><button class="dialog-close icon-button" aria-label="Cerrar ayuda">×</button></form><div class="eyebrow">GUÍA DEL VISOR</div><h2>Tu mesa de estudio anatómico</h2><p>Explora los sistemas del cuerpo, selecciona una estructura y observa los movimientos desde cualquier ángulo.</p><div class="help-grid"><span>Girar</span><strong>Arrastrar</strong><span>Acercar o alejar</span><strong>Rueda / pellizcar</strong><span>Desplazar</span><strong>Clic derecho / dos dedos</strong><span>Encuadrar</span><kbd>F</kbd><span>Restablecer</span><kbd>R</kbd><span>Buscar</span><kbd>/</kbd><span>Reproducir / pausar</span><kbd>Espacio</kbd><span>Quitar selección</span><kbd>Esc</kbd></div><p class="help-note">El plano de corte permite inspeccionar el interior; las superficies cortadas quedan abiertas. Los movimientos y modelos proceden de la biblioteca exportada. La escala conserva las unidades de origen.</p><p class="help-note">Las fichas muestran los nombres recuperados del atlas. Algunos recursos auxiliares conservan su nombre original.</p></dialog>
+  <script type="module" src="./app.js"></script>
+</body></html>

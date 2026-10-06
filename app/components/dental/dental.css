@@ -1,0 +1,24 @@
+.dental-view { max-width: 1800px; margin: 14px auto 0; }
+.dental-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 8px 4px 16px; }
+.dental-heading h1 { margin: 0 0 5px; font-size: 24px; color: var(--uma-pink-dark); }
+.dental-heading p, .dental-notice { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+.dental-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.dental-actions button, .dental-actions a, .dental-status button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 40px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--uma-pink-dark); font-size: 12px; text-decoration: none; cursor: pointer; }
+.dental-frame-shell { position: relative; height: max(680px, calc(100dvh - 185px)); overflow: hidden; border: 1px solid var(--line); border-radius: 20px; background: #f6f6f8; box-shadow: var(--shadow); }
+.dental-frame-shell iframe { display: block; width: 100%; height: 100%; border: 0; }
+.dental-frame-shell:fullscreen { width: 100vw; height: 100dvh; border: 0; border-radius: 0; }
+.dental-status { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 12px; padding: 24px; background: #f6f6f8; color: var(--uma-pink-dark); text-align: center; }
+.dental-status h2 { margin: 0; font-size: 20px; }
+.dental-status p { margin: 0 0 6px; color: var(--muted); max-width: 420px; line-height: 1.5; }
+.dental-status a { color: var(--uma-pink-dark); font-size: 12px; }
+.dental-spinner { animation: dental-spin 1s linear infinite; }
+@keyframes dental-spin { to { transform: rotate(360deg); } }
+.dental-credit { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding: 12px 4px; color: var(--muted); font-size: 10px; line-height: 1.6; }
+.dental-credit a { color: var(--uma-pink-dark); }
+@media (max-width: 780px) {
+  .dental-heading { align-items: flex-start; flex-direction: column; gap: 10px; }
+  .dental-heading h1 { font-size: 21px; }
+  .dental-frame-shell { height: max(440px, calc(100dvh - 340px)); border-radius: 14px; }
+  .dental-actions button, .dental-actions a { min-height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { .dental-spinner { animation: none; } }

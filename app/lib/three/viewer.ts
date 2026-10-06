@@ -16,10 +16,6 @@ type ViewerCallbacks = {
 const DOT_PIXELS = 34;
 const CAMERA_FOV = 34;
 const DEPTH_PREPASS = "depth-prepass";
-const PLINTH_Y = -2.5;
-const PLINTH_TOP = PLINTH_Y + 0.17;
-/** Slightly above eye level, so the plinth reads as a disc the organ sits on
- *  rather than an edge-on band across the background. */
 const HOME_CAMERA = { x: 0, y: 1.05, z: 8.2 };
 const HOME_TARGET = { x: 0, y: 0.02, z: 0 };
 
@@ -34,8 +30,7 @@ export class AnatomyViewer {
   private callbacks: ViewerCallbacks;
   private container: HTMLElement;
   private organ: LoadedOrgan | null = null;
-  private plinth!: THREE.Mesh;
-  private contactShadow!: THREE.Mesh;
+  private particles!: THREE.Points;
 
   private frame = 0;
   private timer = new THREE.Timer();
@@ -103,8 +98,7 @@ export class AnatomyViewer {
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.02;
-    // Shadow mapping would render every organ twice per frame; a baked contact
-    // shadow gives the same read for free.
+    // Keep the organ fully visible from every angle without a floor or shadow plane.
     this.renderer.shadowMap.enabled = false;
     this.renderer.localClippingEnabled = true;
     this.renderer.domElement.setAttribute(
@@ -177,28 +171,6 @@ export class AnatomyViewer {
 
     this.scene.environment = this.buildEnvironmentMap();
 
-    this.plinth = new THREE.Mesh(
-      new THREE.CylinderGeometry(2.3, 2.48, 0.34, 56),
-      new THREE.MeshStandardMaterial({ color: 0xead7c1, roughness: 0.78, metalness: 0 }),
-    );
-    this.plinth.position.y = PLINTH_Y;
-    this.scene.add(this.plinth);
-
-    this.contactShadow = new THREE.Mesh(
-      new THREE.PlaneGeometry(4.2, 4.2),
-      new THREE.MeshBasicMaterial({
-        map: contactShadowTexture(),
-        transparent: true,
-        depthWrite: false,
-        opacity: 0.62,
-        toneMapped: false,
-      }),
-    );
-    this.contactShadow.rotation.x = -Math.PI / 2;
-    this.contactShadow.position.y = PLINTH_TOP + 0.005;
-    this.contactShadow.renderOrder = 1;
-    this.scene.add(this.contactShadow);
-
     const positions = new Float32Array(48 * 3);
     for (let i = 0; i < positions.length; i += 3) {
       positions[i] = (Math.random() - 0.5) * 9;
@@ -207,12 +179,11 @@ export class AnatomyViewer {
     }
     const particleGeometry = new THREE.BufferGeometry();
     particleGeometry.setAttribute("position", new THREE.BufferAttribute(positions, 3));
-    this.scene.add(
-      new THREE.Points(
-        particleGeometry,
-        new THREE.PointsMaterial({ color: 0xe7a18e, size: 0.013, transparent: true, opacity: 0.16 }),
-      ),
+    this.particles = new THREE.Points(
+      particleGeometry,
+      new THREE.PointsMaterial({ color: 0xe7a18e, size: 0.013, transparent: true, opacity: 0.16 }),
     );
+    this.scene.add(this.particles);
   }
 
   /** A tiny warm-to-cool gradient probe: better material response than a bare
@@ -589,10 +560,15 @@ export class AnatomyViewer {
 
   toggleIsolate() {
     this.isolated = !this.isolated;
-    const plinth = this.plinth.material as THREE.MeshStandardMaterial;
-    plinth.transparent = true;
-    this.tween(plinth, { opacity: this.isolated ? 0.15 : 1, duration: 0.45 });
-    this.tween(this.contactShadow.material, { opacity: this.isolated ? 0.08 : 0.55, duration: 0.45 });
+    if (this.isolated) {
+      this.clearSelection();
+      this.hoveredId = null;
+      this.hoverProbe = null;
+      this.renderer.domElement.style.cursor = "";
+    }
+    this.hotspots.setVisible(!this.isolated);
+    this.particles.visible = !this.isolated;
+    this.dirty = true;
     return this.isolated;
   }
 
@@ -721,24 +697,9 @@ export class AnatomyViewer {
     this.depthMaterial.dispose();
     this.assets.dispose();
     this.scene.environment?.dispose();
-    (this.contactShadow.material as THREE.MeshBasicMaterial).map?.dispose();
+    this.particles.geometry.dispose();
+    (this.particles.material as THREE.PointsMaterial).dispose();
     this.renderer.dispose();
     canvas.remove();
   }
-}
-
-function contactShadowTexture() {
-  const size = 256;
-  const canvas = document.createElement("canvas");
-  canvas.width = canvas.height = size;
-  const ctx = canvas.getContext("2d")!;
-  const gradient = ctx.createRadialGradient(size / 2, size / 2, size * 0.04, size / 2, size / 2, size * 0.5);
-  gradient.addColorStop(0, "rgba(94, 62, 42, 0.62)");
-  gradient.addColorStop(0.45, "rgba(94, 62, 42, 0.26)");
-  gradient.addColorStop(1, "rgba(94, 62, 42, 0)");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(0, 0, size, size);
-  const texture = new THREE.CanvasTexture(canvas);
-  texture.colorSpace = THREE.SRGBColorSpace;
-  return texture;
 }

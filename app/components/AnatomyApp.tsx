@@ -40,6 +40,8 @@ import { matchesSearch } from "../lib/search";
 
 type Modal = "lesson" | "quiz" | "animation" | "system" | null;
 const FullBodyAtlas = lazy(() => import("./atlas/FullBodyAtlas"));
+const DentalView = lazy(() => import("./dental/DentalView"));
+const StudyAtlasView = lazy(() => import("./study-atlas/StudyAtlasView"));
 
 export function AnatomyApp() {
   const student = useUmaStudentData();
@@ -112,6 +114,9 @@ export function AnatomyApp() {
   const viewLabels: Record<MainView, string> = {
     explore: "Explorar",
     atlas: "Atlas 3D",
+    dental: "Odontología",
+    exploration: "Exploración",
+    movements: "Movimientos",
     systems: "Sistemas",
     lessons: "Lecciones",
     library: "Biblioteca",
@@ -219,7 +224,6 @@ export function AnatomyApp() {
           organ={organ}
           autoRotate={data.settings.autoRotate}
           onAutoRotate={(enabled) => student.updateSettings({ autoRotate: enabled })}
-          showTips={data.settings.showViewerTips}
           compare={compare}
           onCompare={() => setCompare(!compare)}
           onOpenAtlas={() => openAtlas("heart")}
@@ -320,6 +324,14 @@ export function AnatomyApp() {
       </> : activeView === "atlas" ? (
         <Suspense fallback={<section className="content-view" role="status">Cargando el laboratorio anatómico…</section>}>
           <FullBodyAtlas initialScope={atlasScope} onBack={() => setActiveView("explore")} onViewOrgan={selectOrgan} />
+        </Suspense>
+      ) : activeView === "dental" ? (
+        <Suspense fallback={<section className="content-view" role="status">Cargando el laboratorio de odontología…</section>}>
+          <DentalView />
+        </Suspense>
+      ) : activeView === "exploration" || activeView === "movements" ? (
+        <Suspense fallback={<section className="content-view" role="status">Cargando el simulador anatómico…</section>}>
+          <StudyAtlasView key={activeView} mode={activeView === "movements" ? "motion" : "explore"} />
         </Suspense>
       ) : activeView === "systems" ? (
         <SystemsView selectedSystem={selectedSystem} onSelectSystem={setSelectedSystem} onViewOrgan={selectOrgan} onOpenAtlas={() => openAtlas()} />

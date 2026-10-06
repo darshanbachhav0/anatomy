@@ -122,6 +122,10 @@ export class HotspotLayer {
     return this.markers;
   }
 
+  setVisible(visible: boolean) {
+    this.group.visible = visible;
+  }
+
   attach(pivot: THREE.Group, hotspots: Hotspot[], meshes: THREE.Mesh[]) {
     this.clear();
     if (!hotspots.length) return;
@@ -208,6 +212,7 @@ export class HotspotLayer {
    * has to schedule another frame.
    */
   update(camera: THREE.Camera, delta: number, selectedId: string | null, hoveredId: string | null) {
+    if (!this.group.visible) return true;
     if (!this.markers.length) return true;
     this.time += delta;
     this.group.updateWorldMatrix(true, false);
@@ -271,6 +276,7 @@ export class HotspotLayer {
 
   /** Screen-space picking: six projections, no mesh raycast. */
   pick(x: number, y: number, camera: THREE.Camera, width: number, height: number, radius = 24) {
+    if (!this.group.visible) return null;
     let best: Marker | null = null;
     let bestDistance = radius;
     for (const marker of this.markers) {

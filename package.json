@@ -2,15 +2,22 @@
   "name": "site-creator-vinext-starter",
   "version": "0.1.0",
   "private": true,
+  "workspaces": ["vendor/dental-scope"],
   "engines": {
     "node": ">=22.13.0"
   },
   "scripts": {
+    "predev": "npm run build:dental",
+    "prebuild": "npm run build:dental",
+    "prebuild:next": "npm run build:dental",
+    "build:dental": "node scripts/build-dental.mjs",
+    "test:dental": "npm test --workspace dental-scope",
     "dev": "vinext dev",
     "build": "vinext build",
     "build:next": "next build",
     "start": "vinext start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/atlas.test.mjs",
+    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/atlas.test.mjs tests/study-atlas.test.mjs",
+    "test:study-atlas": "node --test --test-isolation=none tests/study-atlas.test.mjs",
     "test:atlas": "node --test tests/atlas.test.mjs",
     "atlas:translate": "node scripts/build-atlas-spanish.mjs",
     "check:spanish": "node scripts/build-atlas-spanish.mjs --check",

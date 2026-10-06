@@ -92,7 +92,61 @@ actions tied to the current ChatGPT user. Leave public content anonymous.
 - `npm test`: build the starter and verify its rendered loading skeleton
 - `npm run db:generate`: generate Drizzle migrations after schema changes
 
-## Learn More
+## Odontología UMA
+
+The **Odontología** tab contains a locally hosted adaptation of
+[Dental Scope](https://github.com/Yoosseph/dental-scope), with its Spanish
+interface, UMA colors, tooth selection, internal anatomy, layers and sections.
+Source, models and attribution are in `vendor/dental-scope/`. See
+`vendor/dental-scope/UMA-INTEGRATION.md` for the pinned revision and modifications.
+
+Install the whole project from this directory with `npm ci`. Start locally on
+port 3001 with `npm run dev -- --port 3001`. Both `npm run dev` and `npm run build`
+automatically build the dental viewer into `public/dental/`; `build:next` also
+includes it. The same `npm ci` / `npm run build` workflow includes the module on
+Render. Commit the source in `vendor/` and the root lockfile; generated files in
+`public/dental/` are ignored. After editing dental source, run
+`npm run build:dental` and refresh the browser.
+
+`npm run test:dental` runs the dental test suite. Licenses and credits remain
+available inside the viewer and at `/dental/CREDITS.md`.
+
+On Windows, use `npm run dev -- --port 3001` for local preview. The current
+Vinext 0.0.50 production server indexes nested assets with Windows path
+separators, causing 404s under `npm start` on Windows; the Linux deployment
+uses URL-compatible separators.
+
+## Exploración y Movimientos
+
+Las pestañas **Exploración** y **Movimientos** integran el proyecto local entregado
+en `simulator`, con interfaz en español y colores UMA. El visor y todos sus recursos
+están ahora en `public/study-atlas/`; no necesitan un segundo servidor ni instalación.
+El contenedor React está en `app/components/study-atlas/StudyAtlasView.tsx`.
+
+Exploración abre el cuerpo humano con sistemas, configuraciones masculina/femenina,
+preparaciones, selección, aislamiento, opacidad y corte. Movimientos abre directamente
+una de las 58 animaciones e incluye búsqueda, regiones, pausa, velocidad y línea temporal.
+Las pestañas existentes de órganos, atlas, odontología y estudio se conservan.
+
+Incluye la carpeta completa `public/study-atlas/` al subir el proyecto: contiene
+aproximadamente 960 MB, con modelos, texturas, datos y dependencias locales.
+Los archivos `.glb.part000`, `.glb.part001`, etc. son partes necesarias de los dos
+modelos grandes; no se deben renombrar ni eliminar. `npm run build` copia los recursos
+al resultado de producción. Tailwind escanea únicamente `app/` para no procesar
+las partes binarias como texto.
+
+Verificación: `npm run test:study-atlas` comprueba las escenas iniciales, los 58
+movimientos, tamaños de modelos, partes y rutas a texturas. `npm test` incluye estas
+comprobaciones junto con las pruebas existentes.
+
+El original se conserva como copia de recuperación local, excluida de Git, en
+`outputs/simulator-original-2026-10-06/`. No se utiliza al ejecutar ni al compilar.
+Los modelos y textos proceden del paquete aportado, sin nuevas afirmaciones anatómicas.
+Se mantiene la licencia de Three.js en `public/study-atlas/vendor/three/LICENSE.txt`.
+Esta integración no concede derechos adicionales sobre los recursos del atlas;
+conserva los permisos y condiciones del material de origen antes de publicarlo.
+
+## Enlaces del proyecto
 
 - [vinext Documentation](https://github.com/cloudflare/vinext)
 - [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)

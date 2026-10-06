@@ -34,6 +34,8 @@ test("renderiza la experiencia anatómica de UMA en español", async () => {
   assert.match(html, /src="\/uma-logo\.jpg"/i);
   assert.match(html, /UMA Universidad María Auxiliadora/);
   assert.match(html, /Explorar/);
+  assert.match(html, /Exploración/);
+  assert.match(html, /Movimientos/);
   assert.match(html, /Biblioteca de órganos/);
   assert.match(html, /Corazón/);
   assert.match(html, /Datos esenciales/);

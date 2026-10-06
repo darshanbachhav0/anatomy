@@ -1,0 +1,40 @@
+/* UMA interface palette. Anatomical materials and tissue colors stay unchanged. */
+:root { color-scheme: light; color: #342c32; background: #f6f6f8; --bg: #f6f6f8; --panel: #fff; --surface: #fff7fa; --line: #e7dce1; --muted: #786a73; --accent: #c51047; --accent-bg: #fce7ee; }
+.topbar, .library-panel, .inspector-panel { background: #fff; border-color: var(--line); }
+.viewport { background: radial-gradient(ellipse at 50% 48%, #fff 0, #faf5f7 50%, #f0e8ed 100%); }
+.brand, .nav-tab.active, .search input, select { color: #342c32; }
+.brand-mark, .search, select, kbd, .orientation select { background: #fff; border-color: var(--line); color: #57464f; }
+.brand-mark span { color: var(--accent); }
+.search input::placeholder { color: var(--muted); }
+.icon-button, .tool-button, .orientation, .orientation select, .scene-subtitle, .viewport-bottom,
+.empty-inspector p, .structure-item, .structure-item small, .latin-name, .source-name, .opacity-label,
+.selection-id, .system-count, .library-footer, .resource-card small, .timeline-caption span,
+.field-label, .section-label, .eyebrow, .help-grid span, .no-results, .definition { color: var(--muted); }
+.scene-heading .eyebrow, .specimen-button span, .small-cross, .definition summary { color: var(--accent); }
+.system-row:hover, .system-row.enabled, .structure-item:hover, .structure-item.selected { background: var(--accent-bg); color: #7f183b; }
+.specimen-button, .resource-card, .secondary-button, .selection-actions button, .mobile-inspector { background: #fff; color: #57464f; border-color: var(--line); }
+.resource-card:hover, .resource-card.selected, .specimen-button:hover { background: #fff0f5; border-color: #d96086; }
+.view-toolbar, .animation-dock, .section-controls { background: #fffffff2; border-color: var(--line); box-shadow: 0 12px 30px #60223d12; }
+.tool-button:hover, .tool-button.active { background: var(--accent-bg); color: var(--accent); }
+.toolbar-divider { background: var(--line); }
+.selection-symbol, .selection-system, .badge { color: #a91d48; background: #fff0f5; border-color: #f0c4d2; }
+.selection-actions .primary-action, .play-button { background: #e5154f; color: #fff; border-color: #e5154f; }
+.selection-label, .toast { color: #62162f; background: #fff5f9f5; border-color: #d96086; box-shadow: 0 5px 20px #60223d20; }
+.selection-label:before { background: #d96086; }
+.load-overlay { background: #f8f5f8f5; }
+.load-overlay span { color: var(--muted); }
+.load-overlay progress { background: var(--line); }
+.loading-mark { border-color: #efd3df; border-top-color: #e5154f; }
+dialog { background: #fff; color: #342c32; border-color: var(--line); }
+dialog p, .help-note { color: var(--muted) !important; }
+dialog::backdrop { background: #34202b66; }
+.source-name { display: none; } /* Keep original source terms searchable, not as English subtitles. */
+.uma-embedded .topbar { height: 44px; display: flex; justify-content: flex-end; padding: 0 14px; }
+.uma-embedded .brand, .uma-embedded .main-nav { display: none; }
+.uma-embedded .workspace { height: calc(100dvh - 44px); }
+@media (max-width: 950px) { .uma-embedded .inspector-panel { top: 44px; } }
+@media (max-width: 680px) { .uma-embedded .library-panel { top: 44px; } }
+@media (max-width: 680px) {
+  .viewport.has-animation .view-toolbar { display: grid; grid-template-columns: repeat(2, 32px); }
+  .viewport.has-animation .toolbar-divider { grid-column: 1 / -1; }
+}

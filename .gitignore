@@ -42,3 +42,7 @@ next-env.d.ts
 /outputs/
 /work/
 /.atlas-reference/
+/.dental-reference/
+/public/dental/
+/vendor/dental-scope/node_modules/
+/vendor/dental-scope/dist/

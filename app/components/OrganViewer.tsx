@@ -10,7 +10,6 @@ import {
   ScanLine,
   Scissors,
   Search,
-  Sparkles,
   X,
 } from "lucide-react";
 import type { Hotspot, Organ } from "../lib/anatomy-data";
@@ -25,11 +24,10 @@ type Props = {
   onAutoRotate: (enabled: boolean) => void;
   compare: boolean;
   onCompare: () => void;
-  showTips: boolean;
   onOpenAtlas?: () => void;
 };
 
-export function OrganViewer({ organ, autoRotate, onAutoRotate, compare, onCompare, showTips, onOpenAtlas }: Props) {
+export function OrganViewer({ organ, autoRotate, onAutoRotate, compare, onCompare, onOpenAtlas }: Props) {
   const mountRef = useRef<HTMLDivElement>(null);
   const viewerRef = useRef<AnatomyViewer | null>(null);
   const organRef = useRef(organ);
@@ -179,11 +177,6 @@ export function OrganViewer({ organ, autoRotate, onAutoRotate, compare, onCompar
           </button>
         );})}
       </div>
-
-      {showTips && !dissection.enabled && <aside className="tip-note" aria-label="Instrucciones del visor">
-        <span><Sparkles size={15} /> Consejo</span>
-        <p>Arrastra para girar<br />Desplázate para acercar<br />Pulsa un punto para aprender</p>
-      </aside>}
 
       {selected && (
         <div className="hotspot-callout" ref={calloutRef} data-side="right">

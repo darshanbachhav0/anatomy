@@ -15,7 +15,6 @@ export type StudentNote = {
 
 export type UmaSettings = {
   autoRotate: boolean;
-  showViewerTips: boolean;
   confirmNoteDelete: boolean;
 };
 
@@ -51,7 +50,6 @@ export const DEFAULT_STUDENT_DATA: StudentData = {
   notes: [],
   settings: {
     autoRotate: true,
-    showViewerTips: true,
     confirmNoteDelete: true,
   },
 };
@@ -85,7 +83,10 @@ export function loadStudentData(): StudentData {
     lessonProgress: safeRead(STORAGE_KEYS.lessonProgress, DEFAULT_STUDENT_DATA.lessonProgress),
     quizScores: safeRead(STORAGE_KEYS.quizScores, DEFAULT_STUDENT_DATA.quizScores),
     notes: safeRead(STORAGE_KEYS.notes, DEFAULT_STUDENT_DATA.notes),
-    settings: { ...DEFAULT_STUDENT_DATA.settings, ...settings },
+    settings: {
+      autoRotate: settings.autoRotate ?? DEFAULT_STUDENT_DATA.settings.autoRotate,
+      confirmNoteDelete: settings.confirmNoteDelete ?? DEFAULT_STUDENT_DATA.settings.confirmNoteDelete,
+    },
   };
 }
 

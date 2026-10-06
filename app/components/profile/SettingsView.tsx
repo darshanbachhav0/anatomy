@@ -9,7 +9,6 @@ export function SettingsView({ settings, onUpdate, onResetLearning, onClearAll, 
   const [confirm, setConfirm] = useState<"learning" | "all" | null>(null);
   const options: Array<{ key: keyof UmaSettings; label: string; description: string }> = [
     { key: "autoRotate", label: "Animación automática del modelo", description: "Mantiene el órgano en rotación cuando no estás interactuando." },
-    { key: "showViewerTips", label: "Mostrar consejos del visor", description: "Muestra la tarjeta de ayuda dentro del modelo 3D." },
     { key: "confirmNoteDelete", label: "Confirmar antes de eliminar apuntes", description: "Solicita confirmación antes de borrar un apunte." },
   ];
   return (

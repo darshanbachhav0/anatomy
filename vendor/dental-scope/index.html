@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#e5154f" />
+    <!-- seo: title, description, social and canonical tags are written by the build (src/app/seo.ts) -->
+    <link rel="icon" type="image/x-icon" sizes="16x16 32x32 48x48" href="%BASE_URL%favicon.ico" />
+    <link rel="icon" type="image/png" sizes="96x96" href="%BASE_URL%favicon.png" />
+    <link rel="icon" type="image/svg+xml" sizes="any" href="%BASE_URL%favicon.svg" />
+    <link rel="preload" href="%BASE_URL%models/manifest.json" as="fetch" crossorigin />
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>Odontología UMA utiliza Dental Scope para explorar la anatomía dental en 3D. Activa JavaScript y WebGL para abrir el visor. <a href="%BASE_URL%about/es/">Leer sobre Dental Scope y la anatomía dental</a>.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
