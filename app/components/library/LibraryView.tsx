@@ -1,20 +1,20 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowRight, BookMarked, FileText, Heart, LibraryBig, Search } from "lucide-react";
+import { ArrowRight, BookMarked, BookOpen, ExternalLink, FileText, Heart, LibraryBig, Search } from "lucide-react";
 import { organs, type OrganId } from "../../lib/anatomy-data";
 import { glossaryEntries } from "../../lib/glossary-data";
-import { anatomySystems } from "../../lib/system-data";
+import { anatomyBooks } from "../../lib/book-data";
 import { matchesSearch, normalizeSearch } from "../../lib/search";
 import { OrganArt } from "../shared/OrganArt";
 
-type LibraryTab = "all" | "organs" | "systems" | "sheets" | "glossary" | "favorites";
+type LibraryTab = "all" | "organs" | "sheets" | "books" | "glossary" | "favorites";
 
 const TABS: Array<{ id: LibraryTab; label: string }> = [
   { id: "all", label: "Todos" },
   { id: "organs", label: "Órganos" },
-  { id: "systems", label: "Sistemas" },
   { id: "sheets", label: "Fichas anatómicas" },
+  { id: "books", label: "Libros" },
   { id: "glossary", label: "Glosario" },
   { id: "favorites", label: "Favoritos" },
 ];
@@ -24,13 +24,11 @@ export function LibraryView({
   onToggleFavorite,
   onViewOrgan,
   onOpenSheet,
-  onViewSystem,
 }: {
   favorites: OrganId[];
   onToggleFavorite: (organId: OrganId) => void;
   onViewOrgan: (organId: OrganId) => void;
   onOpenSheet: (organId: OrganId) => void;
-  onViewSystem: (systemId: string) => void;
 }) {
   const [tab, setTab] = useState<LibraryTab>("all");
   const [query, setQuery] = useState("");
@@ -40,13 +38,13 @@ export function LibraryView({
     return matches && (tab !== "favorites" || favorites.includes(organ.id));
   }), [normalized, tab, favorites]);
   const matchingGlossary = glossaryEntries.filter((entry) => matchesSearch(normalized, entry.term, entry.definition));
-  const matchingSystems = anatomySystems.filter((system) => matchesSearch(normalized, system.name, system.description, system.primaryFunction));
+  const matchingBooks = anatomyBooks.filter((book) => matchesSearch(normalized, book.title, book.authors, book.publisher));
   const showOrgans = ["all", "organs", "sheets", "favorites"].includes(tab);
 
   return (
     <section className="content-view" aria-labelledby="library-title">
       <header className="content-hero content-hero-row">
-        <div><span className="content-kicker"><LibraryBig size={15} /> Centro de recursos</span><h1 id="library-title">Biblioteca anatómica</h1><p>Consulta fichas, sistemas y términos esenciales desde una sola colección.</p></div>
+        <div><span className="content-kicker"><LibraryBig size={15} /> Centro de recursos</span><h1 id="library-title">Biblioteca anatómica</h1><p>Consulta fichas, libros de referencia y términos esenciales desde una sola colección.</p></div>
         <label className="library-search"><Search size={17} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar en la biblioteca..." aria-label="Buscar en la biblioteca" /></label>
       </header>
       <nav className="content-tabs" aria-label="Secciones de la biblioteca">
@@ -67,10 +65,16 @@ export function LibraryView({
         ))}
       </div> : <EmptyLibrary tab={tab} onExplore={() => setTab("organs")} />)}
 
-      {tab === "systems" && <div className="library-system-list">{matchingSystems.map((system) => {
-        const available = organs.filter((organ) => organ.system === system.name);
-        return <article key={system.id}><span>{system.icon}</span><div><small>{available.length} modelos</small><h2>{system.name}</h2><p>{system.description}</p></div><button type="button" onClick={() => onViewSystem(system.id)}>Explorar <ArrowRight size={14} /></button></article>;
-      })}</div>}
+      {tab === "books" && <div className="library-book-list">
+        {matchingBooks.map((book) => (
+          <article key={book.url}>
+            <span><BookOpen size={20} /></span>
+            <div><small>{book.publisher}{book.edition && ` · ${book.edition}`}{book.free && " · Acceso libre"}</small><h2>{book.title}</h2><p>{book.authors}</p></div>
+            <a href={book.url} target="_blank" rel="noopener noreferrer" aria-label={`Abrir ${book.title} en una pestaña nueva`}>Abrir <ExternalLink size={14} /></a>
+          </article>
+        ))}
+        {matchingBooks.length === 0 && <p className="empty-copy">No se encontraron libros con esa búsqueda.</p>}
+      </div>}
 
       {tab === "glossary" && <div className="glossary-view"><div className="alphabet-nav">{"ABCDEFGHIJLMNOPQRSTUV".split("").map((letter) => <button type="button" key={letter} onClick={() => setQuery(letter)}>{letter}</button>)}</div><dl>{matchingGlossary.map((entry) => <div key={entry.term}><dt>{entry.term}</dt><dd>{entry.definition}</dd></div>)}</dl>{matchingGlossary.length === 0 && <p className="empty-copy">No se encontraron términos con esa búsqueda.</p>}</div>}
     </section>

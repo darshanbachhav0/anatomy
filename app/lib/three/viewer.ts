@@ -103,7 +103,7 @@ export class AnatomyViewer {
     this.renderer.localClippingEnabled = true;
     this.renderer.domElement.setAttribute(
       "aria-label",
-      "Modelo anatómico 3D interactivo. Arrastra para girar, desplázate para acercar y pulsa un punto para conocer la estructura.",
+      "Modelo anatómico 3D interactivo. Arrastra para girar y desplázate para acercar.",
     );
     this.renderer.domElement.tabIndex = 0;
     container.appendChild(this.renderer.domElement);

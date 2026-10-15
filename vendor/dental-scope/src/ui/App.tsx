@@ -1,13 +1,13 @@
 import { useEffect, useRef } from 'react';
-import { pushCurrentPath, startRouter } from '../app/router';
+import { startRouter } from '../app/router';
 import { useT } from '../i18n';
 import { actions, useApp } from '../state/store';
 import { useServices } from './context';
 import { DetailPanel } from './DetailPanel';
 import { Dock } from './Dock';
-import { IconInfo, IconLayers, IconReset, IconSearch, IconSection } from './icons';
+import { IconInfo, IconLayers, IconSearch, IconSection } from './icons';
 import { LayersPanel } from './LayersPanel';
-import { AboutDialog, Footer, LoadingCard } from './Overlays';
+import { AboutDialog, LoadingCard } from './Overlays';
 import { SearchPanel } from './SearchPanel';
 import { TopActions } from './TopBar';
 import { useKeyboard } from './useKeyboard';
@@ -103,8 +103,6 @@ export function App() {
         <LayersPanel />
         <DetailPanel />
         <Dock />
-        <Footer />
-        <ResetButton />
         <LoadingCard />
         <nav className="ds-mobile-bar ds-panel" aria-label={m.mobileControls}>
           <button type="button" className={sheet === 'layers' ? 'is-active' : ''} onClick={() => actions.setMobileSheet(sheet === 'layers' ? 'none' : 'layers')} aria-pressed={sheet === 'layers'}>
@@ -125,22 +123,5 @@ export function App() {
       <SearchPanel />
       <AboutDialog />
     </div>
-  );
-}
-
-/** Bottom-left: back to the start view with every setting at its default. */
-function ResetButton() {
-  const { engine, registry } = useServices();
-  const m = useT();
-  const reset = () => {
-    actions.resetAll();
-    engine.resetToStart();
-    pushCurrentPath(registry);
-  };
-  return (
-    <button type="button" className="ds-reset-all" onClick={reset} title={m.resetAllTitle} aria-label={m.resetAllTitle}>
-      <IconReset size={15} />
-      <span>{m.resetAll}</span>
-    </button>
   );
 }

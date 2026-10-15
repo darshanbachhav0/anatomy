@@ -65,25 +65,6 @@ export function aboutPageHref(lang: string): string {
   return `${import.meta.env.BASE_URL}about/${lang === 'en' ? '' : `${lang}/`}`;
 }
 
-export function Footer() {
-  const m = useT();
-  const lang = useApp((s) => s.lang);
-  return (
-    <footer className="ds-footer">
-      <p className="ds-disclaimer">
-        {m.disclaimer}{' '}
-        <button type="button" className="ds-link-btn" onClick={() => actions.openAbout(true)}>
-          {m.controlsCredits}
-        </button>
-        {' · '}
-        <a className="ds-link-btn" href={aboutPageHref(lang)}>
-          {m.about}
-        </a>
-      </p>
-    </footer>
-  );
-}
-
 export function AboutDialog() {
   const open = useApp((s) => s.aboutOpen);
   const lang = useApp((s) => s.lang);
