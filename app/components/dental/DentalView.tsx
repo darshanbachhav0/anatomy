@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { ExternalLink, LoaderCircle, Maximize2, RotateCcw } from "lucide-react";
+import { LoaderCircle, Maximize2, RotateCcw } from "lucide-react";
 import "./dental.css";
 
 const VIEWER_URL = "/dental/index.html?lang=es";
@@ -34,7 +34,7 @@ export default function DentalView() {
     try {
       await stage.current?.requestFullscreen();
     } catch {
-      setNotice("Tu navegador no permite la pantalla completa. Puedes usar «Abrir visor».");
+      setNotice("Tu navegador no permite la pantalla completa.");
     }
   };
 
@@ -43,7 +43,6 @@ export default function DentalView() {
       <div><h1 id="dental-title">Odontología</h1><p>Explora la dentición, los tejidos y la anatomía interna de cada diente.</p></div>
       <div className="dental-actions">
         <button type="button" onClick={fullscreen}><Maximize2 size={16} /> Pantalla completa</button>
-        <a href={VIEWER_URL} target="_blank" rel="noopener noreferrer"><ExternalLink size={16} /> Abrir visor</a>
       </div>
     </header>
     {notice && <p className="dental-notice" role="status">{notice}</p>}
@@ -54,13 +53,8 @@ export default function DentalView() {
           <h2>No se pudo iniciar el atlas dental</h2>
           <p>Comprueba tu conexión y que tu navegador tenga WebGL habilitado.</p>
           <button type="button" onClick={retry}><RotateCcw size={16} /> Reintentar</button>
-          <a href={VIEWER_URL} target="_blank" rel="noopener noreferrer">Abrir el visor en otra pestaña</a>
         </>}
       </div>}
     </div>
-    <footer className="dental-credit">
-      <span>Adaptado de <a href="https://github.com/Yoosseph/dental-scope" target="_blank" rel="noopener noreferrer">Dental Scope</a> · Yoseph y colaboradores</span>
-      <span>Modelos: BodyParts3D / Z-Anatomy · <a href="/dental/CREDITS.md" target="_blank" rel="noopener noreferrer">Créditos y licencias</a></span>
-    </footer>
   </section>;
 }

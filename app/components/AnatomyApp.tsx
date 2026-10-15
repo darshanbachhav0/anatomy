@@ -6,26 +6,19 @@ import gsap from "gsap";
 import {
   ArrowRight,
   Bookmark,
-  BrainCircuit,
-  CircleHelp,
-  FileText,
   Heart,
   LibraryBig,
-  Microscope,
-  Play,
   Search,
-  Share2,
   Sparkles,
   Stethoscope,
   X,
 } from "lucide-react";
 import { OrganViewer } from "./OrganViewer";
-import { organById, organs, type Organ, type OrganId } from "../lib/anatomy-data";
+import { organById, organs, type OrganId } from "../lib/anatomy-data";
 import { useUmaStudentData } from "../hooks/useUmaStudentData";
 import { MainNavigation, MobileNavigation, type MainView } from "./navigation/MainNavigation";
 import { OrganArt } from "./shared/OrganArt";
 import { Toast } from "./shared/Toast";
-import { SystemsView } from "./systems/SystemsView";
 import { LessonsView } from "./lessons/LessonsView";
 import { LibraryView } from "./library/LibraryView";
 import { AnatomySheet } from "./library/AnatomySheet";
@@ -38,7 +31,6 @@ import { SettingsView } from "./profile/SettingsView";
 import { AboutView } from "./profile/AboutView";
 import { matchesSearch } from "../lib/search";
 
-type Modal = "lesson" | "quiz" | "animation" | "system" | null;
 const FullBodyAtlas = lazy(() => import("./atlas/FullBodyAtlas"));
 const DentalView = lazy(() => import("./dental/DentalView"));
 const StudyAtlasView = lazy(() => import("./study-atlas/StudyAtlasView"));
@@ -47,23 +39,16 @@ export function AnatomyApp() {
   const student = useUmaStudentData();
   const { data } = student;
   const [activeView, setActiveView] = useState<MainView>("explore");
-  const [atlasScope, setAtlasScope] = useState<"body" | "heart">("body");
-  const openAtlas = (scope: "body" | "heart" = "body") => { setAtlasScope(scope); setActiveView("atlas"); };
-  const navigate = (view: MainView) => { if (view === "atlas") setAtlasScope("body"); setActiveView(view); };
   const [organId, setOrganId] = useState<OrganId>("heart");
-  const [compare, setCompare] = useState(false);
-  const [modal, setModal] = useState<Modal>(null);
   const [query, setQuery] = useState("");
   const [systemFilter, setSystemFilter] = useState("all");
   const [mobileLibrary, setMobileLibrary] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
-  const [selectedSystem, setSelectedSystem] = useState<string | null>(null);
   const [sheetOrganId, setSheetOrganId] = useState<OrganId | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const contentRef = useRef<HTMLDivElement>(null);
   const prefetched = useRef(new Set<OrganId>());
   const organ = organById[organId];
-  const reference = organById[organId === "heart" ? "brain" : "heart"];
   const filteredOrgans = useMemo(
     () => organs.filter((item) =>
       matchesSearch(query, item.name, item.system)
@@ -102,7 +87,6 @@ export function AnatomyApp() {
     student.viewOrgan(id);
     setActiveView("explore");
     setMobileLibrary(false);
-    setCompare(false);
   };
 
   const toggleFavorite = (id: OrganId) => {
@@ -117,7 +101,6 @@ export function AnatomyApp() {
     dental: "Odontología",
     exploration: "Exploración",
     movements: "Movimientos",
-    systems: "Sistemas",
     lessons: "Lecciones",
     library: "Biblioteca",
     notes: "Apuntes",
@@ -142,10 +125,9 @@ export function AnatomyApp() {
           <span className="brand-mark"><img src="/uma-logo.jpg" alt="UMA Universidad María Auxiliadora" /></span>
           <span className="brand-copy"><strong>Atlas Anatómico 3D</strong><em>Facultad de Ciencias de la Salud</em></span>
         </button>
-        <MainNavigation active={activeView} onNavigate={navigate} />
+        <MainNavigation active={activeView} onNavigate={setActiveView} />
         <GlobalSearch
           onViewOrgan={selectOrgan}
-          onViewSystem={(systemId) => { setSelectedSystem(systemId); setActiveView("systems"); }}
           onViewLesson={(id) => { setOrganId(id); setActiveView("lessons"); }}
           onOpenSheet={setSheetOrganId}
         />
@@ -220,14 +202,7 @@ export function AnatomyApp() {
           </blockquote>
         </aside>
 
-        <OrganViewer
-          organ={organ}
-          autoRotate={data.settings.autoRotate}
-          onAutoRotate={(enabled) => student.updateSettings({ autoRotate: enabled })}
-          compare={compare}
-          onCompare={() => setCompare(!compare)}
-          onOpenAtlas={() => openAtlas("heart")}
-        />
+        <OrganViewer organ={organ} autoRotate={data.settings.autoRotate} />
 
         <aside className="info-panel" ref={contentRef}>
           <div className="info-kicker" data-reveal><Heart size={13} fill="currentColor" /> Órgano seleccionado</div>
@@ -250,80 +225,11 @@ export function AnatomyApp() {
           </dl>
           <div className="medical-note" data-reveal><Stethoscope size={16} /><p><b>Importancia médica</b>{organ.medical}</p></div>
           <div className="fun-note" data-reveal><Sparkles size={15} /><p><b>¿Sabías que…?</b>{organ.funFact}</p></div>
-          <button className={`favorite-button ${data.favorites.includes(organId) ? "active" : ""}`} onClick={() => toggleFavorite(organId)}>
-            <Heart size={15} fill={data.favorites.includes(organId) ? "currentColor" : "none"} />
-            {data.favorites.includes(organId) ? "En favoritos" : "Agregar a favoritos"}
-          </button>
-          <button className="lesson-button" data-reveal onClick={() => setModal("lesson")}>Ver lección <ArrowRight size={16} /></button>
-          <div className="action-grid" data-reveal>
-            <button onClick={() => setModal("animation")}><Play size={15} /> Animar</button>
-            <button onClick={() => setModal("quiz")}><CircleHelp size={15} /> Evaluación</button>
-            <button onClick={() => setCompare(!compare)} className={compare ? "active" : ""}><Share2 size={15} /> Comparar</button>
-          </div>
         </aside>
       </div>
-
-      {compare && (
-        <section className="compare-strip" aria-label="Comparación de órganos">
-          <div className="compare-organ"><OrganArt organ={organ} asset="thumb" alt="" /><span>Comparando</span><strong>{organ.name}</strong><small>{organ.system}</small></div>
-          <b>con</b>
-          <div className="compare-organ"><OrganArt organ={reference} asset="thumb" alt="" /><span>Referencia</span><strong>{reference.name}</strong><small>{reference.system}</small></div>
-          <dl><div><dt>Función principal</dt><dd>{organ.function}</dd></div><div><dt>Tamaño</dt><dd>{organ.size}</dd></div></dl>
-          <button onClick={() => setCompare(false)} aria-label="Cerrar comparación"><X size={16} /></button>
-        </section>
-      )}
-
-      <section className="learning-cards" aria-label={`Recursos de aprendizaje sobre ${organ.name}`}>
-        <article className="curiosity-card">
-          <span>✦</span><p>Aprender es<br />un acto de curiosidad.</p><em>¡Sigue explorando!</em>
-        </article>
-        <article>
-          <header><div><em>Vista microscópica</em><h3>{organ.tissue}</h3></div><Microscope size={17} /></header>
-          <div className="microscope-visual organ-card-image"><OrganArt organ={organ} asset="microscopic" alt={`Vista microscópica del tejido de ${organ.name}`} /></div>
-          <button onClick={() => setModal("lesson")}>Explorar tejido <ArrowRight size={14} /></button>
-        </article>
-        <article>
-          <header><div><em>Comparar órganos</em><h3>{organ.comparison}</h3></div><Share2 size={17} /></header>
-          <div className="comparison-visual organ-card-image"><OrganArt organ={organ} asset="compare" alt={`Comparación anatómica: ${organ.comparison}`} /></div>
-          <button onClick={() => setCompare(true)}>Abrir comparación <ArrowRight size={14} /></button>
-        </article>
-        <article>
-          <header><div><em>Función en movimiento</em><h3>{organ.function}</h3></div><Play size={17} /></header>
-          {/* The artwork itself is the control, so the play badge inside it is
-              decorative rather than a nested button. */}
-          <button
-            type="button"
-            className="function-visual organ-card-image"
-            onClick={() => setModal("animation")}
-            aria-label={`Reproducir animación de la función de ${organ.name}`}
-          >
-            <OrganArt organ={organ} asset="organ" alt="" />
-            <i className="function-pulse" />
-            <span className="play-badge"><Play size={18} fill="currentColor" /></span>
-          </button>
-          <button onClick={() => setModal("animation")}>Reproducir animación <ArrowRight size={14} /></button>
-        </article>
-        <article>
-          <header><div><em>Notas clínicas</em><h3>Afecciones frecuentes</h3></div><FileText size={17} /></header>
-          <ul>{organ.conditions.map((condition) => <li key={condition}>{condition}</li>)}</ul>
-          <button onClick={() => setModal("lesson")}>Ver todas <ArrowRight size={14} /></button>
-        </article>
-        <article className="system-card">
-          <header><div><em>Ubicación en el cuerpo</em><h3>{organ.system}</h3></div><BrainCircuit size={17} /></header>
-          <button
-            type="button"
-            className="system-visual organ-card-image"
-            onClick={() => setModal("system")}
-            aria-label={`Ver la ubicación de ${organ.name} en el cuerpo`}
-          >
-            <OrganArt organ={organ} asset="location" alt="" />
-          </button>
-          <button onClick={() => setModal("system")}>Ver el sistema <ArrowRight size={14} /></button>
-        </article>
-      </section>
       </> : activeView === "atlas" ? (
         <Suspense fallback={<section className="content-view" role="status">Cargando el laboratorio anatómico…</section>}>
-          <FullBodyAtlas initialScope={atlasScope} onBack={() => setActiveView("explore")} onViewOrgan={selectOrgan} />
+          <FullBodyAtlas initialScope="body" onBack={() => setActiveView("explore")} onViewOrgan={selectOrgan} />
         </Suspense>
       ) : activeView === "dental" ? (
         <Suspense fallback={<section className="content-view" role="status">Cargando el laboratorio de odontología…</section>}>
@@ -333,8 +239,6 @@ export function AnatomyApp() {
         <Suspense fallback={<section className="content-view" role="status">Cargando el simulador anatómico…</section>}>
           <StudyAtlasView key={activeView} mode={activeView === "movements" ? "motion" : "explore"} />
         </Suspense>
-      ) : activeView === "systems" ? (
-        <SystemsView selectedSystem={selectedSystem} onSelectSystem={setSelectedSystem} onViewOrgan={selectOrgan} onOpenAtlas={() => openAtlas()} />
       ) : activeView === "lessons" ? (
         <LessonsView
           selectedOrganId={organId}
@@ -351,7 +255,6 @@ export function AnatomyApp() {
           onToggleFavorite={toggleFavorite}
           onViewOrgan={selectOrgan}
           onOpenSheet={setSheetOrganId}
-          onViewSystem={(systemId) => { setSelectedSystem(systemId); setActiveView("systems"); }}
         />
       ) : activeView === "notes" ? (
         <NotesView
@@ -392,7 +295,6 @@ export function AnatomyApp() {
         </section>
       )}
 
-      {modal && <LearningModal type={modal} organ={organ} onClose={() => setModal(null)} />}
       {sheetOrganId && (
         <AnatomySheet
           organ={organById[sheetOrganId]}
@@ -403,76 +305,8 @@ export function AnatomyApp() {
         />
       )}
       {mobileLibrary && <button className="drawer-backdrop" aria-label="Cerrar biblioteca" onClick={() => setMobileLibrary(false)} />}
-      <MobileNavigation active={activeView} onNavigate={navigate} />
+      <MobileNavigation active={activeView} onNavigate={setActiveView} />
       {toast && <Toast message={toast} onClose={() => setToast(null)} />}
     </main>
-  );
-}
-
-const MODAL_ICON: Record<Exclude<Modal, null>, string> = {
-  quiz: "?",
-  animation: "▶",
-  system: "⌖",
-  lesson: "✦",
-};
-
-function LearningModal({ type, organ, onClose }: { type: Exclude<Modal, null>; organ: Organ; onClose: () => void }) {
-  const closeRef = useRef<HTMLButtonElement>(null);
-  const organName = organ.name;
-  const title =
-    type === "quiz" ? `Evaluación rápida: ${organName}`
-    : type === "animation" ? `${organName} en movimiento`
-    : type === "system" ? `${organName} en el cuerpo`
-    : `Anatomía de ${organName.toLowerCase()}`;
-  useEffect(() => {
-    closeRef.current?.focus();
-    const closeOnEscape = (event: KeyboardEvent) => event.key === "Escape" && onClose();
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, [onClose]);
-  return (
-    <div className="modal-backdrop" role="presentation" onMouseDown={onClose}>
-      <section
-        className={`learning-modal ${type === "system" ? "wide" : ""}`}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="modal-title"
-        onMouseDown={(event) => event.stopPropagation()}
-      >
-        <button ref={closeRef} className="modal-close" onClick={onClose} aria-label="Cerrar"><X size={18} /></button>
-        <span className="modal-icon">{MODAL_ICON[type]}</span>
-        <em>Exploración guiada UMA</em>
-        <h2 id="modal-title">{title}</h2>
-        {type === "quiz" ? (
-          <div className="quiz-options">
-            <p>¿Qué enunciado describe mejor este órgano?</p>
-            <button onClick={onClose}>Cumple una función especializada para mantener el organismo</button>
-            <button onClick={onClose}>Trabaja de forma completamente independiente</button>
-            <button onClick={onClose}>Solo se mantiene activo durante el sueño</button>
-          </div>
-        ) : type === "system" ? (
-          <>
-            <p>Ubicación: {organ.location}. Observa cómo se conecta con el resto del cuerpo.</p>
-            {/* Shown whole rather than cropped into the circular demo — the
-                point of this view is the figure and its vessels. */}
-            <figure className="modal-figure">
-              <OrganArt organ={organ} asset="location" alt={`${organName} ubicado en el ${organ.system.toLowerCase()}`} />
-            </figure>
-            <dl className="modal-facts">
-              <div><dt>Sistema</dt><dd>{organ.system}</dd></div>
-              <div><dt>Función principal</dt><dd>{organ.function}</dd></div>
-              <div><dt>Irrigación</dt><dd>{organ.bloodSupply}</dd></div>
-            </dl>
-            <button className="lesson-button" onClick={onClose}>Continuar explorando <ArrowRight size={16} /></button>
-          </>
-        ) : (
-          <>
-            <p>Sigue las estructuras resaltadas, gira la muestra y relaciona su forma con su función. Esta experiencia breve está diseñada para consolidar tu aprendizaje.</p>
-            <div className={`modal-demo ${type === "animation" ? "moving" : ""}`}><OrganArt organ={organ} asset="organ" alt={`Ilustración de ${organName}`} /></div>
-            <button className="lesson-button" onClick={onClose}>Continuar explorando <ArrowRight size={16} /></button>
-          </>
-        )}
-      </section>
-    </div>
   );
 }

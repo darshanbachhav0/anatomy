@@ -75,9 +75,10 @@ test("incluye navegación funcional, módulos educativos y persistencia versiona
     readFile(new URL("../app/components/navigation/ProfileMenu.tsx", import.meta.url), "utf8"),
   ]);
 
-  for (const label of ["Explorar", "Sistemas", "Lecciones", "Biblioteca", "Apuntes"]) {
+  for (const label of ["Explorar", "Lecciones", "Biblioteca", "Apuntes"]) {
     assert.match(navigation, new RegExp(label));
   }
+  assert.doesNotMatch(navigation, /Sistemas/);
   for (const key of ["favorites", "recent-organs", "last-organ", "lesson-progress", "quiz-scores", "notes", "settings"]) {
     assert.match(storage, new RegExp(`uma-anatomy-v1-${key}`));
   }
@@ -87,17 +88,17 @@ test("incluye navegación funcional, módulos educativos y persistencia versiona
   assert.match(notes, /ConfirmModal/);
   assert.match(library, /Glosario/);
   assert.match(library, /Fichas anatómicas/);
+  assert.match(library, /Libros/);
+  assert.match(library, /anatomyBooks/);
   assert.match(profile, /Mi progreso/);
   assert.match(profile, /Configuración/);
 });
 
 test("integra un modo disección reutilizable sin inventar estructuras ausentes", async () => {
-  const [data, engine, viewer, panel, organViewer, hotspots, inspector] = await Promise.all([
+  const [data, engine, viewer, hotspots, inspector] = await Promise.all([
     readFile(new URL("../app/lib/dissection-data.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/lib/three/dissection-engine.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/lib/three/viewer.ts", import.meta.url), "utf8"),
-    readFile(new URL("../app/components/dissection/DissectionPanel.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/components/OrganViewer.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/lib/three/hotspots.ts", import.meta.url), "utf8"),
     readFile(new URL("../scripts/inspect-glb.mjs", import.meta.url), "utf8"),
   ]);
@@ -112,11 +113,16 @@ test("integra un modo disección reutilizable sin inventar estructuras ausentes"
   }
   assert.match(viewer, /setDissectionEnabled/);
   assert.match(viewer, /focusDissectionStructure/);
-  assert.match(panel, /Modo disección activo/);
-  assert.match(panel, /config\.organLabel/);
-  assert.match(organViewer, /Disección próximamente disponible/);
-  assert.match(organViewer, /accessibleHotspots/);
   assert.match(hotspots, /setDissectionContext/);
   assert.match(inspector, /Jerarquía completa/);
   assert.match(inspector, /Nodos con malla/);
+});
+
+test("el visor de Explorar muestra el órgano sin puntos ni herramientas retiradas", async () => {
+  const organViewer = await readFile(new URL("../app/components/OrganViewer.tsx", import.meta.url), "utf8");
+  assert.match(organViewer, /setOrgan\(organ\.model, \[\], organ\.accent\)/);
+  for (const label of ["Corte", "Capas"]) assert.match(organViewer, new RegExp(`label: "${label}"`));
+  for (const label of ["Girar", "Acercar", "Aislar", "Disección", "Comparar", "Reiniciar", "Giro automático"]) {
+    assert.doesNotMatch(organViewer, new RegExp(label));
+  }
 });
