@@ -24,7 +24,7 @@ const systems = [
   {id:'other',name:'Otras estructuras',color:'#849db5',match:/$^/},
 ];
 const systemById = Object.fromEntries(systems.map(s=>[s.id,s]));
-const state = {mode:'explore',catalog:[],anatomy:{},parts:{},current:null,gltf:null,meshes:[],structures:[],selected:null,enabled:new Set(['muscular','skeletal']),hidden:new Set(),isolate:null,loadToken:0,abort:null,search:'',resultLimit:70,playing:false,loop:true,speed:1,clip:null,mixer:null,action:null,section:false,sectionFlip:1,toastTimer:null,view:'front'};
+const state = {mode:'explore',catalog:[],anatomy:{},parts:{},current:null,gltf:null,meshes:[],structures:[],selected:null,enabled:new Set(['muscular','skeletal']),hidden:new Set(),isolate:null,loadToken:0,abort:null,search:'',resultLimit:70,playing:false,loop:true,speed:1,clip:null,mixer:null,action:null,section:false,sectionFlip:1,toastTimer:null,view:'front',explode:0,explodeAmount:0,explosion:null,explodeLayoutDirty:true};
 let renderer,scene,camera,controls,grid,raycaster,selectionBox,clipPlane;
 let lastFrame=performance.now(),lastStatus=0,frames=0,frameTotal=0,cameraTween=null,pointerStart=null,lastEntry=null,needsRender=true;
 const tempV = new THREE.Vector3();
@@ -74,6 +74,64 @@ function fit(meshes=null,view=state.view,animate=true){
   if(animate&&!matchMedia('(prefers-reduced-motion: reduce)').matches){const from=new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target)),to=new THREE.Spherical().setFromVector3(position.clone().sub(target));while(to.theta-from.theta>Math.PI)to.theta-=Math.PI*2;while(to.theta-from.theta<-Math.PI)to.theta+=Math.PI*2;cameraTween={from,to,start:performance.now(),fromTarget:controls.target.clone(),target};}
   else {camera.position.copy(position);controls.target.copy(target);controls.update();}
 }
+// Despiece anatómico, as in Atlas 3D: 0–45 % pulls the systems apart around the body,
+// 45–100 % lays every visible structure out on a plane facing the anterior view.
+const EXPLODE_SPLIT=.45;
+function prepareExplosion(){
+  if(state.explosion||!state.gltf)return state.explosion;
+  state.gltf.scene.updateMatrixWorld(true);
+  const box=worldBounds(state.meshes),size=box.getSize(new THREE.Vector3());
+  const structures=new Map(state.structures.map(s=>{const b=worldBounds(s.meshes);return [s,{s,center:b.getCenter(new THREE.Vector3()),size:b.getSize(new THREE.Vector3()),offset:new THREE.Vector3(),cell:null}];}));
+  // No study mesh is nested under another mesh, so each one moves by its own structure's offset.
+  const meshes=state.meshes.map(mesh=>({mesh,item:structures.get(mesh.userData.atlasStructure),origin:mesh.position.clone(),toLocal:new THREE.Matrix3().setFromMatrix4(mesh.parent.matrixWorld.clone().invert())}));
+  state.explosion={center:box.getCenter(new THREE.Vector3()),extent:Math.max(size.x,size.y,size.z)||1,structures:[...structures.values()],meshes};
+  state.explodeLayoutDirty=true;return state.explosion;
+}
+function layoutExplosion(x){
+  const pad=x.extent*.022,min=x.extent*.02,cards=[],shown=new Set();
+  for(const item of x.structures){item.cell=null;if(item.s.meshes.some(hasVisibleParent)){cards.push({item,w:Math.max(min,item.size.x)+pad,h:Math.max(min,item.size.y)+pad});shown.add(item.s.system);}}
+  // Only the systems on display share the ring, starting at the sides so that the anterior view
+  // separates them (muscles and skeleton end up side by side instead of one behind the other).
+  const order=systems.map(sys=>sys.id).filter(id=>shown.has(id));
+  x.angles=new Map(order.map((id,i)=>[id,Math.PI/2+i/order.length*Math.PI*2]));x.radius=order.length>1?x.extent*.27:0;
+  const area=cards.reduce((n,c)=>n+c.w*c.h,0),widest=cards.reduce((n,c)=>Math.max(n,c.w),0),target=Math.max(widest,Math.sqrt(area*Math.max(.5,Math.min(1.5,camera.aspect)))*1.18);
+  cards.sort((a,b)=>b.h-a.h||a.item.s.key.localeCompare(b.item.s.key));
+  let px=0,py=0,row=0,used=0;
+  for(const c of cards){if(px>0&&px+c.w>target){px=0;py+=row;row=0;}c.item.cell={x:px+c.w/2,y:-py-c.h/2};px+=c.w;used=Math.max(used,px);row=Math.max(row,c.h);}
+  const height=py+row;for(const c of cards){c.item.cell.x-=used/2;c.item.cell.y+=height/2;}
+  state.explodeLayoutDirty=false;
+}
+function applyExplosion(){
+  const x=prepareExplosion();if(!x)return;const amount=state.explodeAmount,c0=x.center;
+  if(state.explodeLayoutDirty)layoutExplosion(x);
+  const radius=x.radius;
+  for(const item of x.structures){
+    const c=item.center,angle=x.angles.get(item.s.system)??0;
+    const sx=Math.sin(angle)*radius,sy=(c.y-c0.y)*.28,sz=Math.cos(angle)*radius;
+    if(amount<=EXPLODE_SPLIT){const t=amount/EXPLODE_SPLIT;item.offset.set(sx*t,sy*t,sz*t);}
+    else{
+      // The anterior camera looks along +Z, so screen-right is world -X: mirror the grid to read left to right.
+      const t=(amount-EXPLODE_SPLIT)/(1-EXPLODE_SPLIT),cell=item.cell;
+      item.offset.set(THREE.MathUtils.lerp(sx,cell?c0.x-cell.x-c.x:0,t),THREE.MathUtils.lerp(sy,cell?c0.y+cell.y-c.y:0,t),THREE.MathUtils.lerp(sz,cell?c0.z-c.z:0,t));
+    }
+  }
+  for(const m of x.meshes)m.mesh.position.copy(m.origin).add(tempV.copy(m.item.offset).applyMatrix3(m.toLocal));
+  state.gltf.scene.updateMatrixWorld(true);needsRender=true;
+}
+function setExplode(value,{instant=false}={}){
+  state.explode=value;if(instant){state.explodeAmount=value;if(state.explosion)applyExplosion();}
+  const percent=Math.round(value*100);$('explode-range').value=percent;$('explode-value').textContent=percent+' %';
+}
+function updateExplosion(delta){
+  const moving=Math.abs(state.explodeAmount-state.explode)>1e-4;
+  if(!state.gltf||(!moving&&!(state.explodeAmount>0&&state.explodeLayoutDirty)))return;
+  state.explodeAmount=moving&&!matchMedia('(prefers-reduced-motion: reduce)').matches?THREE.MathUtils.damp(state.explodeAmount,state.explode,8,delta):state.explode;
+  if(Math.abs(state.explodeAmount-state.explode)<=1e-4)state.explodeAmount=state.explode;
+  applyExplosion();
+  // Pieces laid out on the plane are read from the front, so the view follows them there.
+  if(state.explodeAmount>=.8&&state.view!=='front'){state.view='front';$('camera-view').value='front';$('view-name').textContent='Vista anterior';}
+  fit(null,state.explodeAmount>=.8?'front':'current',!moving);
+}
 function initRenderer(){
   scene=new THREE.Scene();camera=new THREE.PerspectiveCamera(34,1,.001,1000);
   renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true,powerPreference:'high-performance'});
@@ -89,7 +147,7 @@ function initRenderer(){
   grid=new THREE.GridHelper(12,30,0x3d687f,0x223d52);grid.visible=false;grid.material.transparent=true;grid.material.opacity=.34;scene.add(grid);
   selectionBox=new THREE.Box3Helper(new THREE.Box3(),0x79d9eb);selectionBox.visible=false;selectionBox.material.depthTest=false;selectionBox.material.transparent=true;selectionBox.material.opacity=.42;scene.add(selectionBox);
   clipPlane=new THREE.Plane(new THREE.Vector3(1,0,0),0);raycaster=new THREE.Raycaster();
-  const resize=()=>{needsRender=true;const rect=$('canvas-host').getBoundingClientRect();renderer.setSize(rect.width,rect.height);camera.aspect=rect.width/Math.max(rect.height,1);camera.updateProjectionMatrix();};new ResizeObserver(resize).observe($('canvas-host'));resize();
+  const resize=()=>{needsRender=true;state.explodeLayoutDirty=true;const rect=$('canvas-host').getBoundingClientRect();renderer.setSize(rect.width,rect.height);camera.aspect=rect.width/Math.max(rect.height,1);camera.updateProjectionMatrix();};new ResizeObserver(resize).observe($('canvas-host'));resize();
   controls.addEventListener('change',()=>{needsRender=true;});
   controls.addEventListener('start',()=>{cameraTween=null;});
   renderer.domElement.addEventListener('pointerdown',e=>{pointerStart={x:e.clientX,y:e.clientY,time:performance.now()};});
@@ -102,6 +160,7 @@ function frame(now){
   requestAnimationFrame(frame);if(!renderer)return;
   const delta=Math.max(0,Math.min((now-lastFrame)/1000,.05));
   if(state.mixer&&state.playing){state.mixer.update(delta*state.speed);if(state.action?.paused&&!state.loop){state.playing=false;updatePlaybackButton();}}
+  updateExplosion(delta);
   if(cameraTween){const t=Math.min((now-cameraTween.start)/480,1),k=1-Math.pow(1-t,3),from=cameraTween.from,to=cameraTween.to;controls.target.lerpVectors(cameraTween.fromTarget,cameraTween.target,k);camera.position.setFromSpherical(new THREE.Spherical(THREE.MathUtils.lerp(from.radius,to.radius,k),THREE.MathUtils.lerp(from.phi,to.phi,k),THREE.MathUtils.lerp(from.theta,to.theta,k))).add(controls.target);if(t>=1)cameraTween=null;}
   controls.update();
   if(state.selected&&(needsRender||state.playing||cameraTween)){const box=worldBounds(state.selected.meshes.filter(hasVisibleParent));if(!box.isEmpty()){selectionBox.box.copy(box);selectionBox.visible=true;const center=box.getCenter(tempV);center.project(camera);const rect=$('canvas-host').getBoundingClientRect();if(center.z>-1&&center.z<1){$('selection-label').hidden=false;$('selection-label').style.left=Math.max(65,Math.min(rect.width-185,(center.x*.5+.5)*rect.width))+'px';$('selection-label').style.top=Math.max(130,Math.min(rect.height-95,(-center.y*.5+.5)*rect.height+rect.top-$('viewport').getBoundingClientRect().top))+'px';}else $('selection-label').hidden=true;}else{selectionBox.visible=false;$('selection-label').hidden=true;}}
@@ -138,7 +197,7 @@ async function loadEntry(entry){
     const materialDefs=gltf.parser.json.materials||[];for(let i=0;i<materialDefs.length;i++){const material=await gltf.parser.getDependency('material',i);if((materialDefs[i].pbrMetallicRoughness?.baseColorTexture&&!material.map)||(materialDefs[i].normalTexture&&!material.normalMap)){disposeAsset(gltf);throw new Error('No se pudieron cargar todas las texturas. Vuelve a intentar.');}}
     if(token!==state.loadToken){disposeAsset(gltf);return;}
     state.mixer?.stopAllAction();if(state.mixer&&state.gltf)state.mixer.uncacheRoot(state.gltf.scene);disposeAsset(state.gltf);
-    state.gltf=gltf;state.current=entry;state.mixer=null;state.clip=null;state.action=null;state.meshes=[];state.structures=[];state.hidden.clear();state.isolate=null;
+    state.gltf=gltf;state.explosion=null;setExplode(0);state.explodeAmount=0;state.current=entry;state.mixer=null;state.clip=null;state.action=null;state.meshes=[];state.structures=[];state.hidden.clear();state.isolate=null;
     const sourceNames=new Map((gltf.parser.json.nodes||[]).filter(n=>n.extras?.unitySource).map(n=>[n.extras.unitySource.file+':'+n.extras.unitySource.gameObjectId,n.name]));
     gltf.scene.traverse(o=>{if(o.userData.unitySource)o.userData.atlasName=sourceNames.get(o.userData.unitySource.file+':'+o.userData.unitySource.gameObjectId)||o.name;});
     const structureMap=new Map();
@@ -163,7 +222,7 @@ async function loadEntry(entry){
     if(gltf.animations.length){state.clip=gltf.animations[0];state.mixer=new THREE.AnimationMixer(gltf.scene);state.action=state.mixer.clipAction(state.clip);state.action.setLoop(state.loop?THREE.LoopRepeat:THREE.LoopOnce,state.loop?Infinity:1);state.action.clampWhenFinished=true;state.action.play();state.mixer.setTime(0);gltf.scene.updateMatrixWorld(true);gltf.scene.traverse(o=>{if(o.isSkinnedMesh)o.skeleton.update();});state.playing=true;}
     $('scene-title').textContent=entry.label;$('scene-category').textContent=entry.animated?(entry.region||'MOVIMIENTO ANATÓMICO').toUpperCase():'EXPLORACIÓN ANATÓMICA';
     $('scene-subtitle').textContent=entry.animated?'Movimiento anatómico · '+state.clip.duration.toFixed(1)+' segundos':isBody?'Sistemas muscular y esquelético':number(state.structures.length)+' estructuras · vista anatómica';
-    $('animation-dock').hidden=!state.clip;$('viewport').classList.toggle('has-animation',!!state.clip);$('clip-title').textContent=entry.label;updatePlaybackButton();
+    $('animation-dock').hidden=!state.clip;$('viewport').classList.toggle('has-animation',!!state.clip);$('explode-dock').hidden=!!state.clip;$('viewport').classList.toggle('has-explode',!state.clip);$('clip-title').textContent=entry.label;updatePlaybackButton();
     applyVisibility();renderSystems();renderStructures();renderResources();
     const bounds=currentBounds(),size=bounds.getSize(new THREE.Vector3());grid.position.set(bounds.getCenter(new THREE.Vector3()).x,bounds.min.y-.015,bounds.getCenter(new THREE.Vector3()).z);grid.scale.setScalar(Math.max(size.x,size.y,size.z)/8);
     state.view=entry.animated?'oblique':'front';$('camera-view').value=state.view;$('view-name').textContent=entry.animated?'Perspectiva 3/4':'Vista anterior';fit(null,state.view,false);updateClipping();
@@ -172,7 +231,7 @@ async function loadEntry(entry){
   }catch(error){if(error.name==='AbortError'||token!==state.loadToken)return;console.error('Atlas load failed:',error);fail(error.message||'No se pudo leer el modelo. Vuelve a intentar.');}
 }
 function applyVisibility(){
-  needsRender=true;
+  needsRender=true;state.explodeLayoutDirty=true;
   for(const mesh of state.meshes){const s=mesh.userData.atlasStructure;const gender=mesh.userData.atlasGender;const genderMatches=!state.current?.scene||!['level0','level1'].includes(state.current.source)||!gender||gender===state.sex;mesh.visible=genderMatches&&state.enabled.has(s.system)&&!state.hidden.has(s.key)&&(!state.isolate||state.isolate===s.key||state.isolateMeshes?.has(mesh.uuid));}
   if(state.selected&&!state.selected.meshes.some(hasVisibleParent)){$('selection-label').hidden=true;selectionBox.visible=false;}
   $('visible-count').textContent=number(state.structures.filter(s=>s.meshes.some(hasVisibleParent)).length);renderStructures();
@@ -242,6 +301,7 @@ function updateClipping(){
 function resetView(){
   clearSelection();state.hidden.clear();state.isolate=null;state.enabled=state.current?.scene&&['level0','level1'].includes(state.current.source)?new Set(['muscular','skeletal']):new Set(systems.map(s=>s.id));
   for(const mesh of state.meshes)for(const mat of materialArray(mesh)){mat.opacity=mat.userData.originalOpacity;mat.transparent=mat.userData.originalTransparent;mat.depthWrite=mat.userData.originalDepthWrite;mat.needsUpdate=true;}
+  setExplode(0,{instant:true});
   state.section=false;$('section-controls').hidden=true;$('toggle-section').classList.remove('active');$('toggle-section').setAttribute('aria-pressed','false');updateClipping();applyVisibility();renderSystems();state.view='front';$('camera-view').value='front';$('view-name').textContent='Vista anterior';fit();toast('Vista restablecida');
 }
 function wireUI(){
@@ -255,6 +315,7 @@ function wireUI(){
   $('auto-rotate').onclick=()=>{controls.autoRotate=!controls.autoRotate;$('auto-rotate').classList.toggle('active',controls.autoRotate);$('auto-rotate').setAttribute('aria-pressed',String(controls.autoRotate));};
   $('toggle-grid').onclick=()=>{needsRender=true;grid.visible=!grid.visible;$('toggle-grid').classList.toggle('active',grid.visible);$('toggle-grid').setAttribute('aria-pressed',String(grid.visible));};
   $('toggle-section').onclick=()=>{state.section=!state.section;$('section-controls').hidden=!state.section;$('toggle-section').classList.toggle('active',state.section);$('toggle-section').setAttribute('aria-pressed',String(state.section));updateClipping();};
+  $('explode-range').oninput=e=>{setExplode(Number(e.target.value)/100);if(controls.autoRotate)$('auto-rotate').click();};
   $('section-position').oninput=$('section-axis').onchange=updateClipping;$('flip-section').onclick=()=>{state.sectionFlip*=-1;updateClipping();};
   $('play-animation').onclick=togglePlay;$('playback-speed').onchange=e=>{state.speed=Number(e.target.value);};
   $('timeline').oninput=e=>{if(!state.mixer)return;const time=Math.min(Number(e.target.value)/1000*state.clip.duration,state.clip.duration-0.000001);state.action.paused=false;state.action.enabled=true;state.mixer.setTime(time);state.gltf.scene.updateMatrixWorld(true);needsRender=true;};
