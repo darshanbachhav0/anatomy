@@ -14,7 +14,7 @@
 .system-row:hover, .system-row.enabled, .structure-item:hover, .structure-item.selected { background: var(--accent-bg); color: #7f183b; }
 .specimen-button, .resource-card, .secondary-button, .selection-actions button, .mobile-inspector { background: #fff; color: #57464f; border-color: var(--line); }
 .resource-card:hover, .resource-card.selected, .specimen-button:hover { background: #fff0f5; border-color: #d96086; }
-.view-toolbar, .animation-dock, .section-controls { background: #fffffff2; border-color: var(--line); box-shadow: 0 12px 30px #60223d12; }
+.view-toolbar, .animation-dock, .section-controls, .explode-dock { background: #fffffff2; border-color: var(--line); box-shadow: 0 12px 30px #60223d12; }
 .tool-button:hover, .tool-button.active { background: var(--accent-bg); color: var(--accent); }
 .toolbar-divider { background: var(--line); }
 .selection-symbol, .selection-system, .badge { color: #a91d48; background: #fff0f5; border-color: #f0c4d2; }
@@ -37,4 +37,19 @@ dialog::backdrop { background: #34202b66; }
 @media (max-width: 680px) {
   .viewport.has-animation .view-toolbar { display: grid; grid-template-columns: repeat(2, 32px); }
   .viewport.has-animation .toolbar-divider { grid-column: 1 / -1; }
+}
+/* Despiece anatómico: the same bar as Atlas 3D, docked above the viewer status line. */
+.explode-dock { position: absolute; left: 50%; bottom: 46px; transform: translateX(-50%); width: min(560px, calc(100% - 200px)); padding: 11px 16px 10px; border: 1px solid; border-radius: 13px; backdrop-filter: blur(16px); }
+.explode-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+.explode-head label { display: flex; align-items: center; gap: 7px; color: #342c32; font-size: 0.82rem; font-weight: 600; }
+.explode-head svg { width: 17px; height: 17px; fill: none; stroke: var(--accent); stroke-width: 1.7; stroke-linejoin: round; }
+.explode-head output { color: var(--accent); font-size: 0.8rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+.explode-dock input { width: 100%; accent-color: #e5154f; }
+.explode-labels { display: flex; justify-content: space-between; gap: 8px; color: var(--muted); font-size: 0.68rem; }
+.viewport.has-explode .section-controls { bottom: 132px; }
+@media (max-width: 950px) { .viewport.has-explode .mobile-inspector { bottom: 132px; } }
+@media (max-width: 680px) {
+  .explode-dock { bottom: 40px; width: calc(100% - 28px); padding: 9px 12px 8px; }
+  .explode-labels span:nth-child(2) { display: none; }
+  .viewport.has-explode .section-controls { bottom: 122px; }
 }

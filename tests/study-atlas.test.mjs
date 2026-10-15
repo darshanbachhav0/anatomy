@@ -49,3 +49,11 @@ test('every GLB external texture and buffer is included locally', async () => {
   }
   assert.ok(checked.size > 0);
 });
+
+test('Exploración offers the Atlas 3D despiece bar, hidden for animated movements', async () => {
+  const [html, app] = await Promise.all([readFile(new URL('index.html', root), 'utf8'), readFile(new URL('app.js', root), 'utf8')]);
+  assert.match(html, /id="explode-range" type="range" min="0" max="100"/);
+  for (const label of ['Despiece anatómico', 'Ensamblado', 'Separación por sistemas', 'Piezas individuales']) assert.match(html, new RegExp(label));
+  assert.match(app, /\$\('explode-dock'\)\.hidden=!!state\.clip/);
+  assert.match(app, /function layoutExplosion\(/);
+});
