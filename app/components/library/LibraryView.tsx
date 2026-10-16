@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ArrowRight, BookMarked, BookOpen, ExternalLink, FileText, Heart, LibraryBig, Search } from "lucide-react";
-import { organs, type OrganId } from "../../lib/anatomy-data";
+import { organPhrase, organs, type OrganId } from "../../lib/anatomy-data";
 import { glossaryEntries } from "../../lib/glossary-data";
 import { anatomyBooks } from "../../lib/book-data";
 import { matchesSearch, normalizeSearch } from "../../lib/search";
@@ -34,7 +34,7 @@ export function LibraryView({
   const [query, setQuery] = useState("");
   const normalized = normalizeSearch(query);
   const matchingOrgans = useMemo(() => organs.filter((organ) => {
-    const matches = matchesSearch(normalized, organ.name, organ.system, organ.function, organ.location, organ.medical, organ.conditions.join(" "), organ.hotspots.map((spot) => spot.label).join(" "));
+    const matches = matchesSearch(normalized, organ.name, organ.scientificName, organ.system, organ.description, organ.function, organ.location, organ.bloodSupply, organ.innervation, organ.medical, organ.conditions.join(" "), organ.hotspots.map((spot) => spot.label).join(" "));
     return matches && (tab !== "favorites" || favorites.includes(organ.id));
   }), [normalized, tab, favorites]);
   const matchingGlossary = glossaryEntries.filter((entry) => matchesSearch(normalized, entry.term, entry.definition));
@@ -54,12 +54,12 @@ export function LibraryView({
       {showOrgans && (matchingOrgans.length > 0 ? <div className="resource-grid">
         {matchingOrgans.map((organ) => (
           <article className="resource-card anatomy-card" key={organ.id}>
-            <span className="resource-art"><OrganArt organ={organ} asset="thumb" alt={`Ilustración de ${organ.name}`} /></span>
-            <div><small>{organ.system}</small><h2>{organ.name}</h2><dl><div><dt>Función</dt><dd>{organ.function}</dd></div><div><dt>Ubicación</dt><dd>{organ.location}</dd></div></dl></div>
+            <span className="resource-art"><OrganArt organ={organ} asset="thumb" alt={`Ilustración ${organPhrase(organ, "de")}`} /></span>
+            <div><small>{organ.system}</small><h2>{organ.name}</h2><dl><div><dt>Función</dt><dd>{organ.summary.function}</dd></div><div><dt>Ubicación</dt><dd>{organ.summary.location}</dd></div></dl></div>
             <div className="card-actions">
               <button type="button" onClick={() => onOpenSheet(organ.id)}><FileText size={14} /> Ver ficha</button>
               <button type="button" onClick={() => onViewOrgan(organ.id)}>Ver en 3D <ArrowRight size={14} /></button>
-              <button type="button" className={favorites.includes(organ.id) ? "active" : ""} onClick={() => onToggleFavorite(organ.id)} aria-label={favorites.includes(organ.id) ? `Quitar ${organ.name} de favoritos` : `Guardar ${organ.name}`}><Heart size={14} fill={favorites.includes(organ.id) ? "currentColor" : "none"} /></button>
+              <button type="button" className={favorites.includes(organ.id) ? "active" : ""} onClick={() => onToggleFavorite(organ.id)} aria-label={favorites.includes(organ.id) ? `Quitar ${organPhrase(organ)} de favoritos` : `Guardar ${organPhrase(organ)} en favoritos`}><Heart size={14} fill={favorites.includes(organ.id) ? "currentColor" : "none"} /></button>
             </div>
           </article>
         ))}

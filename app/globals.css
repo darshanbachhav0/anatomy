@@ -337,6 +337,11 @@ button:focus-visible, input:focus-visible, canvas:focus-visible {
 .sheet-columns p, .sheet-columns li { color: var(--muted); font: 500 12px/1.4 var(--font-serif), serif; }
 .sheet-columns aside { padding: 16px; border-radius: 14px; background: var(--uma-pink-soft); }
 .sheet-columns aside span { color: var(--uma-pink); font-size: 9px; text-transform: uppercase; }
+.sheet-columns h2 { display: flex; align-items: center; gap: 8px; }
+.sheet-columns h2 svg { color: var(--uma-pink); }
+.sheet-references { display: flex; gap: 9px; margin: 18px 0 0; padding-top: 14px; border-top: 1px solid var(--line); color: var(--muted); font: 500 12px/1.4 var(--font-serif), serif; }
+.sheet-references svg { flex: none; margin-top: 2px; color: var(--uma-pink); }
+.sheet-references b { display: block; margin-bottom: 2px; color: var(--ink); }
 .anatomy-sheet > footer { display: flex; justify-content: flex-end; gap: 9px; margin-top: 20px; }
 .anatomy-sheet > footer .primary-action { margin-top: 0; }
 
@@ -588,15 +593,16 @@ button:focus-visible, input:focus-visible, canvas:focus-visible {
 .rule { height: 1px; background: var(--line); }
 .info-panel h2 { margin: 17px 0 10px; font-style: italic; font-weight: 500; }
 .key-facts { margin: 0; display: flex; flex-direction: column; gap: 11px; }
-.key-facts > div { display: grid; grid-template-columns: 105px 1fr; gap: 8px; align-items: baseline; }
+.key-facts > div { display: grid; grid-template-columns: 124px 1fr; gap: 8px; align-items: baseline; }
 .key-facts dt { display: flex; gap: 8px; font: 500 13px var(--font-serif), serif; }
 .key-facts dt span { color: var(--coral); width: 16px; }
 .key-facts dd { margin: 0; color: var(--muted); font: 500 12px/1.35 var(--font-serif), serif; }
-.medical-note, .fun-note { margin-top: 15px; display: flex; gap: 9px; padding: 10px; border-radius: 12px; }
+.medical-note, .fun-note, .source-note { margin-top: 15px; display: flex; gap: 9px; padding: 10px; border-radius: 12px; }
 .medical-note { background: rgba(229,21,79,.065); color: #8b163e; }
 .fun-note { background: rgba(26,22,24,.045); color: #62585d; }
-.medical-note p, .fun-note p { margin: 0; font: 500 11px/1.35 var(--font-serif), serif; }
-.medical-note b, .fun-note b { display: block; margin-bottom: 2px; color: var(--ink); }
+.source-note { margin-top: 10px; border: 1px solid var(--line); color: var(--muted); }
+.medical-note p, .fun-note p, .source-note p { margin: 0; font: 500 11px/1.35 var(--font-serif), serif; }
+.medical-note b, .fun-note b, .source-note b { display: block; margin-bottom: 2px; color: var(--ink); }
 .medical-note svg, .fun-note svg { flex: none; }
 
 /* The artwork is square, so a square box spanning the full card width shows it

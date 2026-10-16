@@ -5,6 +5,7 @@ import { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import gsap from "gsap";
 import {
   ArrowRight,
+  BookOpen,
   Bookmark,
   Heart,
   LibraryBig,
@@ -14,7 +15,7 @@ import {
   X,
 } from "lucide-react";
 import { OrganViewer } from "./OrganViewer";
-import { organById, organs, type OrganId } from "../lib/anatomy-data";
+import { organById, organPhrase, organs, type OrganId } from "../lib/anatomy-data";
 import { useUmaStudentData } from "../hooks/useUmaStudentData";
 import { MainNavigation, MobileNavigation, type MainView } from "./navigation/MainNavigation";
 import { OrganArt } from "./shared/OrganArt";
@@ -186,7 +187,7 @@ export function AnatomyApp() {
                 style={{ "--item-accent": item.accent } as React.CSSProperties}
               >
                 <span className="organ-glyph">
-                  <OrganArt organ={item} asset="thumb" alt={`Miniatura anatómica de ${item.name}`} size={47} />
+                  <OrganArt organ={item} asset="thumb" alt={`Miniatura anatómica ${organPhrase(item, "de")}`} size={47} />
                 </span>
                 <span><b>{item.name}</b><small>{item.system}</small></span>
                 {data.favorites.includes(item.id) && <Heart className="favorite" size={14} fill="currentColor" />}
@@ -209,7 +210,7 @@ export function AnatomyApp() {
           <div className="info-title-row" data-reveal>
             <div><h1>{organ.name}</h1><em>{organ.poetic}</em></div>
             <span className="specimen-stamp">
-              <OrganArt organ={organ} asset="organ" alt={`Ilustración anatómica de ${organ.name}`} size={92} />
+              <OrganArt organ={organ} asset="organ" alt={`Ilustración anatómica ${organPhrase(organ, "de")}`} size={92} />
             </span>
           </div>
           <p className="description" data-reveal>{organ.description}</p>
@@ -221,10 +222,13 @@ export function AnatomyApp() {
             <div data-reveal><dt><span>⌁</span> Cada día</dt><dd>{organ.dailyFact}</dd></div>
             <div data-reveal><dt><span>⌖</span> Ubicación</dt><dd>{organ.location}</dd></div>
             <div data-reveal><dt><span>❋</span> Irrigación</dt><dd>{organ.bloodSupply}</dd></div>
+            <div data-reveal><dt><span>⌇</span> Inervación</dt><dd>{organ.innervation}</dd></div>
+            <div data-reveal><dt><span>≋</span> Vascularización</dt><dd>{organ.venousDrainage}</dd></div>
             <div data-reveal><dt><span>◈</span> Función</dt><dd>{organ.function}</dd></div>
           </dl>
           <div className="medical-note" data-reveal><Stethoscope size={16} /><p><b>Importancia médica</b>{organ.medical}</p></div>
           <div className="fun-note" data-reveal><Sparkles size={15} /><p><b>¿Sabías que…?</b>{organ.funFact}</p></div>
+          <div className="source-note" data-reveal><BookOpen size={15} /><p><b>Sustento</b>{organ.references}</p></div>
         </aside>
       </div>
       </> : activeView === "atlas" ? (

@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Layers3, Maximize2, ScanLine } from "lucide-react";
-import type { Organ } from "../lib/anatomy-data";
+import { organPhrase, type Organ } from "../lib/anatomy-data";
 import type { AnatomyViewer } from "../lib/three/viewer";
 
 type Props = {
@@ -95,7 +95,7 @@ export function OrganViewer({ organ, autoRotate }: Props) {
   ];
 
   return (
-    <section className="viewer-shell" aria-label={`Visor interactivo de ${organ.name}`}>
+    <section className="viewer-shell" aria-label={`Visor interactivo ${organPhrase(organ, "de")}`}>
       <div className="viewer-glow" style={{ "--organ-accent": organ.accent } as React.CSSProperties} />
       <div ref={mountRef} className="three-mount" />
 
@@ -121,7 +121,7 @@ export function OrganViewer({ organ, autoRotate }: Props) {
       {loading && slowLoad && (
         <div className="model-loader" role="status" aria-live="polite">
           <div className="loader-orbit"><Maximize2 size={20} /></div>
-          <strong>Preparando el modelo de {organ.name}</strong>
+          <strong>Preparando el modelo {organPhrase(organ, "de")}</strong>
           <span>{Math.max(8, Math.round(progress * 100))}%</span>
         </div>
       )}
