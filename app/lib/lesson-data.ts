@@ -1,4 +1,4 @@
-import { organs, type Organ, type OrganId } from "./anatomy-data";
+import { isPluralOrgan, organPhrase, organs, type Organ, type OrganId } from "./anatomy-data";
 
 export type LessonModule = {
   id: string;
@@ -20,30 +20,36 @@ export function lessonKey(organId: OrganId, moduleId: string) {
   return `${organId}:${moduleId}`;
 }
 
+const capitalize = (text: string) => text.charAt(0).toUpperCase() + text.slice(1);
+// Lowercases a term inside a sentence, but keeps acronyms such as "EPOC".
+const inSentence = (term: string) => (/^\p{Lu}{2}/u.test(term) ? term : term.charAt(0).toLowerCase() + term.slice(1));
+const listJoin = (items: string[]) => (items.length > 1 ? `${items.slice(0, -1).join(", ")} y ${items.at(-1)}` : items.join(""));
+
 export function getLessonContent(organ: Organ, module: LessonModule) {
-  const structures = organ.hotspots.map((hotspot) => hotspot.label).join(", ");
+  const structures = listJoin(organ.hotspots.map((hotspot) => inSentence(hotspot.label)));
+  const subject = capitalize(organPhrase(organ));
   const titleByModule: Record<string, string> = {
-    introduction: `Introducción a ${organ.name.toLowerCase()}`,
-    anatomy: `Anatomía de ${organ.name.toLowerCase()}`,
-    function: `Función de ${organ.name.toLowerCase()}`,
+    introduction: `Introducción ${organPhrase(organ, "a")}`,
+    anatomy: `Anatomía ${organPhrase(organ, "de")}`,
+    function: `Función ${organPhrase(organ, "de")}`,
     structures: "Estructuras principales",
     clinical: "Importancia clínica",
     review: "Repaso integrado",
-    quiz: `Cuestionario de ${organ.name.toLowerCase()}`,
+    quiz: `Cuestionario ${organPhrase(organ, "de")}`,
   };
   const contentByModule: Record<string, string[]> = {
-    introduction: [organ.description, `Forma parte del ${organ.system.toLowerCase()} y se localiza en: ${organ.location}.`],
-    anatomy: [`Su nombre científico es ${organ.scientificName}. ${organ.size} y su peso aproximado es ${organ.weight}.`, `La irrigación depende de: ${organ.bloodSupply}.`],
-    function: [`Su función principal es: ${organ.function}.`, organ.dailyFact + "."],
-    structures: [`En el modelo 3D puedes identificar: ${structures}.`, `Selecciona los puntos anatómicos para relacionar cada estructura con su función.`],
-    clinical: [organ.medical, `Entre las afecciones asociadas se encuentran ${organ.conditions.slice(0, 4).join(", ")}.`],
-    review: [`Ubicación: ${organ.location}. Función: ${organ.function}.`, `Irrigación: ${organ.bloodSupply}. Tejido destacado: ${organ.tissue}.`],
+    introduction: [organ.description, `${subject} ${isPluralOrgan(organ) ? "forman" : "forma"} parte del ${organ.system.toLowerCase()}.`, `Ubicación: ${organ.location}`],
+    anatomy: [`Nombre en la terminología anatómica latina: ${organ.scientificName}.`, `Tamaño: ${organ.size}`, `Peso: ${organ.weight}`, `Irrigación: ${organ.bloodSupply}`, `Inervación: ${organ.innervation}`, `Vascularización: ${organ.venousDrainage}`],
+    function: [`Función: ${organ.function}`, `Cada día: ${organ.dailyFact}`],
+    structures: [`Estructuras que puedes reconocer en el modelo 3D: ${structures}.`, "En la pestaña Explorar, gira el modelo y usa las herramientas Corte y Capas para observar su forma y su organización."],
+    clinical: [organ.medical, `Afecciones asociadas: ${listJoin(organ.conditions.map(inSentence))}.`],
+    review: [`Ubicación: ${organ.summary.location}. Función: ${organ.summary.function}. Irrigación: ${organ.summary.bloodSupply}.`, `Sustento: ${organ.references}`],
     quiz: ["Responde cinco preguntas introductorias y revisa la explicación después de cada respuesta."],
   };
   return {
     title: titleByModule[module.id],
     objectives: [
-      `Reconocer la anatomía básica de ${organ.name.toLowerCase()}.`,
+      `Reconocer la anatomía básica ${organPhrase(organ, "de")}.`,
       "Relacionar estructura, ubicación y función.",
       "Aplicar los conceptos en el modelo tridimensional.",
     ],
@@ -61,7 +67,10 @@ export type QuizQuestion = {
 };
 
 function choices(correct: string, distractors: string[], position: number) {
-  const unique = [...new Set(distractors.filter((item) => item !== correct))].slice(0, 3);
+  // A distractor that contains the answer (or is contained in it) would also be partly right,
+  // e.g. "Sistema digestivo" for the pancreas, which belongs to the digestive and endocrine systems.
+  const overlaps = (item: string) => item.toLowerCase().includes(correct.toLowerCase()) || correct.toLowerCase().includes(item.toLowerCase());
+  const unique = [...new Set(distractors.filter((item) => !overlaps(item)))].slice(0, 3);
   const options = [...unique];
   options.splice(Math.min(position, options.length), 0, correct);
   return { options, correctIndex: options.indexOf(correct) };
@@ -70,41 +79,43 @@ function choices(correct: string, distractors: string[], position: number) {
 export function createQuiz(organ: Organ): QuizQuestion[] {
   const otherOrgans = organs.filter((item) => item.id !== organ.id);
   const seed = organs.findIndex((item) => item.id === organ.id);
+  const plural = isPluralOrgan(organ);
+  // Options use the short summaries; the explanation gives the full course text.
   const definitions = [
     {
       id: "function",
-      prompt: `¿Cuál es la función principal de ${organ.name.toLowerCase()}?`,
-      correct: organ.function,
-      distractors: otherOrgans.map((item) => item.function),
-      explanation: `La función principal es: ${organ.function}.`,
+      prompt: `¿Cuál es la función principal ${organPhrase(organ, "de")}?`,
+      correct: organ.summary.function,
+      distractors: otherOrgans.map((item) => item.summary.function),
+      explanation: `Función: ${organ.function}`,
     },
     {
       id: "system",
-      prompt: `¿A qué sistema pertenece ${organ.name.toLowerCase()}?`,
+      prompt: `¿A qué sistema ${plural ? "pertenecen" : "pertenece"} ${organPhrase(organ)}?`,
       correct: organ.system,
       distractors: otherOrgans.map((item) => item.system),
-      explanation: `${organ.name} forma parte del ${organ.system.toLowerCase()}.`,
+      explanation: `${capitalize(organPhrase(organ))} ${plural ? "forman" : "forma"} parte del ${organ.system.toLowerCase()}.`,
     },
     {
       id: "location",
-      prompt: `¿Dónde se localiza ${organ.name.toLowerCase()}?`,
-      correct: organ.location,
-      distractors: otherOrgans.map((item) => item.location),
-      explanation: `Su ubicación anatómica es: ${organ.location}.`,
+      prompt: `¿Dónde se ${plural ? "localizan" : "localiza"} ${organPhrase(organ)}?`,
+      correct: organ.summary.location,
+      distractors: otherOrgans.map((item) => item.summary.location),
+      explanation: `Ubicación: ${organ.location}`,
     },
     {
       id: "blood",
-      prompt: `¿Cuál es la irrigación principal de ${organ.name.toLowerCase()}?`,
-      correct: organ.bloodSupply,
-      distractors: otherOrgans.map((item) => item.bloodSupply),
-      explanation: `La irrigación descrita es: ${organ.bloodSupply}.`,
+      prompt: `¿Cuál es la irrigación principal ${organPhrase(organ, "de")}?`,
+      correct: organ.summary.bloodSupply,
+      distractors: otherOrgans.map((item) => item.summary.bloodSupply),
+      explanation: `Irrigación: ${organ.bloodSupply}`,
     },
     {
       id: "size",
-      prompt: `¿Qué referencia de tamaño corresponde a ${organ.name.toLowerCase()}?`,
-      correct: organ.size,
-      distractors: otherOrgans.map((item) => item.size),
-      explanation: `${organ.name}: ${organ.size}.`,
+      prompt: `¿Qué medida corresponde ${organPhrase(organ, "a")}?`,
+      correct: organ.summary.size,
+      distractors: otherOrgans.map((item) => item.summary.size),
+      explanation: `Tamaño: ${organ.size}`,
     },
   ];
 

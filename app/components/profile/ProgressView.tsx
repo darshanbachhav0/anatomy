@@ -26,7 +26,7 @@ export function ProgressView({ data, onViewOrgan }: { data: StudentData; onViewO
         <div className="organ-progress-list">{organs.map((organ) => {
           const lessonCompleted = lessonModules.filter((module) => data.lessonProgress[lessonKey(organ.id, module.id)] === "completed").length;
           const percent = lessonCompleted ? Math.round((lessonCompleted / lessonModules.length) * 100) : data.exploredOrgans.includes(organ.id) ? 10 : 0;
-          return <button type="button" key={organ.id} onClick={() => onViewOrgan(organ.id)}><span>{organ.name}<small>{lessonCompleted} lecciones completadas</small></span><i><em style={{ width: `${percent}%` }} /></i><b>{percent}%</b></button>;
+          return <button type="button" key={organ.id} onClick={() => onViewOrgan(organ.id)}><span>{organ.name}<small>{lessonCompleted} {lessonCompleted === 1 ? "lección completada" : "lecciones completadas"}</small></span><i><em style={{ width: `${percent}%` }} /></i><b>{percent}%</b></button>;
         })}</div>
       </>}
     </section>

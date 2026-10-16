@@ -514,7 +514,7 @@ const es: AboutText = {
     },
     {
       q: '¿Para quién es?',
-      a: 'Para estudiantes de odontología, de higiene bucodental y de técnico en cuidados auxiliares, para docentes que quieren un modelo 3D para mostrar en clase y para cualquier persona con curiosidad por cómo están formados y numerados los dientes.',
+      a: 'Para estudiantes de odontología, de higiene bucodental y de asistencia dental, para docentes que quieren un modelo 3D para mostrar en clase y para cualquier persona con curiosidad por cómo están formados y numerados los dientes.',
     },
     {
       q: '¿Qué sistemas de numeración dental admite?',

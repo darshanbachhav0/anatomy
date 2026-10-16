@@ -370,7 +370,7 @@
   },
   "tmj": {
     "summary": "Las articulaciones temporomandibulares unen la mandíbula a los huesos temporales. Cada una es una articulación sinovial en la que el cóndilo mandibular se articula con la fosa mandibular y la eminencia articular, separados por un disco articular.",
-    "function": "Permite movimientos de bisagra (rotación) y de deslizamiento (traslación), de modo que la boca puede abrirse ampliamente y moverse de lado a lado.",
+    "function": "Permite movimientos de bisagra (rotación) y de deslizamiento (traslación), de modo que la boca puede abrirse ampliamente y la mandíbula puede moverse de lado a lado.",
     "clinical": "Los trastornos temporomandibulares (TTM) pueden causar dolor, chasquidos y limitación de la apertura.",
     "related": [
       "articular-disc",
@@ -419,7 +419,7 @@
   },
   "lateral-pterygoid": {
     "summary": "Un músculo de dos cabezas que va hacia delante desde el cóndilo y la cápsula articular hasta el hueso esfenoides.",
-    "function": "Protruye la mandíbula y ayuda a abrir la boca y a desplazarla hacia el lado contrario.",
+    "function": "Protruye la mandíbula y ayuda a abrir la boca y a desplazar la mandíbula hacia el lado contrario.",
     "related": [
       "mandibular-condyle",
       "articular-disc"

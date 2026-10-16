@@ -126,3 +126,19 @@ test("el visor de Explorar muestra el órgano sin puntos ni herramientas retirad
     assert.doesNotMatch(organViewer, new RegExp(label));
   }
 });
+
+test("los 9 órganos usan la información del documento EXPLORAR ANATOMÍA", async () => {
+  const [data, lessons, panel] = await Promise.all([
+    readFile(new URL("../app/lib/anatomy-data.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/lib/lesson-data.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/AnatomyApp.tsx", import.meta.url), "utf8"),
+  ]);
+  for (const fact of ["nodo sinoauricular", "86 mil millones de neuronas", "escotadura cardíaca", "doble entrada sanguínea", "un millón de nefronas", "Los conos permiten distinguir colores", "pliegues circulares", "precursores inactivos", "órgano de mayor superficie"]) {
+    assert.match(data, new RegExp(fact));
+  }
+  for (const field of ["innervation", "venousDrainage", "references", "summary"]) {
+    assert.equal(data.match(new RegExp(`\n    ${field}: `, "g"))?.length, 9, field);
+  }
+  for (const label of ["Inervación", "Vascularización", "Sustento"]) assert.match(panel, new RegExp(label));
+  assert.doesNotMatch(lessons, /de \$\{organ\.name\.toLowerCase\(\)\}/);
+});

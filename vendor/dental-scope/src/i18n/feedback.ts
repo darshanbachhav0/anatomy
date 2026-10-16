@@ -47,13 +47,13 @@ const de: Text = {
   schematicAnatomy: 'Schematische Anatomie', atlasAnatomy: 'Atlasanatomie', foramenNote: 'Die Markierung kennzeichnet den Durchtritt, keine vermessene Öffnung im Knochenmodell.',
 };
 const es: Text = {
-  nervesMuscles: 'Nervios y músculos', transparencyHint: 'Use el botón translúcido junto a una capa, o seleccione una estructura y Translúcido (G), para ver los nervios detrás.',
+  nervesMuscles: 'Nervios y músculos', transparencyHint: 'Use el botón de translucidez junto a una capa, o seleccione una estructura y elija Translúcido (G), para ver los nervios detrás.',
   pathView: 'Mostrar paso del nervio', passages: 'Pasos nerviosos', location: 'Ubicación',
   canalFrequency: 'Número de conductos en un estudio', canals: 'Conductos', frequency: 'Frecuencia observada', sample: 'Dientes examinados', source: 'Fuente',
   toulouse: 'Adultos de una consulta radiológica de Toulouse, Francia; lados derecho e izquierdo combinados.', jordan: 'Terceros molares extraídos en el norte de Jordania.',
   cbct: 'CBCT, vóxeles de 200 µm', clearing: 'Tinción de conductos y diafanización dental',
   observed: 'Número de conductos observado con CBCT; los pequeños pueden pasar inadvertidos.', maximum: 'Mayor número de conductos visible en cualquier punto del diente.',
-  evidenceNote: 'Son frecuencias de una muestra, no probabilidades universales. La población, la selección y el método afectan los resultados. El número de raíces y la configuración son medidas distintas.',
+  evidenceNote: 'Son frecuencias de una muestra, no probabilidades universales. La población, la selección y el método afectan los resultados. El número de raíces y la configuración de los conductos son medidas distintas.',
   modeledNote: 'El modelo 3D muestra una configuración y no cambia con estos porcentajes.',
   jawMotion: 'Movimiento mandibular', jawOpening: 'Apertura bucal', jawClosed: 'Cerrada', jawOpen: 'Abierta',
   playJaw: 'Reproducir apertura y cierre', pauseJaw: 'Pausar movimiento', resetJaw: 'Cerrar boca', rightJoint: 'Articulación derecha', leftJoint: 'Articulación izquierda',

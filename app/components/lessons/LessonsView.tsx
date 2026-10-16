@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ArrowLeft, ArrowRight, BookOpen, Check, Circle, CircleDot, Cuboid, Trophy } from "lucide-react";
-import { organById, organs, type OrganId } from "../../lib/anatomy-data";
+import { organById, organPhrase, organs, type OrganId } from "../../lib/anatomy-data";
 import { getLessonContent, lessonKey, lessonModules } from "../../lib/lesson-data";
 import type { LessonStatus } from "../../lib/storage";
 import { OrganArt } from "../shared/OrganArt";
@@ -130,7 +130,7 @@ function LessonDetail({
       <button className="back-action" type="button" onClick={onBack}><ArrowLeft size={16} /> Volver a lecciones</button>
       <div className="lesson-detail-layout">
         <aside className="lesson-outline">
-          <span className="resource-art"><OrganArt organ={organ} asset="thumb" alt={`Miniatura de ${organ.name}`} /></span>
+          <span className="resource-art"><OrganArt organ={organ} asset="thumb" alt={`Miniatura ${organPhrase(organ, "de")}`} /></span>
           <small>{organ.system}</small><h2>{organ.name}</h2>
           {lessonModules.map((item, index) => <button type="button" key={item.id} className={index === moduleIndex ? "active" : ""} onClick={() => onNavigate(index)}><span>{item.number}</span>{item.label}</button>)}
         </aside>

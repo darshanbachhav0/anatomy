@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { BookOpen, FileText, Search } from "lucide-react";
-import { organs, type OrganId } from "../../lib/anatomy-data";
+import { organPhrase, organs, type OrganId } from "../../lib/anatomy-data";
 import { matchesSearch, normalizeSearch } from "../../lib/search";
 
 export function GlobalSearch({ onViewOrgan, onViewLesson, onOpenSheet }: { onViewOrgan: (organId: OrganId) => void; onViewLesson: (organId: OrganId) => void; onOpenSheet: (organId: OrganId) => void }) {
@@ -44,8 +44,8 @@ export function GlobalSearch({ onViewOrgan, onViewLesson, onOpenSheet }: { onVie
       {open && normalized && <div className="search-results" role="listbox" aria-label="Resultados de búsqueda">
         {!hasResults && <p>No se encontraron resultados.</p>}
         {results.organs.length > 0 && <SearchGroup title="Órganos" icon={<Search size={13} />}>{results.organs.map((organ) => <button type="button" key={organ.id} onClick={() => select(() => onViewOrgan(organ.id))}><b>{organ.name}</b><span>{organ.system}</span></button>)}</SearchGroup>}
-        {results.lessons.length > 0 && <SearchGroup title="Lecciones" icon={<BookOpen size={13} />}>{results.lessons.map((organ) => <button type="button" key={organ.id} onClick={() => select(() => onViewLesson(organ.id))}><b>Anatomía de {organ.name.toLowerCase()}</b><span>Ruta de 7 módulos</span></button>)}</SearchGroup>}
-        {results.library.length > 0 && <SearchGroup title="Biblioteca" icon={<FileText size={13} />}>{results.library.map((organ) => <button type="button" key={organ.id} onClick={() => select(() => onOpenSheet(organ.id))}><b>Ficha de {organ.name.toLowerCase()}</b><span>Irrigación, estructuras y clínica</span></button>)}</SearchGroup>}
+        {results.lessons.length > 0 && <SearchGroup title="Lecciones" icon={<BookOpen size={13} />}>{results.lessons.map((organ) => <button type="button" key={organ.id} onClick={() => select(() => onViewLesson(organ.id))}><b>Anatomía {organPhrase(organ, "de")}</b><span>Ruta de 7 módulos</span></button>)}</SearchGroup>}
+        {results.library.length > 0 && <SearchGroup title="Biblioteca" icon={<FileText size={13} />}>{results.library.map((organ) => <button type="button" key={organ.id} onClick={() => select(() => onOpenSheet(organ.id))}><b>Ficha {organPhrase(organ, "de")}</b><span>Irrigación, inervación e importancia médica</span></button>)}</SearchGroup>}
       </div>}
     </div>
   );
