@@ -294,6 +294,8 @@ button:focus-visible, input:focus-visible, canvas:focus-visible {
 .card-actions button { min-height: 34px; padding: 0 9px; display: flex; align-items: center; justify-content: center; gap: 6px; border: 1px solid var(--line); border-radius: 8px; background: #fff; cursor: pointer; font-size: 9px; }
 .card-actions button:nth-child(2) { border-color: var(--uma-pink); background: var(--uma-pink); color: #fff; }
 .card-actions button.active { color: var(--uma-pink); background: var(--uma-pink-soft); }
+.card-actions .resources-action { grid-column: 1 / -1; justify-content: flex-start; border-color: rgba(229,21,79,.22); color: var(--uma-pink-dark); }
+.card-actions .resources-action small { margin-left: auto; color: var(--muted); font-size: 8px; letter-spacing: 0; text-transform: none; }
 .library-book-list { display: grid; gap: 10px; }
 .library-book-list article { min-height: 104px; padding: 16px; display: grid; grid-template-columns: 52px 1fr auto; gap: 14px; align-items: center; border: 1px solid var(--line); border-radius: 15px; background: #fff; }
 .library-book-list article > span { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 13px; background: var(--uma-pink-soft); color: var(--uma-pink); font-size: 20px; }
@@ -344,6 +346,23 @@ button:focus-visible, input:focus-visible, canvas:focus-visible {
 .sheet-references b { display: block; margin-bottom: 2px; color: var(--ink); }
 .anatomy-sheet > footer { display: flex; justify-content: flex-end; gap: 9px; margin-top: 20px; }
 .anatomy-sheet > footer .primary-action { margin-top: 0; }
+.resources-modal { width: min(780px, 100%); max-height: 92vh; overflow: auto; scrollbar-width: thin; position: relative; padding: 28px; border: 1px solid rgba(229,21,79,.18); border-radius: 22px; background: #fff; box-shadow: 0 30px 90px rgba(74,0,25,.22); }
+.resources-modal > header { padding-right: 44px; }
+.resources-modal > header small { color: var(--uma-pink); font-size: 9px; text-transform: uppercase; letter-spacing: .1em; }
+.resources-modal > header h1 { margin: 5px 0 6px; font: 600 42px/1 var(--font-serif), serif; }
+.resources-modal > header p { margin: 0; color: var(--muted); font: 500 14px/1.45 var(--font-serif), serif; }
+.resources-section { margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--line); }
+.resources-section h2 { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font: 600 20px var(--font-serif), serif; }
+.resources-section h2 svg { color: var(--uma-pink); }
+.resources-section ul { margin: 0; padding: 0; list-style: none; display: grid; gap: 7px; }
+.resources-section a { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; align-items: center; padding: 11px 13px; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); text-decoration: none; transition: border-color .15s, background .15s; }
+.resources-section a:hover, .resources-section a:focus-visible { border-color: rgba(229,21,79,.32); background: #fff6f9; }
+.resources-section a b { display: block; font: 600 15px/1.25 var(--font-serif), serif; }
+.resources-section a small { display: block; margin-top: 3px; color: var(--muted); font-size: 10px; line-height: 1.35; }
+.resources-section a em { color: var(--uma-pink-dark); font-size: 9px; font-style: normal; white-space: nowrap; }
+.resources-section a > svg { color: var(--uma-pink); }
+.resources-note { margin: 18px 0 0; padding: 12px 14px; border-radius: 12px; background: var(--uma-pink-soft); color: var(--muted); font: 500 12px/1.4 var(--font-serif), serif; }
+.resources-note b { display: block; margin-bottom: 2px; color: var(--ink); }
 
 .profile-menu { position: relative; }
 .profile-dropdown { position: absolute; z-index: 45; top: calc(100% + 10px); right: 0; width: 250px; padding: 10px; border: 1px solid var(--line); border-radius: 16px; background: #fff; box-shadow: 0 22px 60px rgba(55,0,19,.18); }
@@ -746,6 +765,10 @@ button:focus-visible, input:focus-visible, canvas:focus-visible {
   .alphabet-nav { flex-direction: row; overflow-x: auto; }
   .glossary-view dl { grid-template-columns: 1fr; }
   .anatomy-sheet { padding: 20px; }
+  .resources-modal { padding: 20px; }
+  .resources-modal > header h1 { font-size: 34px; }
+  .resources-section a { grid-template-columns: 1fr auto; }
+  .resources-section a em { grid-column: 1; grid-row: 2; }
   .anatomy-sheet > header { grid-template-columns: 100px 1fr; gap: 14px; }
   .sheet-art { width: 100px; height: 100px; border-radius: 16px; }
   .anatomy-sheet > header h1 { font-size: 36px; }
