@@ -1,20 +1,23 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowRight, BookMarked, BookOpen, ExternalLink, FileText, Heart, LibraryBig, Search } from "lucide-react";
-import { organPhrase, organs, type OrganId } from "../../lib/anatomy-data";
+import { ArrowRight, BookMarked, BookOpen, ExternalLink, FileText, Heart, LibraryBig, Library, Search } from "lucide-react";
+import { organById, organPhrase, organs, type OrganId } from "../../lib/anatomy-data";
 import { glossaryEntries } from "../../lib/glossary-data";
 import { anatomyBooks } from "../../lib/book-data";
+import { organResources, resourceMeta } from "../../lib/organ-resources";
 import { matchesSearch, normalizeSearch } from "../../lib/search";
 import { OrganArt } from "../shared/OrganArt";
+import { OrganResourcesPanel } from "./OrganResourcesPanel";
 
-type LibraryTab = "all" | "organs" | "sheets" | "books" | "glossary" | "favorites";
+type LibraryTab = "all" | "organs" | "sheets" | "books" | "papers" | "glossary" | "favorites";
 
 const TABS: Array<{ id: LibraryTab; label: string }> = [
   { id: "all", label: "Todos" },
   { id: "organs", label: "Órganos" },
   { id: "sheets", label: "Fichas anatómicas" },
   { id: "books", label: "Libros" },
+  { id: "papers", label: "Artículos" },
   { id: "glossary", label: "Glosario" },
   { id: "favorites", label: "Favoritos" },
 ];
@@ -32,6 +35,7 @@ export function LibraryView({
 }) {
   const [tab, setTab] = useState<LibraryTab>("all");
   const [query, setQuery] = useState("");
+  const [resourcesFor, setResourcesFor] = useState<OrganId | null>(null);
   const normalized = normalizeSearch(query);
   const matchingOrgans = useMemo(() => organs.filter((organ) => {
     const matches = matchesSearch(normalized, organ.name, organ.scientificName, organ.system, organ.description, organ.function, organ.location, organ.bloodSupply, organ.innervation, organ.medical, organ.conditions.join(" "), organ.hotspots.map((spot) => spot.label).join(" "));
@@ -39,12 +43,14 @@ export function LibraryView({
   }), [normalized, tab, favorites]);
   const matchingGlossary = glossaryEntries.filter((entry) => matchesSearch(normalized, entry.term, entry.definition));
   const matchingBooks = anatomyBooks.filter((book) => matchesSearch(normalized, book.title, book.authors, book.publisher));
+  const matchingPapers = organs.flatMap((organ) => organResources[organ.id].papers.map((paper) => ({ organ, paper })))
+    .filter(({ organ, paper }) => matchesSearch(normalized, organ.name, paper.title, paper.authors ?? "", paper.source));
   const showOrgans = ["all", "organs", "sheets", "favorites"].includes(tab);
 
   return (
     <section className="content-view" aria-labelledby="library-title">
       <header className="content-hero content-hero-row">
-        <div><span className="content-kicker"><LibraryBig size={15} /> Centro de recursos</span><h1 id="library-title">Biblioteca anatómica</h1><p>Consulta fichas, libros de referencia y términos esenciales desde una sola colección.</p></div>
+        <div><span className="content-kicker"><LibraryBig size={15} /> Centro de recursos</span><h1 id="library-title">Biblioteca anatómica</h1><p>Consulta fichas, libros, artículos de investigación y términos esenciales desde una sola colección.</p></div>
         <label className="library-search"><Search size={17} /><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar en la biblioteca..." aria-label="Buscar en la biblioteca" /></label>
       </header>
       <nav className="content-tabs" aria-label="Secciones de la biblioteca">
@@ -60,6 +66,7 @@ export function LibraryView({
               <button type="button" onClick={() => onOpenSheet(organ.id)}><FileText size={14} /> Ver ficha</button>
               <button type="button" onClick={() => onViewOrgan(organ.id)}>Ver en 3D <ArrowRight size={14} /></button>
               <button type="button" className={favorites.includes(organ.id) ? "active" : ""} onClick={() => onToggleFavorite(organ.id)} aria-label={favorites.includes(organ.id) ? `Quitar ${organPhrase(organ)} de favoritos` : `Guardar ${organPhrase(organ)} en favoritos`}><Heart size={14} fill={favorites.includes(organ.id) ? "currentColor" : "none"} /></button>
+              <button type="button" className="resources-action" onClick={() => setResourcesFor(organ.id)} aria-label={`Bibliografía ${organPhrase(organ, "de")}: libros y artículos`}><Library size={14} /> Bibliografía <small>{organResources[organ.id].books.length} libros · {organResources[organ.id].papers.length} artículos</small></button>
             </div>
           </article>
         ))}
@@ -76,7 +83,19 @@ export function LibraryView({
         {matchingBooks.length === 0 && <p className="empty-copy">No se encontraron libros con esa búsqueda.</p>}
       </div>}
 
+      {tab === "papers" && <div className="library-book-list">
+        {matchingPapers.map(({ organ, paper }) => (
+          <article key={`${organ.id}-${paper.url}`}>
+            <span><FileText size={20} /></span>
+            <div><small>{organ.name} · {paper.language === "es" ? "Español" : "Inglés"}{paper.free && " · Acceso libre"}</small><h2>{paper.title}</h2><p>{resourceMeta(paper)}</p></div>
+            <a href={paper.url} target="_blank" rel="noopener noreferrer" aria-label={`Abrir el artículo ${paper.title} en una pestaña nueva`}>Abrir <ExternalLink size={14} /></a>
+          </article>
+        ))}
+        {matchingPapers.length === 0 && <p className="empty-copy">No se encontraron artículos con esa búsqueda.</p>}
+      </div>}
+
       {tab === "glossary" && <div className="glossary-view"><div className="alphabet-nav">{"ABCDEFGHIJLMNOPQRSTUV".split("").map((letter) => <button type="button" key={letter} onClick={() => setQuery(letter)}>{letter}</button>)}</div><dl>{matchingGlossary.map((entry) => <div key={entry.term}><dt>{entry.term}</dt><dd>{entry.definition}</dd></div>)}</dl>{matchingGlossary.length === 0 && <p className="empty-copy">No se encontraron términos con esa búsqueda.</p>}</div>}
+      {resourcesFor && <OrganResourcesPanel organ={organById[resourcesFor]} onClose={() => setResourcesFor(null)} />}
     </section>
   );
 }

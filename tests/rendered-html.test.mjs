@@ -142,3 +142,22 @@ test("los 9 órganos usan la información del documento EXPLORAR ANATOMÍA", asy
   for (const label of ["Inervación", "Vascularización", "Sustento"]) assert.match(panel, new RegExp(label));
   assert.doesNotMatch(lessons, /de \$\{organ\.name\.toLowerCase\(\)\}/);
 });
+
+test("la biblioteca enlaza libros y artículos de investigación para cada órgano", async () => {
+  const [resources, library] = await Promise.all([
+    readFile(new URL("../app/lib/organ-resources.ts", import.meta.url), "utf8"),
+    readFile(new URL("../app/components/library/LibraryView.tsx", import.meta.url), "utf8"),
+  ]);
+  for (const organ of ["heart", "brain", "lungs", "liver", "kidneys", "eyeball", "intestine", "pancreas", "skin"]) {
+    const block = resources.slice(resources.indexOf(`\n  ${organ}: {`), resources.indexOf("\n  },", resources.indexOf(`\n  ${organ}: {`)));
+    const [books, papers] = block.split("papers: [");
+    const urls = (text) => [...text.matchAll(/url: "(https?:\/\/[^"]+)"/g)].map((match) => match[1]);
+    assert.ok(urls(books).length >= 3, `${organ}: libros`);
+    assert.ok(urls(papers).length >= 3, `${organ}: artículos`);
+    assert.equal(new Set(urls(block)).size, urls(block).length, `${organ}: enlaces repetidos`);
+    assert.match(papers, /language: "es"/, `${organ}: artículo en español`);
+  }
+  assert.match(library, /OrganResourcesPanel/);
+  assert.match(library, /Bibliografía/);
+  assert.match(library, /\{ id: "papers", label: "Artículos" \}/);
+});
