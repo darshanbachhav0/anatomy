@@ -2,7 +2,7 @@ import { LANGS, type Lang } from './lang';
 
 const text = {
   nerveGroups: ['Nerve groups', 'Nervgrupper', 'Nervengruppen', 'Grupos nerviosos', 'Greges nervorum'],
-  nerveSide: ['Nerve side', 'Nervsida', 'Nervenseite', 'Lado nervioso', 'Latus nervorum'],
+  nerveSide: ['Nerve side', 'Nervsida', 'Nervenseite', 'Lado de los nervios', 'Latus nervorum'],
   dental: ['Dental · V2 / V3', 'Dentala · V2 / V3', 'Dental · V2 / V3', 'Dentales · V2 / V3', 'Dentales · V2 / V3'],
   trigeminal: ['Trigeminal · V', 'Trigeminus · V', 'Trigeminus · V', 'Trigémino · V', 'Trigeminus · V'],
   facial: ['Facial · VII', 'Facialis · VII', 'Facialis · VII', 'Facial · VII', 'Facialis · VII'],

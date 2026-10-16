@@ -14,6 +14,30 @@ vascular tree organ|árbol vascular
 coronary sinus tree|árbol del seno coronario
 portal vein|vena porta
 hepatic portal vein|vena porta hepática
+hepatic artery proper|arteria hepática propia
+external iliac artery proper|arteria ilíaca externa propia
+plantar digital arteries proper|arterias digitales plantares propias
+circumflex humeral artery|arteria circunfleja humeral
+circumflex humeral vein|vena circunfleja humeral
+circumflex femoral artery|arteria circunfleja femoral
+circumflex femoral vein|vena circunfleja femoral
+circumflex scapular artery|arteria circunfleja escapular
+circumflex scapular vein|vena circunfleja escapular
+inferior vena caval tree|árbol de la vena cava inferior
+superior vena caval tree|árbol de la vena cava superior
+great cardiac vein|vena cardíaca magna
+great pancreatic artery|arteria pancreática magna
+sphenoid bone|hueso esfenoides
+hair of head|cabello
+back of abdomen|parte posterior del abdomen
+back of neck|parte posterior del cuello
+back of thorax|parte posterior del tórax
+posterior limb of internal capsule|brazo posterior de la cápsula interna
+posterior limb of left internal capsule|brazo posterior de la cápsula interna izquierda
+posterior limb of right internal capsule|brazo posterior de la cápsula interna derecha
+alimentary system|sistema digestivo
+organ with cavitated organ parts|órgano con partes cavitadas
+organ with organ cavity|órgano con cavidad
 caudate lobe branch|rama del lóbulo caudado
 caudate lobe tributary|afluente del lóbulo caudado
 upper lobe part|parte del lóbulo superior
@@ -829,7 +853,7 @@ postvertebral|posvertebral
 pre-hepatic|prehepático
 precentral|precentral
 precommunicating|precomunicante
-precuneal|del precúneo
+precuneal|precuneal
 prefrontal|prefrontal
 prevertebral|prevertebral
 proper|propio
@@ -931,7 +955,7 @@ zygomatic|cigomático
 `);
 const feminine = new Set('aorta apófisis amígdala anastomosis arteria arterias aurícula base boca cabeza caja cámara capa cápsula cara carótida cavidad cavidades ceja cintura clavícula columna comisura continuidad córnea corona coroides corteza costilla costillas decusación división duramadre encía entidad epidermis epiglotis escápula esclerótica espalda estría fascia falange faringe formación fosa glándula glándulas habénula hipofisis hipófisis hoja ínsula lámina lengua línea mandíbula mano médula mejilla membrana muñeca musculatura nariz órbita pared paredes parte partes pelvis piel pierna porción próstata rama ramas raíz región regiones retina rodilla rótula sínfisis subcorteza subdivisión sustancia tenia tibia tienda tráquea tróclea úvula uretra unión valva valvas válvula válvulas vasculatura vena venas vesícula vejiga vértebra vértebras zona'.split(' '));
 const plurals = new Set('arterias venas vértebras músculos ramas partes regiones órganos conjuntos cavidades paredes costillas'.split(' '));
-for (const head of ['cadera', 'arquicorteza', 'cortina', 'estructura', 'incisura', 'placa', 'red']) feminine.add(head);
+for (const head of ['cadera', 'arquicorteza', 'cortina', 'estructura', 'incisura', 'placa', 'red', 'laringe', 'laringofaringe']) feminine.add(head);
 function phrase(text) { const head = text.split(' ')[0]; return { text, feminine: feminine.has(head), plural: plurals.has(head) }; }
 function agree(adjective, noun) {
   if (adjective.startsWith('de ')) return adjective;
@@ -942,8 +966,9 @@ function agree(adjective, noun) {
   return value;
 }
 function append(noun, adjective) {
-  // Keep modifiers with their head noun, ahead of prepositional complements.
-  const position = noun.text.search(/ (?:de|del|con|en|a|al|para|desde|entre) /);
+  // Keep modifiers with their head noun, ahead of prepositional complements,
+  // "propiamente dicho/a" and parenthetical qualifiers.
+  const position = noun.text.search(/ (?:de|del|con|en|a|al|para|desde|entre|propiamente) | \(/);
   const offset = position < 0 ? noun.text.length : position;
   return { ...noun, text: `${noun.text.slice(0, offset)} ${agree(adjective, noun)}${noun.text.slice(offset)}` };
 }

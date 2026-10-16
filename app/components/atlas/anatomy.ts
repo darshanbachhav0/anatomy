@@ -21,7 +21,7 @@ export const SYSTEMS: {
         "id": "cardiac",
         "name": "Corazón",
         "color": "#c95873",
-        "description": "El corazón impulsa la sangre. Sus cámaras y válvulas organizan el flujo a través de la circulación pulmonar y sistémica."
+        "description": "El corazón impulsa la sangre. Sus cavidades y válvulas organizan el flujo a través de las circulaciones pulmonar y sistémica."
     },
     {
         "id": "sensory",
@@ -149,12 +149,12 @@ export interface SceneState {
 }
 export const DEFAULT_VISIBLE: SystemId[] = ['cardiac', 'sensory', 'skeletal', 'muscular', 'arterial', 'venous', 'nervous', 'respiratory', 'digestive', 'urinary', 'lymphatic', 'endocrine', 'reproductive', 'connective'];
 export const EXPLANATIONS: Record<string, string> = {
-    "heart": "Órgano muscular del tórax. Su lado derecho impulsa sangre hacia los pulmones y su lado izquierdo hacia la circulación sistémica.",
-    "liver": "Órgano situado bajo el diafragma derecho. Procesa nutrientes, produce bilis y sintetiza proteínas de la sangre.",
-    "brain": "Órgano central del sistema nervioso. Sus regiones participan en la percepción, el movimiento, la memoria y la regulación corporal.",
-    "stomach": "Cámara muscular entre el esófago y el intestino delgado. Almacena y mezcla alimentos antes de su paso al duodeno.",
-    "spleen": "Órgano linfoide del abdomen superior izquierdo. Filtra la sangre y participa en las respuestas inmunitarias.",
-    "pancreas": "Órgano abdominal con funciones digestivas y endocrinas. Produce enzimas y hormonas como la insulina y el glucagón.",
+    "heart": "Órgano muscular hueco situado en el mediastino medio. Su lado derecho impulsa la sangre hacia los pulmones y su lado izquierdo, hacia la circulación sistémica.",
+    "liver": "Glándula voluminosa situada principalmente en el hipocondrio derecho y el epigastrio, debajo del diafragma. Procesa nutrientes, produce bilis y sintetiza proteínas plasmáticas.",
+    "brain": "Porción del sistema nervioso central alojada en la cavidad craneal; comprende el cerebro, el cerebelo y el tronco encefálico. Participa en la percepción, el movimiento voluntario, la memoria, el lenguaje y la regulación corporal.",
+    "stomach": "Órgano muscular hueco situado entre el esófago y el intestino delgado. Almacena y mezcla los alimentos antes de su paso al duodeno.",
+    "spleen": "Órgano linfoide situado en el hipocondrio izquierdo. Filtra la sangre y participa en las respuestas inmunitarias.",
+    "pancreas": "Glándula mixta retroperitoneal situada detrás del estómago. Su porción exocrina produce enzimas digestivas y su porción endocrina, hormonas como la insulina y el glucagón.",
     "urinary bladder": "Reservorio muscular de la pelvis que almacena la orina procedente de los riñones.",
     "trachea": "Vía aérea que conecta la laringe con los bronquios. Sus cartílagos ayudan a mantenerla abierta.",
     "diaphragm": "Músculo que separa el tórax del abdomen y participa en la inspiración.",
