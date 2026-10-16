@@ -344,7 +344,7 @@ async function start(){
     $('header-count').textContent=number(summary.assets)+' recursos · '+summary.animations+' movimientos';$('library-footer-text').textContent=number(summary.assets)+' recursos anatómicos disponibles';
     const scenes=catalog.filter(r=>r.scene);$('scene-select').innerHTML=scenes.map(r=>`<option value="${esc(r.id)}">${esc(r.label)}</option>`).join('');
     $('region-filter').innerHTML='<option value="all">Todas las regiones</option>'+[...new Set(catalog.filter(r=>r.animated).map(r=>r.region))].sort().map(r=>`<option value="${esc(r)}">${esc(r)}</option>`).join('');
-    const specimens=[['level3','Oído','◉'],['level4','Ojo','◉'],['level5','Piel','▦'],['level6','Lengua','◇'],['level2','Corti','◌'],['level14','Diafragma','◡']];
+    const specimens=[['level3','Oído','◉'],['level4','Ojo','◉'],['level5','Piel','▦'],['level6','Lengua','◇'],['level2','Órgano de Corti','◌'],['level14','Diafragma','◡']];
     $('specimen-list').innerHTML=specimens.map(([source,label,symbol])=>`<button class="specimen-button" data-scene="${source}"><span>${symbol}</span>${label}</button>`).join('');$('specimen-list').querySelectorAll('button').forEach(b=>b.onclick=()=>{const row=scenes.find(r=>r.source===b.dataset.scene);$('scene-select').value=row.id;loadEntry(row);});
     const {mode,entry:chosen}=initialResource(catalog,location.search);
     if(!chosen)throw new Error('No se encontró una preparación para esta sección.');
