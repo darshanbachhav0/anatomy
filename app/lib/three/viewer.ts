@@ -5,6 +5,7 @@ import type { Hotspot } from "../anatomy-data";
 import type { DissectionConfig } from "../dissection-data";
 import { AnatomyAssetManager, type LoadedOrgan } from "./loaders";
 import { HotspotLayer } from "./hotspots";
+import { createOrganDepthMaterial } from "./brain-depth";
 import { DissectionEngine, type DissectionSnapshot } from "./dissection-engine";
 
 type ViewerCallbacks = {
@@ -37,8 +38,6 @@ export class AnatomyViewer {
   private resizeObserver: ResizeObserver;
   private intersectionObserver: IntersectionObserver;
   private clipPlane = new THREE.Plane(new THREE.Vector3(-1, 0, 0), 0);
-  /** Writes depth only — used to resolve a fading organ to one surface. */
-  private depthMaterial = new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: true, depthTest: true });
   private crossSection = false;
   private isolated = false;
   private layersEnabled = false;
@@ -354,11 +353,18 @@ export class AnatomyViewer {
     organ.meshes.forEach((mesh) => {
       const existing = mesh.children.find((child) => child.name === DEPTH_PREPASS);
       if (!enabled) {
+        if (existing instanceof THREE.Mesh) {
+          const materials = Array.isArray(existing.material) ? existing.material : [existing.material];
+          materials.forEach((material) => material.dispose());
+        }
         existing?.removeFromParent();
         return;
       }
       if (existing) return;
-      const proxy = new THREE.Mesh(mesh.geometry, this.depthMaterial);
+      const depthMaterial = Array.isArray(mesh.material)
+        ? mesh.material.map(createOrganDepthMaterial)
+        : createOrganDepthMaterial(mesh.material);
+      const proxy = new THREE.Mesh(mesh.geometry, depthMaterial);
       proxy.name = DEPTH_PREPASS;
       proxy.frustumCulled = mesh.frustumCulled;
       mesh.add(proxy);
@@ -592,7 +598,14 @@ export class AnatomyViewer {
   private applyClipping(enabled: boolean) {
     if (!this.organ) return;
     const planes = enabled ? [this.clipPlane] : null;
-    [...this.materials(this.organ), this.depthMaterial].forEach((material) => {
+    const materials = this.materials(this.organ);
+    this.organ.meshes.forEach((mesh) => {
+      const proxy = mesh.children.find((child) => child.name === DEPTH_PREPASS);
+      if (proxy instanceof THREE.Mesh) {
+        materials.push(...(Array.isArray(proxy.material) ? proxy.material : [proxy.material]));
+      }
+    });
+    materials.forEach((material) => {
       material.clippingPlanes = planes;
       material.needsUpdate = true;
     });
@@ -694,7 +707,8 @@ export class AnatomyViewer {
 
     this.dissection.dispose();
     this.hotspots.dispose();
-    this.depthMaterial.dispose();
+    this.fadeTween?.kill();
+    if (this.organ) this.setDepthPrepass(this.organ, false);
     this.assets.dispose();
     this.scene.environment?.dispose();
     this.particles.geometry.dispose();

@@ -1,4 +1,4 @@
-import { BookOpenCheck, Heart, NotebookPen, ScanSearch, TrendingUp, Trophy } from "lucide-react";
+import { BookOpenCheck, Heart, ScanSearch, TrendingUp, Trophy } from "lucide-react";
 import { organs, type OrganId } from "../../lib/anatomy-data";
 import { lessonKey, lessonModules } from "../../lib/lesson-data";
 import type { StudentData } from "../../lib/storage";
@@ -14,7 +14,6 @@ export function ProgressView({ data, onViewOrgan }: { data: StudentData; onViewO
     { label: "Promedio de cuestionarios", value: `${average}%`, icon: TrendingUp },
     { label: "Órganos explorados", value: `${data.exploredOrgans.length} / ${organs.length}`, icon: ScanSearch },
     { label: "Favoritos", value: String(data.favorites.length), icon: Heart },
-    { label: "Apuntes", value: String(data.notes.length), icon: NotebookPen },
   ];
 
   return (

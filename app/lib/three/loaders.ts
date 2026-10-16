@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.js";
 import { disposeObject } from "./dispose";
+import { stabilizeBrainDepth } from "./brain-depth";
+import { repairBrainWinding } from "./brain-geometry";
 
 /** Edge length of the cube every organ is normalised into, so hotspot
  *  coordinates authored in `anatomy-data` mean the same thing for each model. */
@@ -144,6 +146,15 @@ export class AnatomyAssetManager {
         material.needsUpdate = true;
       });
     });
+
+    if (url.split("?")[0] === "/models/brain.glb") {
+      new Set(meshes.map((mesh) => mesh.geometry)).forEach(repairBrainWinding);
+      const originals = new Set(meshes.flatMap((mesh) =>
+        Array.isArray(mesh.material) ? mesh.material : [mesh.material]));
+      stabilizeBrainDepth(meshes);
+      // Clones retain the textures; dispose only the replaced material objects.
+      originals.forEach((material) => material.dispose());
+    }
 
     let mixer: THREE.AnimationMixer | null = null;
     if (gltf.animations.length) {

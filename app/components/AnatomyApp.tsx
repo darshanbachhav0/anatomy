@@ -23,7 +23,6 @@ import { Toast } from "./shared/Toast";
 import { LessonsView } from "./lessons/LessonsView";
 import { LibraryView } from "./library/LibraryView";
 import { AnatomySheet } from "./library/AnatomySheet";
-import { NotesView } from "./notes/NotesView";
 import { ProfileMenu } from "./navigation/ProfileMenu";
 import { GlobalSearch } from "./navigation/GlobalSearch";
 import { ProgressView } from "./profile/ProgressView";
@@ -32,7 +31,6 @@ import { SettingsView } from "./profile/SettingsView";
 import { AboutView } from "./profile/AboutView";
 import { matchesSearch } from "../lib/search";
 
-const FullBodyAtlas = lazy(() => import("./atlas/FullBodyAtlas"));
 const DentalView = lazy(() => import("./dental/DentalView"));
 const StudyAtlasView = lazy(() => import("./study-atlas/StudyAtlasView"));
 
@@ -98,13 +96,11 @@ export function AnatomyApp() {
 
   const viewLabels: Record<MainView, string> = {
     explore: "Explorar",
-    atlas: "Atlas 3D",
     dental: "Odontología",
     exploration: "Exploración",
     movements: "Movimientos",
     lessons: "Lecciones",
     library: "Biblioteca",
-    notes: "Apuntes",
     progress: "Mi progreso",
     favorites: "Mis favoritos",
     settings: "Configuración",
@@ -228,14 +224,10 @@ export function AnatomyApp() {
           </dl>
           <div className="medical-note" data-reveal><Stethoscope size={16} /><p><b>Importancia médica</b>{organ.medical}</p></div>
           <div className="fun-note" data-reveal><Sparkles size={15} /><p><b>¿Sabías que…?</b>{organ.funFact}</p></div>
-          <div className="source-note" data-reveal><BookOpen size={15} /><p><b>Sustento</b>{organ.references}</p></div>
+          <div className="source-note" data-reveal><BookOpen size={15} /><p><b>Referencia</b>{organ.references}</p></div>
         </aside>
       </div>
-      </> : activeView === "atlas" ? (
-        <Suspense fallback={<section className="content-view" role="status">Cargando el laboratorio anatómico…</section>}>
-          <FullBodyAtlas initialScope="body" onBack={() => setActiveView("explore")} onViewOrgan={selectOrgan} />
-        </Suspense>
-      ) : activeView === "dental" ? (
+      </> : activeView === "dental" ? (
         <Suspense fallback={<section className="content-view" role="status">Cargando el laboratorio de odontología…</section>}>
           <DentalView />
         </Suspense>
@@ -259,16 +251,6 @@ export function AnatomyApp() {
           onToggleFavorite={toggleFavorite}
           onViewOrgan={selectOrgan}
           onOpenSheet={setSheetOrganId}
-        />
-      ) : activeView === "notes" ? (
-        <NotesView
-          notes={data.notes}
-          selectedOrganId={organId}
-          confirmDelete={data.settings.confirmNoteDelete}
-          onSave={student.saveNote}
-          onDelete={student.deleteNote}
-          onViewOrgan={selectOrgan}
-          onNotify={setToast}
         />
       ) : activeView === "progress" ? (
         <ProgressView data={data} onViewOrgan={selectOrgan} />

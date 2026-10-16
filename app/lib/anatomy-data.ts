@@ -46,7 +46,7 @@ export type Organ = {
   /** Venous drainage, labelled "Vascularización" in the course material. */
   venousDrainage: string;
   funFact: string;
-  /** Bibliographic support ("Sustento") for the organ's information. */
+  /** Bibliographic support ("Referencia") for the organ's information. */
   references: string;
   /** Short forms for quiz options and library cards. */
   summary: { function: string; location: string; bloodSupply: string; size: string };

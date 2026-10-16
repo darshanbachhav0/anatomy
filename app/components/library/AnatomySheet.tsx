@@ -35,7 +35,7 @@ export function AnatomySheet({ organ, favorite, onToggleFavorite, onViewOrgan, o
         </div>
         <section className="sheet-section"><h2>Estructuras anatómicas</h2><div className="structure-list">{organ.hotspots.map((hotspot) => <span key={hotspot.id}><b>{hotspot.label}</b>{hotspot.detail}</span>)}</div></section>
         <section className="sheet-columns"><div><h2><Stethoscope size={18} /> Importancia médica</h2><p>{organ.medical}</p><ul>{organ.conditions.map((condition) => <li key={condition}>{condition}</li>)}</ul></div><aside><span>¿Sabías que…?</span><p>{organ.funFact}</p></aside></section>
-        <p className="sheet-references"><BookOpen size={15} /><span><b>Sustento</b>{organ.references}</span></p>
+        <p className="sheet-references"><BookOpen size={15} /><span><b>Referencia</b>{organ.references}</span></p>
         <footer>
           <button type="button" className={`secondary-action ${favorite ? "active" : ""}`} onClick={onToggleFavorite}><Heart size={15} fill={favorite ? "currentColor" : "none"} /> {favorite ? "En favoritos" : "Guardar"}</button>
           <button type="button" className="primary-action" onClick={onViewOrgan}>Ver en 3D <ArrowRight size={15} /></button>

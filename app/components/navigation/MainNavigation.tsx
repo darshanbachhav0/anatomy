@@ -1,14 +1,12 @@
-import { Activity, BookOpen, Compass, Layers3, LibraryBig, NotebookPen, Scan, Smile } from "lucide-react";
+import { Activity, BookOpen, Compass, LibraryBig, Scan, Smile } from "lucide-react";
 
 export type MainView =
   | "explore"
-  | "atlas"
   | "dental"
   | "exploration"
   | "movements"
   | "lessons"
   | "library"
-  | "notes"
   | "progress"
   | "favorites"
   | "settings"
@@ -16,13 +14,11 @@ export type MainView =
 
 const ITEMS = [
   { id: "explore", label: "Explorar", icon: Compass },
-  { id: "atlas", label: "Atlas 3D", icon: Layers3 },
   { id: "dental", label: "Odontología", icon: Smile },
   { id: "exploration", label: "Exploración", icon: Scan },
   { id: "movements", label: "Movimientos", icon: Activity },
   { id: "lessons", label: "Lecciones", icon: BookOpen },
   { id: "library", label: "Biblioteca", icon: LibraryBig },
-  { id: "notes", label: "Apuntes", icon: NotebookPen },
 ] as const;
 
 export function MainNavigation({ active, onNavigate }: { active: MainView; onNavigate: (view: MainView) => void }) {

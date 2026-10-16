@@ -27,7 +27,7 @@ export function OrganResourcesPanel({ organ, onClose }: { organ: Organ; onClose:
         </header>
         <ResourceList title="Libros" icon={<BookOpen size={18} />} items={books} />
         <ResourceList title="Artículos de investigación" icon={<FileText size={18} />} items={papers} />
-        <p className="resources-note"><b>Sustento del curso</b>{organ.references}</p>
+        <p className="resources-note"><b>Referencia del curso</b>{organ.references}</p>
       </section>
     </div>
   );

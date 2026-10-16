@@ -40,7 +40,7 @@ test("renderiza la experiencia anatómica de UMA en español", async () => {
   assert.match(html, /Corazón/);
   assert.match(html, /Datos esenciales/);
   assert.match(html, /og-uma\.png/);
-  assert.doesNotMatch(html, /Anatomy Atelier/);
+  assert.doesNotMatch(html, /Anatomy Atelier|Apuntes|Atlas 3D/);
 });
 
 test("mantiene centralizados el contenido en español y la identidad UMA", async () => {
@@ -75,10 +75,11 @@ test("incluye navegación funcional, módulos educativos y persistencia versiona
     readFile(new URL("../app/components/navigation/ProfileMenu.tsx", import.meta.url), "utf8"),
   ]);
 
-  for (const label of ["Explorar", "Lecciones", "Biblioteca", "Apuntes"]) {
+  for (const label of ["Explorar", "Lecciones", "Biblioteca"]) {
     assert.match(navigation, new RegExp(label));
   }
-  assert.doesNotMatch(navigation, /Sistemas/);
+  assert.doesNotMatch(navigation, /Sistemas|Apuntes|Atlas 3D/);
+  assert.doesNotMatch(profile, /Mis apuntes/);
   for (const key of ["favorites", "recent-organs", "last-organ", "lesson-progress", "quiz-scores", "notes", "settings"]) {
     assert.match(storage, new RegExp(`uma-anatomy-v1-${key}`));
   }
@@ -139,7 +140,7 @@ test("los 9 órganos usan la información del documento EXPLORAR ANATOMÍA", asy
   for (const field of ["innervation", "venousDrainage", "references", "summary"]) {
     assert.equal(data.match(new RegExp(`\n    ${field}: `, "g"))?.length, 9, field);
   }
-  for (const label of ["Inervación", "Vascularización", "Sustento"]) assert.match(panel, new RegExp(label));
+  for (const label of ["Inervación", "Vascularización", "Referencia"]) assert.match(panel, new RegExp(label));
   assert.doesNotMatch(lessons, /de \$\{organ\.name\.toLowerCase\(\)\}/);
 });
 

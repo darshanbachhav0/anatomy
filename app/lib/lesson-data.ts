@@ -43,7 +43,7 @@ export function getLessonContent(organ: Organ, module: LessonModule) {
     function: [`Función: ${organ.function}`, `Cada día: ${organ.dailyFact}`],
     structures: [`Estructuras que puedes reconocer en el modelo 3D: ${structures}.`, "En la pestaña Explorar, gira el modelo y usa las herramientas Corte y Capas para observar su forma y su organización."],
     clinical: [organ.medical, `Afecciones asociadas: ${listJoin(organ.conditions.map(inSentence))}.`],
-    review: [`Ubicación: ${organ.summary.location}. Función: ${organ.summary.function}. Irrigación: ${organ.summary.bloodSupply}.`, `Sustento: ${organ.references}`],
+    review: [`Ubicación: ${organ.summary.location}. Función: ${organ.summary.function}. Irrigación: ${organ.summary.bloodSupply}.`, `Referencia: ${organ.references}`],
     quiz: ["Responde cinco preguntas introductorias y revisa la explicación después de cada respuesta."],
   };
   return {

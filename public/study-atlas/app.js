@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { initialResource } from './startup.js';
+import { repairSurfaceWinding } from './geometry-repair.js';
 
 const $ = id => document.getElementById(id);
 const esc = value => String(value ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -201,8 +202,15 @@ async function loadEntry(entry){
     const sourceNames=new Map((gltf.parser.json.nodes||[]).filter(n=>n.extras?.unitySource).map(n=>[n.extras.unitySource.file+':'+n.extras.unitySource.gameObjectId,n.name]));
     gltf.scene.traverse(o=>{if(o.userData.unitySource)o.userData.atlasName=sourceNames.get(o.userData.unitySource.file+':'+o.userData.unitySource.gameObjectId)||o.name;});
     const structureMap=new Map();
+    const repairedGeometry=new Set();
     gltf.scene.traverse(o=>{
-      if(!o.isMesh)return;state.meshes.push(o);const id=anatomyId(o);let node=o;while(node.parent&&!node.userData.unitySource&&!node.userData.anatomicalIds?.length)node=node.parent;
+      if(!o.isMesh)return;
+      // Reversed skin sections must not flip the lighting normal and create
+      // dark patches against their neighbouring sections.
+      if(materialArray(o).some(m=>/Skins_Atlas-.*Skin,/i.test(m.name))&&!repairedGeometry.has(o.geometry)){
+        repairSurfaceWinding(o.geometry);repairedGeometry.add(o.geometry);
+      }
+      state.meshes.push(o);const id=anatomyId(o);let node=o;while(node.parent&&!node.userData.unitySource&&!node.userData.anatomicalIds?.length)node=node.parent;
       const original=originalName(node)||o.name;const data=state.anatomy[id]||{};
       const system=classify(o),key=id?system+':'+id:system+':'+node.uuid;
       if(!structureMap.has(key))structureMap.set(key,{key,id,label:data.es||cleanName(original),latin:data.latin||'',description:data.description||'',english:data.en||cleanName(original),system,meshes:[],original});

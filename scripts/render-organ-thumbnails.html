@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>Organ model snapshots</title>
+<style>body{font:16px system-ui;background:#f8f4f5;margin:24px}main{display:grid;grid-template-columns:repeat(3,280px);gap:16px}figure{margin:0;background:white;border-radius:16px;padding:12px}img{width:256px;height:256px;object-fit:contain}figcaption{text-align:center}</style>
+<script type="importmap">{"imports":{"three":"/study-atlas/vendor/three/three.module.js","three/addons/":"/study-atlas/vendor/three/addons/"}}</script>
+<h1>Snapshots of the nine local organ models</h1><p id="status">Rendering…</p><main></main>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {repairSurfaceWinding} from '/study-atlas/geometry-repair.js';
+const organs=['heart','brain','lungs','liver','kidneys','eyeball','intestine','pancreas','skin'];
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.setSize(512,512);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.02;
+const scene=new THREE.Scene();scene.add(new THREE.AmbientLight(0xffffff,.6));scene.add(new THREE.HemisphereLight(0xfff8ee,0x33252d,.85));
+for(const [color,intensity,position] of [[0xfff3e7,3.5,[4.8,6.5,6.8]],[0xe6ecff,1.5,[-4.5,1.2,5.2]],[0xffb7a5,1.6,[-4,3.5,-5.5]]]){const light=new THREE.DirectionalLight(color,intensity);light.position.set(...position);scene.add(light);}
+const camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,.35,8.2);camera.lookAt(0,0,0);
+const loader=new GLTFLoader();
+try{
+for(const id of organs){
+ document.querySelector('#status').textContent='Rendering '+id;
+ const gltf=await loader.loadAsync('/models/'+id+'.glb'),model=gltf.scene,box=new THREE.Box3().setFromObject(model),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3()),scale=3.8/Math.max(size.x,size.y,size.z);
+ model.scale.setScalar(scale);model.position.copy(center.multiplyScalar(-scale));
+ const pivot=new THREE.Group();pivot.add(model);pivot.rotation.set(.05,-.28,0);scene.add(pivot);
+ const seen=new Set();let depthIndex=0;
+ model.traverse(mesh=>{if(!mesh.isMesh)return;if(id==='brain')repairSurfaceWinding(mesh.geometry);mesh.frustumCulled=false;
+ const materials=Array.isArray(mesh.material)?mesh.material:[mesh.material];
+ for(const material of materials){if(seen.has(material))continue;seen.add(material);material.transparent=false;material.opacity=1;material.depthWrite=true;material.side=THREE.FrontSide;
+ if(material.isMeshStandardMaterial){material.roughness=THREE.MathUtils.clamp(material.roughness??.5,.42,.62);material.metalness=0;material.emissive.set(0);material.emissiveIntensity=0;material.envMapIntensity=.32;if(material.isMeshPhysicalMaterial){material.clearcoat=.08;material.clearcoatRoughness=.62;material.transmission=0;material.thickness=0;}if(material.normalMap)material.normalScale.multiplyScalar(.62);
+ for(const map of [material.map,material.normalMap,material.roughnessMap,material.metalnessMap,material.aoMap]){if(!map)continue;map.anisotropy=Math.min(8,renderer.capabilities.getMaxAnisotropy());map.generateMipmaps=true;map.minFilter=THREE.LinearMipmapLinearFilter;map.needsUpdate=true;}}
+ }
+ if(id==='brain'){mesh.material=materials.map(m=>{const c=m.clone();c.polygonOffset=true;c.polygonOffsetFactor=0;c.polygonOffsetUnits=-2*(depthIndex+1);return c;});if(materials.length===1)mesh.material=mesh.material[0];depthIndex++;}
+ });
+ // Keep the original orientation, and fit the rotated bounds with a small margin.
+ pivot.updateMatrixWorld(true);const bounds=new THREE.Box3().setFromObject(pivot),extent=bounds.getSize(new THREE.Vector3());camera.position.set(0,.35,Math.max(extent.x,extent.y)/(2*Math.tan(THREE.MathUtils.degToRad(17)))*1.13+extent.z/2);camera.lookAt(0,0,0);
+ renderer.render(scene,camera);const figure=document.createElement('figure'),img=document.createElement('img');img.id=id;img.alt=id+' actual 3D model';img.src=renderer.domElement.toDataURL('image/png');const caption=document.createElement('figcaption');caption.textContent=id;figure.append(img,caption);document.querySelector('main').append(figure);pivot.removeFromParent();
+ const geometry=new Set(),materials=new Set(),textures=new Set();model.traverse(m=>{if(!m.isMesh)return;geometry.add(m.geometry);for(const material of (Array.isArray(m.material)?m.material:[m.material])){materials.add(material);for(const v of Object.values(material))if(v?.isTexture)textures.add(v);}});geometry.forEach(g=>g.dispose());materials.forEach(m=>m.dispose());textures.forEach(t=>t.dispose());
+}
+document.querySelector('#status').textContent='Ready: 9 model snapshots';renderer.dispose();
+}catch(error){document.querySelector('#status').textContent='Error: '+error.message;throw error;}
+</script></html>
