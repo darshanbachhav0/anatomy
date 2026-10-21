@@ -16,7 +16,7 @@
     "build": "vinext build",
     "build:next": "next build",
     "start": "vinext start",
-    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/atlas.test.mjs tests/study-atlas.test.mjs tests/brain-depth.test.mjs tests/brain-geometry.test.mjs",
+    "test": "npm run build && node --test tests/rendered-html.test.mjs tests/atlas.test.mjs tests/study-atlas.test.mjs tests/brain-depth.test.mjs tests/brain-geometry.test.mjs tests/body-geometry.test.mjs",
     "test:study-atlas": "node --test --test-isolation=none tests/study-atlas.test.mjs",
     "test:atlas": "node --test tests/atlas.test.mjs",
     "atlas:translate": "node scripts/build-atlas-spanish.mjs",

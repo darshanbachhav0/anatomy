@@ -6,13 +6,14 @@
 <script type="module">
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {MeshoptDecoder} from 'three/addons/libs/meshopt_decoder.module.js';
 import {repairSurfaceWinding} from '/study-atlas/geometry-repair.js';
 const organs=['heart','brain','lungs','liver','kidneys','eyeball','intestine','pancreas','skin'];
 const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});renderer.setSize(512,512);renderer.outputColorSpace=THREE.SRGBColorSpace;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.02;
 const scene=new THREE.Scene();scene.add(new THREE.AmbientLight(0xffffff,.6));scene.add(new THREE.HemisphereLight(0xfff8ee,0x33252d,.85));
 for(const [color,intensity,position] of [[0xfff3e7,3.5,[4.8,6.5,6.8]],[0xe6ecff,1.5,[-4.5,1.2,5.2]],[0xffb7a5,1.6,[-4,3.5,-5.5]]]){const light=new THREE.DirectionalLight(color,intensity);light.position.set(...position);scene.add(light);}
 const camera=new THREE.PerspectiveCamera(34,1,.1,100);camera.position.set(0,.35,8.2);camera.lookAt(0,0,0);
-const loader=new GLTFLoader();
+const loader=new GLTFLoader().setMeshoptDecoder(MeshoptDecoder);
 try{
 for(const id of organs){
  document.querySelector('#status').textContent='Rendering '+id;

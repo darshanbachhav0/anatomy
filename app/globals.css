@@ -526,7 +526,7 @@ button:focus-visible, input:focus-visible, canvas:focus-visible {
   background: radial-gradient(circle at 35% 28%, #fff, color-mix(in srgb, var(--item-accent), white 84%));
   box-shadow: inset 0 0 0 1px rgba(121,86,67,.07);
 }
-.organ-glyph img { width: 100%; height: 100%; object-fit: cover; mix-blend-mode: multiply; transform: scale(1.14); }
+.organ-glyph img { width: 100%; height: 100%; object-fit: contain; }
 .organ-item b { display: block; font: 500 17px/1.1 var(--font-serif), serif; }
 .organ-item small { display: block; margin-top: 5px; color: var(--muted); font-size: 10px; }
 .organ-item .favorite { color: var(--uma-pink); }

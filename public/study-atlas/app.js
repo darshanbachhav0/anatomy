@@ -141,9 +141,12 @@ function initRenderer(){
   $('canvas-host').append(renderer.domElement);
   controls=new OrbitControls(camera,renderer.domElement);controls.enableDamping=true;controls.dampingFactor=.075;controls.autoRotateSpeed=.8;controls.screenSpacePanning=true;
   const hemi=new THREE.HemisphereLight(0xc9e7ff,0x4d3941,2.3);scene.add(hemi);
-  const key=new THREE.DirectionalLight(0xffeee1,3.7);key.position.set(4,6,8);scene.add(key);
-  const fill=new THREE.DirectionalLight(0xa5d5f9,2.1);fill.position.set(-5,2,-2);scene.add(fill);
-  const rim=new THREE.DirectionalLight(0xdef9ff,1.7);rim.position.set(1,3,-7);scene.add(rim);
+  // Equal white lights on either side preserve the atlas colours without
+  // giving one half a warm tint and the other a cool tint.
+  for(const z of [-7,7])for(const x of [-4,4]){
+    const light=new THREE.DirectionalLight(0xffffff,1.85);
+    light.position.set(x,6,z);scene.add(light);
+  }
   scene.add(new THREE.AmbientLight(0xffffff,.45));
   grid=new THREE.GridHelper(12,30,0x3d687f,0x223d52);grid.visible=false;grid.material.transparent=true;grid.material.opacity=.34;scene.add(grid);
   selectionBox=new THREE.Box3Helper(new THREE.Box3(),0x79d9eb);selectionBox.visible=false;selectionBox.material.depthTest=false;selectionBox.material.transparent=true;selectionBox.material.opacity=.42;scene.add(selectionBox);
@@ -205,9 +208,9 @@ async function loadEntry(entry){
     const repairedGeometry=new Set();
     gltf.scene.traverse(o=>{
       if(!o.isMesh)return;
-      // Reversed skin sections must not flip the lighting normal and create
-      // dark patches against their neighbouring sections.
-      if(materialArray(o).some(m=>/Skins_Atlas-.*Skin,/i.test(m.name))&&!repairedGeometry.has(o.geometry)){
+      // The export reverses mirrored muscles and other structures as well as
+      // skin. Repair each geometry once, preserving its authored surface normals.
+      if(!repairedGeometry.has(o.geometry)){
         repairSurfaceWinding(o.geometry);repairedGeometry.add(o.geometry);
       }
       state.meshes.push(o);const id=anatomyId(o);let node=o;while(node.parent&&!node.userData.unitySource&&!node.userData.anatomicalIds?.length)node=node.parent;

@@ -202,7 +202,6 @@ export function AnatomyApp() {
         <OrganViewer organ={organ} autoRotate={data.settings.autoRotate} />
 
         <aside className="info-panel" ref={contentRef}>
-          <div className="info-kicker" data-reveal><Heart size={13} fill="currentColor" /> Órgano seleccionado</div>
           <div className="info-title-row" data-reveal>
             <div><h1>{organ.name}</h1><em>{organ.poetic}</em></div>
             <span className="specimen-stamp">
