@@ -12,6 +12,8 @@
     "prebuild:next": "npm run build:dental",
     "build:dental": "node scripts/build-dental.mjs",
     "test:dental": "npm test --workspace dental-scope",
+    "test:echo": "node --test tests/echo.test.mjs",
+    "prepare:echo": "node scripts/prepare-echo.mjs",
     "dev": "vinext dev",
     "build": "vinext build",
     "build:next": "next build",

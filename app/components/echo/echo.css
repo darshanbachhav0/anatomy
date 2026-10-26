@@ -1,0 +1,3 @@
+.uma-echo-module{max-width:1720px;margin:16px auto 0;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:var(--canvas)}
+.uma-echo-module iframe{display:block;width:100%;height:calc(100dvh - 164px);min-height:520px;border:0;background:#f7f4f6}
+@media(max-width:780px){.uma-echo-module{margin-top:12px;border-radius:12px}.uma-echo-module iframe{height:calc(100dvh - 170px);min-height:650px}}

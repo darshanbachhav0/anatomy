@@ -1,10 +1,11 @@
-import { Activity, BookOpen, Compass, LibraryBig, Scan, Smile } from "lucide-react";
+import { Activity, BookOpen, Compass, HeartPulse, LibraryBig, Scan, Smile } from "lucide-react";
 
 export type MainView =
   | "explore"
   | "dental"
   | "exploration"
   | "movements"
+  | "echo"
   | "lessons"
   | "library"
   | "progress"
@@ -17,6 +18,7 @@ const ITEMS = [
   { id: "dental", label: "Odontología", icon: Smile },
   { id: "exploration", label: "Exploración", icon: Scan },
   { id: "movements", label: "Movimientos", icon: Activity },
+  { id: "echo", label: "Ecocardiografía", icon: HeartPulse },
   { id: "lessons", label: "Lecciones", icon: BookOpen },
   { id: "library", label: "Biblioteca", icon: LibraryBig },
 ] as const;

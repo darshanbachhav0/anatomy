@@ -4,6 +4,10 @@ A clean full-stack starter running on
 [vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
 Drizzle support.
 
+## Laboratorio UMA de ecocardiografía
+
+Nueva pestaña con la adaptación autorizada del simulador original, recursos locales, identidad UMA y localización española. Consulte [integración y validación](docs/echo-integration.md) y [procedencia y licencias](public/echo/ADAPTACION-UMA.md). Ejecutar `npm run test:echo` para las comprobaciones del módulo.
+
 ## Prerequisites
 
 - Node.js `>=22.13.0`

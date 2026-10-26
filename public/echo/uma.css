@@ -1,0 +1,17 @@
+html:root{--rule:#e5dce0;--muted:#74656c;--paper:#fff;--ink:#20151b;--bg:#f7f4f6;--wash:#fff0f4;--accent:#e5154f;color:#20151b;background:#f7f4f6;accent-color:#e5154f}
+html:root[data-theme=dark]{--rule:#4b333e;--muted:#c4abb8;--paper:#28212a;--ink:#f7f1f4;--bg:#1d1820;--wash:#3b2430;background:#1d1820;color:#f7f1f4}
+.site-header{padding:12px 24px!important;background:var(--paper)!important}
+.brand{display:flex;align-items:center;gap:12px!important;text-decoration:none}
+.brand img{width:102px;height:46px;object-fit:contain;border-radius:3px}
+.brand strong{font:600 13px/1.4 system-ui;border-left:2px solid #e5154f;padding-left:12px;color:var(--ink)}
+.brand small{display:block;font-size:9px;letter-spacing:.08em;color:#a90035}
+button:focus-visible,a:focus-visible,input:focus-visible,#scene:focus-visible{outline-color:#e5154f!important}
+.site-header nav a[aria-current=page],.view-button[aria-pressed=true],.view-family[aria-pressed=true]{background:#fff0f4!important;color:#a90035!important}
+input[type=range]{accent-color:#e5154f}
+#calculator{--marker:#e5154f!important;--accent:#a90035!important;--active:#fff0f4!important}
+[data-theme=dark] #calculator{--accent:#ff8eae!important;--active:#512638!important}
+#views button[aria-pressed=true]{background:#fff0f4!important;color:#a90035!important}
+#controls input[type=range]::-webkit-slider-thumb{background:#e5154f}
+.site-info-resources,.site-info-creator{display:none}
+@media(max-width:580px){.site-header{padding:8px 10px!important;gap:10px!important}.brand img{width:75px;height:36px}.brand strong{font-size:10px;padding-left:8px}.brand small{display:none}.site-header nav{gap:5px!important}.site-header nav a{font-size:10px!important;padding:7px!important}}
+@media(max-width:580px){body>header.site-header{height:auto!important;min-height:82px;flex-wrap:wrap;gap:4px 8px!important}.site-header .brand{flex:1;min-width:0}.site-header nav{order:3;flex-basis:100%;justify-content:center}.site-header nav a{font-size:11px!important}.site-header button{flex-shrink:0}}

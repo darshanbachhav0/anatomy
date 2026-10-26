@@ -33,6 +33,7 @@ import { matchesSearch } from "../lib/search";
 
 const DentalView = lazy(() => import("./dental/DentalView"));
 const StudyAtlasView = lazy(() => import("./study-atlas/StudyAtlasView"));
+const EchoView = lazy(() => import("./echo/EchoView"));
 
 export function AnatomyApp() {
   const student = useUmaStudentData();
@@ -99,6 +100,7 @@ export function AnatomyApp() {
     dental: "Odontología",
     exploration: "Exploración",
     movements: "Movimientos",
+    echo: "Ecocardiografía",
     lessons: "Lecciones",
     library: "Biblioteca",
     progress: "Mi progreso",
@@ -230,6 +232,8 @@ export function AnatomyApp() {
         <Suspense fallback={<section className="content-view" role="status">Cargando el laboratorio de odontología…</section>}>
           <DentalView />
         </Suspense>
+      ) : activeView === "echo" ? (
+        <Suspense fallback={<section className="content-view" role="status">Cargando ecocardiografía…</section>}><EchoView /></Suspense>
       ) : activeView === "exploration" || activeView === "movements" ? (
         <Suspense fallback={<section className="content-view" role="status">Cargando el simulador anatómico…</section>}>
           <StudyAtlasView key={activeView} mode={activeView === "movements" ? "motion" : "explore"} />
