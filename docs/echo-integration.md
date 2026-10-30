@@ -4,6 +4,10 @@ La pestaña **Ecocardiografía** carga `public/echo/index.html` sin reemplazar l
 
 ## Mantenimiento
 
+- `public/echo/atlas-anatomy.js`: reutiliza el catálogo y los buffers de Exploración en `/atlas/models/`. Registra el atlas mediante la envolvente ventricular y una escala uniforme; limita las estructuras al tramo corporal del simulador. No genera copias de modelos en disco.
+- El cargador `lab-QITkds_9.js` aplica el adaptador antes de iniciar la escena; `main-jy7ggAZV.js` utiliza `displayMeshes` solamente para dibujar. `meshes` y los bytes originales se conservan para el escaneo y sus etiquetas; corazón, piel, hígado, poses y volúmenes no cambian. Se comprueba la integridad original antes de adaptar y se calcula el hash del buffer resultante.
+- Se retiró el diálogo «Acerca del simulador UMA» de ambas páginas. Las atribuciones originales permanecen en `assets/ATTRIBUTION.txt`, `assets/credits.json` y `ADAPTACION-UMA.md`; el atlas compartido conserva `/atlas/ATRIBUCION.md` y `/atlas/LICENSE.txt`.
+
 - `scripts/import-echo.mjs`: importa los recursos públicos autorizados. No sobrescribe archivos existentes. La estructura y los hashes pertenecen a la instantánea de octubre de 2026; revisar el manifiesto si cambia el sitio original.
 - `scripts/prepare-echo.mjs`: aplica rutas, metadatos, privacidad y búsqueda española. Es idempotente.
 - `scripts/translate-echo.mjs`: genera el diccionario a partir de textos públicos usando un servicio externo. No se ejecuta durante la compilación ni en el navegador. El diccionario está incluido en el repositorio; no hace falta acceso a traducción para utilizar el módulo.

@@ -1,4 +1,11 @@
 const phrases = {
+  'Tools & resources': 'Herramientas y recursos',
+  'Live practice': 'Práctica en vivo',
+  'Probe Lab could not open': 'No se pudo abrir el laboratorio',
+  'The lab code could not load. Please try again.': 'No se pudo cargar el laboratorio. Inténtalo de nuevo.',
+  'Anatomy download did not finish. Please try again.': 'La descarga de anatomía no terminó. Inténtalo de nuevo.',
+  'Skin preparation did not finish. Please try again.': 'La preparación de la piel no terminó. Inténtalo de nuevo.',
+  'Anatomy integrity check failed.': 'No se pudo verificar la integridad de la anatomía.',
   'Skip': 'Omitir',
   'RA size': 'Tamaño de la AD',
   'LA size': 'Tamaño de la AI',

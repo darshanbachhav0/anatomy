@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFile, stat } from "node:fs/promises";
 import vm from "node:vm";
 import test from "node:test";
+import { useExplorationAnatomy, registration } from '../public/echo/atlas-anatomy.js';
 
 const root = new URL("../public/echo/", import.meta.url);
 const read = (file) => readFile(new URL(file, root), "utf8");
@@ -12,6 +13,39 @@ const context = vm.createContext({
 vm.runInContext(await read("translations-es.js"), context);
 vm.runInContext(await read("uma-es.js"), context);
 const translate = (value) => vm.runInContext(`translate(${JSON.stringify(value)})`, context);
+
+test('Exploration display anatomy preserves original scanning meshes and poses', async () => {
+  const original = JSON.parse(await read('assets/anatomy.json'));
+  const bytes = await readFile(new URL('assets/anatomy.bin', root));
+  const buffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
+  const poses = JSON.parse(await read('assets/poses.json'));
+  const atlas = JSON.parse(await readFile(new URL('../atlas/models/atlas.json', root), 'utf8'));
+  const fetcher = async url => new Response(await readFile(new URL(`../${url.slice(1)}`, root)));
+  const [manifest, combined, resultPoses] = await useExplorationAnatomy([original, buffer, poses], fetcher);
+  assert.equal(resultPoses, poses);
+  assert.equal(manifest.meshes, original.meshes);
+  assert.deepEqual(new Uint8Array(combined, 0, buffer.byteLength), new Uint8Array(buffer));
+  const retained = original.meshes.filter(mesh => !['bone', 'vessels'].includes(mesh.layer));
+  assert.deepEqual(manifest.displayMeshes.slice(0, retained.length), retained);
+  const atlasIds = new Set(atlas.parts.map(part => part.id));
+  const additions = manifest.displayMeshes.slice(retained.length);
+  assert.ok(additions.length > 100);
+  assert.ok(additions.every(mesh => atlasIds.has(mesh.name)));
+  assert.ok(additions.some(mesh => mesh.layer === 'bone'));
+  assert.ok(additions.some(mesh => mesh.layer === 'vessels'));
+  const transform = registration(atlas, original, buffer);
+  assert.ok(transform.scale > .9 && transform.scale < 1.2);
+  assert.ok(transform.offset[1] < -.7 && transform.offset[1] > -1.1);
+  const hash = Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', combined)), n => n.toString(16).padStart(2, '0')).join('');
+  assert.equal(manifest.binarySHA256, hash);
+  await assert.rejects(useExplorationAnatomy([original, new ArrayBuffer(buffer.byteLength), poses], fetcher), /integridad/);
+});
+
+test('removed about box does not remain in either echo page', async () => {
+  for (const page of ['index.html', 'calculators/index.html']) {
+    assert.doesNotMatch(await read(page), /id="about"|id="about-button"|Explora la ecocardiografía\./);
+  }
+});
 
 test("Spanish localization is idempotent, including translated English prefixes", () => {
   for (const text of ["Volume", "Cancel", "Reference view", "Clear", "Ejection fraction", "Body surface area"]) {
