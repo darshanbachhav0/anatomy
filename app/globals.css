@@ -585,6 +585,8 @@ button:focus-visible, input:focus-visible, canvas:focus-visible {
 .tool-button.active { color: var(--uma-pink); background: var(--uma-pink-soft); }
 .tool-button:disabled { opacity: .32; cursor: not-allowed; }
 .tool-button:nth-last-child(1) { border-top: 1px solid var(--line); border-radius: 0 0 12px 12px; }
+.viewer-tools .tool-button:only-child { border-top: 0; border-radius: 12px; }
+.viewer-tools .tool-button:only-child span { line-height: 1.25; }
 
 /* Anchor point only — the viewer writes the transform each frame so tracking a
    spinning model costs no React renders. The dots themselves live in the canvas. */

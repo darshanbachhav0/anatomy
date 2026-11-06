@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Layers3, Maximize2, ScanLine } from "lucide-react";
+import { Maximize2, ScanLine } from "lucide-react";
 import { organPhrase, type Organ } from "../lib/anatomy-data";
 import type { AnatomyViewer } from "../lib/three/viewer";
 
@@ -18,7 +18,7 @@ export function OrganViewer({ organ, autoRotate }: Props) {
   const [loading, setLoading] = useState(true);
   const [progress, setProgress] = useState(0);
   const [slowLoad, setSlowLoad] = useState(false);
-  const [activeTools, setActiveTools] = useState<Set<string>>(() => new Set());
+  const [sectionAndLayersEnabled, setSectionAndLayersEnabled] = useState(false);
 
   // A typical organ is ready well inside a second — flashing a loading panel for
   // that reads as jank. It only appears if the fetch is genuinely slow; the flag
@@ -78,21 +78,11 @@ export function OrganViewer({ organ, autoRotate }: Props) {
 
   useEffect(() => viewerRef.current?.setAutoRotate(autoRotate), [autoRotate]);
 
-  const handleTool = (tool: string) => {
+  const handleSectionAndLayers = () => {
     const viewer = viewerRef.current;
-    if (!viewer) return;
-    const enabled = tool === "section" ? viewer.toggleCrossSection() : viewer.toggleLayers();
-    setActiveTools((current) => {
-      const next = new Set(current);
-      if (enabled) next.add(tool); else next.delete(tool);
-      return next;
-    });
+    if (!viewer || loading) return;
+    setSectionAndLayersEnabled(viewer.toggleSectionAndLayers());
   };
-
-  const tools = [
-    { id: "section", label: "Corte", icon: ScanLine },
-    { id: "layers", label: "Capas", icon: Layers3 },
-  ];
 
   return (
     <section className="viewer-shell" aria-label={`Visor interactivo ${organPhrase(organ, "de")}`}>
@@ -100,22 +90,18 @@ export function OrganViewer({ organ, autoRotate }: Props) {
       <div ref={mountRef} className="three-mount" />
 
       <div className="viewer-tools" aria-label="Herramientas del visor 3D">
-        {tools.map(({ id, label, icon: Icon }) => {
-          const pressed = activeTools.has(id);
-          return (
           <button
-            key={id}
             type="button"
-            className={`tool-button ${pressed ? "active" : ""}`}
-            onClick={() => handleTool(id)}
-            aria-pressed={pressed}
-            aria-label={label}
-            title={label}
+            className={`tool-button ${sectionAndLayersEnabled ? "active" : ""}`}
+            onClick={handleSectionAndLayers}
+            aria-pressed={sectionAndLayersEnabled}
+            aria-label="Corte y Capas"
+            title="Corte y Capas"
+            disabled={loading}
           >
-            <Icon size={19} strokeWidth={1.65} />
-            <span>{label}</span>
+            <ScanLine size={19} strokeWidth={1.65} />
+            <span>Corte y Capas</span>
           </button>
-        );})}
       </div>
 
       {loading && slowLoad && (

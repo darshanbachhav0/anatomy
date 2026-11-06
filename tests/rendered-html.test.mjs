@@ -122,7 +122,7 @@ test("integra un modo disección reutilizable sin inventar estructuras ausentes"
 test("el visor de Explorar muestra el órgano sin puntos ni herramientas retiradas", async () => {
   const organViewer = await readFile(new URL("../app/components/OrganViewer.tsx", import.meta.url), "utf8");
   assert.match(organViewer, /setOrgan\(organ\.model, \[\], organ\.accent\)/);
-  for (const label of ["Corte", "Capas"]) assert.match(organViewer, new RegExp(`label: "${label}"`));
+  assert.match(organViewer, /aria-label="Corte y Capas"/);
   for (const label of ["Girar", "Acercar", "Aislar", "Disección", "Comparar", "Reiniciar", "Giro automático"]) {
     assert.doesNotMatch(organViewer, new RegExp(label));
   }

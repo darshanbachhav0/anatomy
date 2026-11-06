@@ -579,6 +579,7 @@ export class AnatomyViewer {
   }
 
   toggleCrossSection() {
+    gsap.killTweensOf(this.clipPlane);
     this.crossSection = !this.crossSection;
     this.applyClipping(this.crossSection);
     gsap.fromTo(
@@ -618,6 +619,15 @@ export class AnatomyViewer {
     this.applyLayerState();
     this.dirty = true;
     return this.layersEnabled;
+  }
+
+  toggleSectionAndLayers() {
+    if (!this.organ) return false;
+    const enabled = this.toggleCrossSection();
+    this.layersEnabled = enabled;
+    this.applyLayerState();
+    this.dirty = true;
+    return enabled;
   }
 
   private applyLayerState() {

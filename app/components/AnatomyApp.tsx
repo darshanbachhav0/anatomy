@@ -7,7 +7,6 @@ import {
   ArrowRight,
   BookOpen,
   Bookmark,
-  Heart,
   LibraryBig,
   Search,
   Sparkles,
@@ -188,7 +187,6 @@ export function AnatomyApp() {
                   <OrganArt organ={item} asset="thumb" alt={`Miniatura anatómica ${organPhrase(item, "de")}`} size={47} />
                 </span>
                 <span><b>{item.name}</b><small>{item.system}</small></span>
-                {data.favorites.includes(item.id) && <Heart className="favorite" size={14} fill="currentColor" />}
               </button>
             ))}
             {filteredOrgans.length === 0 && <div className="organ-empty"><Search size={20} /><p>No encontramos órganos con esos filtros.</p><button type="button" onClick={() => { setQuery(""); setSystemFilter("all"); }}>Limpiar filtros</button></div>}
