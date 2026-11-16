@@ -1,175 +1,188 @@
-# vinext-starter
+<div align="center">
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+# UMA · Atlas Anatómico 3D
 
-## Laboratorio UMA de ecocardiografía
+**Explore human anatomy. Understand movement. Connect structure with function.**
 
-Nueva pestaña con la adaptación autorizada del simulador original, recursos locales, identidad UMA y localización española. Consulte [integración y validación](docs/echo-integration.md) y [procedencia y licencias](public/echo/ADAPTACION-UMA.md). Ejecutar `npm run test:echo` para las comprobaciones del módulo.
+An interactive learning platform for the students of **Universidad María Auxiliadora**, Lima, Peru.
 
-## Copyright and release records
+![UMA Atlas Anatómico 3D — Universidad María Auxiliadora](public/og-uma.png)
 
-See [COPYRIGHT.md](COPYRIGHT.md) and [the remediation record](COPYRIGHT_REMEDIATION.md). The existing audit reports retain their original findings; corrected notices do not supply missing author permissions.
+![Node.js 24](https://img.shields.io/badge/Node.js-24-339933?style=flat-square&logo=nodedotjs&logoColor=white)
+![React 19](https://img.shields.io/badge/React-19-149ECA?style=flat-square&logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![Three.js](https://img.shields.io/badge/Three.js-000000?style=flat-square&logo=threedotjs&logoColor=white)
+![Interface in Spanish](https://img.shields.io/badge/Interface-Espa%C3%B1ol-E5154F?style=flat-square)
 
-- `npm run licenses:generate`: prepare original notices for the installed lockfile, offline. Also runs before normal development/builds.
-- `npm run licenses:check`: detect stale or missing generated notices.
-- `npm run test:compliance`: verify notice coverage, unchanged decoders and credit access.
-- `npm run copyright:status`: show unresolved rights evidence without blocking development.
-- `npm run check:copyright:release`: explicitly check release readiness; currently fails because permissions remain unverified.
-- `npm run licenses:sync-sources` / `npm run licenses:sync-packages`: explicit network maintenance of upstream license evidence. Review and retain the generated records; these commands do not run during builds.
-- `python scripts/package-echo-notices.py`: attach notices to the existing local partial Echo ZIP, preserving its original source entries. Does not authorize redistribution.
+[Overview](#overview) · [Learning modules](#learning-modules) · [Getting started](#getting-started) · [Deployment](#deployment) · [Credits](#credits-and-usage)
 
-## Prerequisites
+</div>
 
-- Node.js `24.x` (also selected on Vercel through `package.json`)
+## Overview
 
-Vercel runs `npm run build:next`, including the dental build and offline notice
-generation. Commit `.gitattributes` with the license files: it preserves the
-original bytes of checksum-verified notices and decoders across Windows and
-Linux checkouts. In particular, the upstream DM Sans license uses CRLF line
-endings; converting it to LF causes the notice-generation integrity check to
-fail. Keep that check enabled.
+UMA Atlas Anatómico 3D brings interactive organ models, whole-body exploration, anatomical movement, dental anatomy, and echocardiography practice into one browser-based environment. It is designed to support free, publicly accessible anatomy education for the UMA community, with a Spanish interface and the university's visual identity.
 
-## Quick Start
+Students can examine structures from different angles, explore their relationships, review guided lessons, and check their understanding through quizzes. Reference material, favorites, and saved progress help them return to a topic and continue studying at their own pace.
+
+| Organ models | Anatomical movements | Learning environment |
+| :---: | :---: | :---: |
+| **9** interactive organs | **58** animations | **Spanish** interface |
+
+## Learning modules
+
+| Module | Learning experience |
+| --- | --- |
+| **Explorar** | Inspect 3D organs with rotation, zoom, anatomical points of interest, illustrations, and supporting explanations. |
+| **Exploración** | Explore whole-body anatomy through systems, male and female configurations, structure selection, isolation, opacity, and section controls. |
+| **Movimientos** | Study anatomical movement with searchable animations, regional filters, playback controls, speed adjustment, and a timeline. |
+| **Odontología** | Examine teeth, internal dental anatomy, layers, and sections through an integrated 3D dental viewer. |
+| **Ecocardiografía** | Practice with an echocardiography simulator, educational guidance, clinical video examples, and reference calculators. |
+| **Lecciones** | Work through organ-focused learning material and quizzes, with lesson completion and saved scores. |
+| **Biblioteca** | Find anatomy books, articles, and organ-specific reference resources. |
+
+The organ collection includes the **heart, brain, lungs, liver, kidneys, eye, intestine, pancreas, and skin**.
+
+### Built for independent study
+
+- **Find a structure quickly** with global search and organ filters.
+- **Resume a study session** using recently viewed organs and the last explored model.
+- **Keep useful topics close** with favorites and a personal progress view.
+- **Learn across screen sizes** with desktop and mobile navigation, plus touch interaction in the viewers.
+
+Study progress, quiz scores, favorites, settings, and notes are stored locally in the browser. The current application does not require an account or a configured database; local study data does not synchronize between devices and can be removed by clearing browser storage.
+
+## Technology
+
+| Layer | Technologies |
+| --- | --- |
+| Application | React 19, TypeScript, Next.js 16 / Vinext |
+| 3D visualization | Three.js, WebGL, GLB models, geometry and texture decoders |
+| Interface | Tailwind CSS 4, GSAP, Lucide icons |
+| Student data | Browser `localStorage` |
+| Production targets | Next.js on Vercel; Vinext production build |
+
+The specialized viewers and their assets are hosted with the application. Optional Cloudflare D1/Drizzle scaffolding is included for future server-side features; it is not required for the current learning experience.
+
+## Getting started
+
+### Requirements
+
+- **Node.js 24.x** and npm.
+- A modern browser with **WebGL** enabled.
+- The complete repository, including `public/` and `vendor/dental-scope/`.
+
+### Run locally
 
 ```bash
-npm install
-npm run dev
+git clone https://github.com/darshanbachhav0/anatomy.git
+cd anatomy
+npm ci
+npm run dev -- --port 3001
+```
+
+Open **http://localhost:3001** in your browser.
+
+The development command automatically builds the dental module and prepares third-party notices. Install dependencies from the repository root so npm also installs the dental workspace.
+
+## Deployment
+
+### Vercel
+
+The repository includes a [Vercel configuration](vercel.json) for the Next.js build:
+
+| Setting | Value |
+| --- | --- |
+| Framework preset | Next.js |
+| Install command | `npm ci` |
+| Build command | `npm run build:next` |
+| Node.js | `24.x` |
+
+Set `NEXT_PUBLIC_SITE_URL` to the final HTTPS address before building so social previews and absolute metadata URLs use the correct domain. Attach the UMA subdomain through the hosting project's domain settings and coordinate its DNS entry with the university's IT team.
+
+To verify this build locally:
+
+```bash
+npm run build:next
+npx next start
+```
+
+### Vinext
+
+For the Vinext production target:
+
+```bash
 npm run build
+npm start
 ```
 
-This starter does not use `wrangler.jsonc`.
+Use the matching build and start commands for each target. For the current Vinext version, use Linux for production: its Windows production server has a documented nested-asset path issue. Local development on Windows uses the development command above.
 
-## Included Shape
+<details>
+<summary><strong>Asset packaging and build integrity</strong></summary>
 
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
+- Keep the complete models, textures, videos, atlas data, and decoder files in the deployment. The repository contains more than 1 GB of public assets; check your hosting plan's file, storage, and transfer limits.
+- Preserve `.glb.part000`, `.glb.part001`, and subsequent model parts exactly. The atlas needs every part to reconstruct its larger models.
+- `public/dental/` is generated during development and production builds. Its source is maintained in `vendor/dental-scope/`.
+- Commit `.gitattributes` alongside license files and decoders. It preserves the original bytes of checksum-verified assets across Windows and Linux checkouts, including the CRLF line endings in the DM Sans license.
+- Notice generation runs offline during the build. Keep its integrity checks enabled; upstream license synchronization is a separate maintenance task.
 
-## Workspace Auth Headers
+</details>
 
-OpenAI workspace sites can read the current user's email from
-`oai-authenticated-user-email`.
+## Development and verification
 
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
+| Command | Purpose |
+| --- | --- |
+| `npm run lint` | Check application and supporting code with ESLint. |
+| `npx tsc --noEmit` | Check TypeScript types. |
+| `npm test` | Build the Vinext target and run the main verification suites. |
+| `npm run test:atlas` | Verify the body-atlas integration. |
+| `npm run test:study-atlas` | Verify exploration scenes, movement data, and model assets. |
+| `npm run test:dental` | Run the dental workspace tests. |
+| `npm run test:echo` | Verify the echocardiography integration and Spanish guidance. |
+| `npm run test:compliance` | Verify notice coverage, attribution access, and preserved upstream bytes. |
+| `npm run licenses:check` | Check that generated third-party notices are current. |
+| `npm run check:spanish` | Check the body-atlas Spanish translation data. |
 
-Treat the full name as optional and fall back to email when it is absent:
+### Repository guide
 
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```text
+app/
+  components/           Application interface and learning modules
+  hooks/                Student data and application hooks
+  lib/                  Anatomy content, storage, search, and 3D utilities
+public/
+  anatomy/              Organ illustrations and thumbnails
+  atlas/                Body-atlas geometry and data
+  models/               Organ models and textures
+  study-atlas/          Whole-body exploration and movement viewer
+  echo/                 Echocardiography viewer and learning assets
+  third-party-notices/  Generated dependency notices and inventory
+vendor/dental-scope/    Integrated dental viewer source
+docs/                   Module integration documentation
+scripts/                Build, translation, asset, and notice tooling
+tests/                  Application and integration verification
+compliance/             Provenance and rights evidence records
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+## Credits and usage
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+This platform brings together original application work and third-party software, anatomical resources, and educational media. Acknowledgements and licenses remain available in the application and in the repository:
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+- [Body atlas: sources and attribution](public/atlas/ATRIBUCION.md)
+- [Dental Scope: credits](vendor/dental-scope/CREDITS.md) and [UMA integration](vendor/dental-scope/UMA-INTEGRATION.md)
+- [Echocardiography: provenance and adaptation](public/echo/ADAPTACION-UMA.md)
+- [Third-party software notices](public/third-party-notices/THIRD_PARTY_NOTICES.txt)
+- [Copyright information](COPYRIGHT.md) and [rights evidence register](compliance/rights-register.json)
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+Individual components retain their respective terms. Free educational access does not grant a blanket license to redistribute this repository or its assets. Some rights records remain unverified; review the recorded permissions and applicable conditions before public redistribution. `npm run copyright:status` displays the outstanding records, and `npm run check:copyright:release` checks their verification status.
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+**Educational use:** The platform supports anatomy teaching and independent study. It does not replace clinical training, professional judgment, or medical advice. Educational content, translations, and calculator outputs should receive appropriate faculty review.
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+---
 
-## Useful Commands
+<div align="center">
 
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+**Universidad María Auxiliadora · Lima, Perú**<br>
+Facultad de Ciencias de la Salud
 
-## Odontología UMA
-
-The **Odontología** tab contains a locally hosted adaptation of
-[Dental Scope](https://github.com/Yoosseph/dental-scope), with its Spanish
-interface, UMA colors, tooth selection, internal anatomy, layers and sections.
-Source, models and attribution are in `vendor/dental-scope/`. See
-`vendor/dental-scope/UMA-INTEGRATION.md` for the pinned revision and modifications.
-
-Install the whole project from this directory with `npm ci`. Start locally on
-port 3001 with `npm run dev -- --port 3001`. Both `npm run dev` and `npm run build`
-automatically build the dental viewer into `public/dental/`; `build:next` also
-includes it. The same `npm ci` / `npm run build` workflow includes the module on
-Render. Commit the source in `vendor/` and the root lockfile; generated files in
-`public/dental/` are ignored. After editing dental source, run
-`npm run build:dental` and refresh the browser.
-
-`npm run test:dental` runs the dental test suite. Licenses and credits remain
-available inside the viewer and at `/dental/CREDITS.md`.
-
-On Windows, use `npm run dev -- --port 3001` for local preview. The current
-Vinext 0.0.50 production server indexes nested assets with Windows path
-separators, causing 404s under `npm start` on Windows; the Linux deployment
-uses URL-compatible separators.
-
-## Exploración y Movimientos
-
-Las pestañas **Exploración** y **Movimientos** integran el proyecto local entregado
-en `simulator`, con interfaz en español y colores UMA. El visor y todos sus recursos
-están ahora en `public/study-atlas/`; no necesitan un segundo servidor ni instalación.
-El contenedor React está en `app/components/study-atlas/StudyAtlasView.tsx`.
-
-Exploración abre el cuerpo humano con sistemas, configuraciones masculina/femenina,
-preparaciones, selección, aislamiento, opacidad y corte. Movimientos abre directamente
-una de las 58 animaciones e incluye búsqueda, regiones, pausa, velocidad y línea temporal.
-Las pestañas existentes de órganos, atlas, odontología y estudio se conservan.
-
-Incluye la carpeta completa `public/study-atlas/` al subir el proyecto: contiene
-aproximadamente 960 MB, con modelos, texturas, datos y dependencias locales.
-Los archivos `.glb.part000`, `.glb.part001`, etc. son partes necesarias de los dos
-modelos grandes; no se deben renombrar ni eliminar. `npm run build` copia los recursos
-al resultado de producción. Tailwind escanea únicamente `app/` para no procesar
-las partes binarias como texto.
-
-Verificación: `npm run test:study-atlas` comprueba las escenas iniciales, los 58
-movimientos, tamaños de modelos, partes y rutas a texturas. `npm test` incluye estas
-comprobaciones junto con las pruebas existentes.
-
-El original se conserva como copia de recuperación local, excluida de Git, en
-`outputs/simulator-original-2026-10-06/`. No se utiliza al ejecutar ni al compilar.
-Los modelos y textos proceden del paquete aportado, sin nuevas afirmaciones anatómicas.
-Se mantiene la licencia de Three.js en `public/study-atlas/vendor/three/LICENSE.txt`.
-Esta integración no concede derechos adicionales sobre los recursos del atlas;
-conserva los permisos y condiciones del material de origen antes de publicarlo.
-
-## Enlaces del proyecto
-
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+</div>
