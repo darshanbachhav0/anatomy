@@ -1,0 +1,8 @@
+.uma-echo-credits-dialog{box-sizing:border-box;width:min(720px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow:auto;border:1px solid var(--rule,#cbd5e1);border-radius:16px;padding:24px;background:var(--paper,#fff);color:var(--ink,#172033);font:14px/1.6 system-ui,sans-serif}
+.uma-echo-credits-dialog::backdrop{background:rgb(0 0 0 / .55)}
+.uma-echo-credits-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.uma-echo-credits-dialog h2{margin:0;font-size:22px}.uma-echo-credits-dialog h3{margin-top:24px}.uma-echo-credits-dialog h4{margin:0}
+.uma-echo-credits-dialog article{padding:14px 0;border-top:1px solid var(--rule,#d9d9d9)}
+.uma-echo-credits-dialog p{margin:8px 0;overflow-wrap:anywhere}.uma-echo-credits-dialog a{color:inherit;text-decoration:underline;text-underline-offset:3px}
+.uma-echo-credits-dialog button{min-height:44px;padding:8px 14px;border:1px solid var(--rule,#cbd5e1);border-radius:8px;background:transparent;color:inherit;cursor:pointer}
+.uma-echo-credits-dialog :focus-visible{outline:3px solid #e5154f;outline-offset:3px}

@@ -53,7 +53,7 @@ Z-Anatomy is itself built on BodyParts3D.
 - [three.js](https://threejs.org) — MIT
 - [React](https://react.dev) — MIT
 - [Zustand](https://github.com/pmndrs/zustand) — MIT
-- [meshoptimizer](https://github.com/zeux/meshoptimizer) — MIT
+- [meshoptimizer](https://github.com/zeux/meshoptimizer) — MIT; [full decoder license](licenses/Meshoptimizer-LICENSE.txt)
 - [glTF Transform](https://gltf-transform.dev) — MIT
 - [trimesh](https://trimesh.org), [scikit-image](https://scikit-image.org), [SciPy](https://scipy.org), [NumPy](https://numpy.org), [fast-simplification](https://github.com/pyvista/fast-simplification) — MIT / BSD (pipeline only)
 

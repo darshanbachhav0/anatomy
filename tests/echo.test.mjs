@@ -66,6 +66,33 @@ test("dynamic simulation descriptions and core controls are Spanish", () => {
   assert.equal(translate("LVOT diameter"), "Diámetro del TSVI");
 });
 
+test('runtime calculator instructions and changing wall-score labels remain Spanish', () => {
+  assert.equal(translate('How to obtain LVIDs · end-systole'), 'Cómo medir LVIDs · final de la sístole');
+  assert.equal(translate('How to obtain Pressure half-time'), 'Cómo medir el tiempo de hemipresión');
+  assert.equal(translate('if strain is unavailable.'), 'si no se dispone de la deformación.');
+  for (const status of ['Normal', 'Hypokinetic', 'Akinetic', 'Dyskinetic', 'Not visualized']) {
+    const spanish = translate(`7. Mid anterior: ${status}. Activate to cycle score; Delete marks not visualized.`);
+    assert.match(spanish, /^7\. Anterior medio:/);
+    assert.match(spanish, /Suprimir marca el segmento como no visualizado/);
+    assert.doesNotMatch(spanish, /Activate|cycle score|Delete marks|Mid anterior|Hypokinetic|Akinetic|Dyskinetic|Not visualized/);
+    assert.equal(translate(spanish), spanish);
+  }
+});
+
+test('additional Spanish messages preserve numerical values and formula variables', async () => {
+  const overrides = JSON.parse(await read('spanish-overrides.json'));
+  const numbers = value => value.match(/\d+(?:[.,]\d+)*/g) ?? [];
+  for (const [source, spanish] of Object.entries(overrides)) {
+    assert.deepEqual(numbers(spanish), numbers(source), source);
+    assert.equal(translate(translate(source)), translate(source), source);
+  }
+  const formula = translate('Mosteller: BSA = √(H × W / 3600). H in cm, W in kg, BSA in m². The app defaults to this equation; this is not a claim that every echo reference uses it.');
+  assert.match(formula, /SC = √\(H × W \/ 3600\)/);
+  assert.match(formula, /H en cm, W en kg/);
+  assert.equal(translate('LVIDd and LVIDs'), 'LVIDd y LVIDs');
+  assert.equal(translate('FS = (LVIDd − LVIDs) ÷ LVIDd × 100'), 'FS = (LVIDd − LVIDs) ÷ LVIDd × 100');
+});
+
 test("standalone pages use local routes, UMA assets and no upstream analytics", async () => {
   for (const page of ["index.html", "calculators/index.html"]) {
     const html = await read(page);

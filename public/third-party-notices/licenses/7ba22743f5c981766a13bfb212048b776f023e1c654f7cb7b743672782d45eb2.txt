@@ -1,0 +1,11 @@
+/*!
+ * GSAP 3.15.0
+ * https://gsap.com
+ *
+ * @license Copyright 2008-2026, GreenSock. All rights reserved.
+ * Subject to the terms at https://gsap.com/standard-license
+ * @author: Jack Doyle, jack@greensock.com
+*/
+
+Applicable custom license: https://gsap.com/standard-license
+This component is not MIT licensed. Preserve its proprietary notices.

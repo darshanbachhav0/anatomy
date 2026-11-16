@@ -35,6 +35,9 @@ for (const page of ['index.html', 'calculators/index.html']) {
   source = source.replace(/<script src="\/echo\/translations-es.js"[^>]*><\/script>/g, '');
   source = source.replace('<script type="module"', '<script src="/echo/translations-es.js"></script><script type="module"');
   source = source.replaceAll('href="/echo/"', 'href="/echo/index.html"').replaceAll('href="/echo/calculators/"', 'href="/echo/calculators/index.html"');
+  // Preserve the layout while restoring the existing generated credits buttons.
+  if (!source.includes('href="/echo/credits.css"')) source = source.replace('</head>', '<link rel="stylesheet" href="/echo/credits.css"></head>');
+  if (!source.includes('src="/echo/credits.js"')) source = source.replace('</body>', '<script type="module" src="/echo/credits.js"></script></body>');
   await writeFile(target, localizeHtml(source));
 }
 for (const name of await readdir(path.join(root, 'assets'))) {

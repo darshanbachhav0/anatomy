@@ -42,9 +42,9 @@ export function LibraryView({
     return matches && (tab !== "favorites" || favorites.includes(organ.id));
   }), [normalized, tab, favorites]);
   const matchingGlossary = glossaryEntries.filter((entry) => matchesSearch(normalized, entry.term, entry.definition));
-  const matchingBooks = anatomyBooks.filter((book) => matchesSearch(normalized, book.title, book.authors, book.publisher));
+  const matchingBooks = anatomyBooks.filter((book) => matchesSearch(normalized, book.title, book.originalTitle ?? "", book.authors, book.publisher));
   const matchingPapers = organs.flatMap((organ) => organResources[organ.id].papers.map((paper) => ({ organ, paper })))
-    .filter(({ organ, paper }) => matchesSearch(normalized, organ.name, paper.title, paper.authors ?? "", paper.source));
+    .filter(({ organ, paper }) => matchesSearch(normalized, organ.name, paper.title, paper.originalTitle ?? "", paper.authors ?? "", paper.source));
   const showOrgans = ["all", "organs", "sheets", "favorites"].includes(tab);
 
   return (
@@ -73,11 +73,12 @@ export function LibraryView({
       </div> : <EmptyLibrary tab={tab} onExplore={() => setTab("organs")} />)}
 
       {tab === "books" && <div className="library-book-list">
+        <p className="empty-copy">Libros completos para leer en línea gratis.</p>
         {matchingBooks.map((book) => (
           <article key={book.url}>
             <span><BookOpen size={20} /></span>
             <div><small>{book.publisher}{book.edition && ` · ${book.edition}`}{book.free && " · Acceso libre"}</small><h2>{book.title}</h2><p>{book.authors}</p></div>
-            <a href={book.url} target="_blank" rel="noopener noreferrer" aria-label={`Abrir ${book.title} en una pestaña nueva`}>Abrir <ExternalLink size={14} /></a>
+            <a href={book.url} target="_blank" rel="noopener noreferrer" aria-label={`Leer gratis ${book.title} en una pestaña nueva`}>Leer gratis <ExternalLink size={14} /></a>
           </article>
         ))}
         {matchingBooks.length === 0 && <p className="empty-copy">No se encontraron libros con esa búsqueda.</p>}

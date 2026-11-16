@@ -76,16 +76,78 @@ for (const [source, spanish] of Object.entries(translatedPhrases)) {
   }
 }
 const fragmentPattern = new RegExp('(?<![\\p{L}\\p{N}_])(?:' + fragments.map(([source]) => source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|') + ')(?![\\p{L}\\p{N}_])', 'gu');
+const templatePhrases = Object.entries(window.UMA_ECHO_TEMPLATES ?? {}).map(([source, spanish]) => {
+  const slots = [];
+  const normalized = source.replace(/\s+/g, ' ').trim();
+  const pattern = normalized.split(/(\{\d+\})/).map(part => {
+    const slot = part.match(/^\{(\d+)\}$/);
+    if (slot) { slots.push(Number(slot[1])); return '(.*?)'; }
+    return part.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }).join('');
+  return { pattern: new RegExp(`^${pattern}$`, 'u'), slots, spanish, specificity: normalized.replace(/\{\d+\}/g, '').length };
+}).sort((a, b) => b.specificity - a.specificity);
 const localizedValues = new Set();
+// Practice guidance joins directions and clock positions at runtime. Translate the
+// complete grammar instead of relying on a finite list of captured sentences.
+const practiceDirections = {
+  'up toward the head': 'hacia arriba, en dirección a la cabeza',
+  'down toward the feet': 'hacia abajo, en dirección a los pies',
+  'toward the head': 'hacia la cabeza',
+  'toward the feet': 'hacia los pies',
+  "toward the patient's left": 'hacia la izquierda del paciente',
+  "toward the patient's right": 'hacia la derecha del paciente',
+  "toward the head and the patient's left": 'hacia la cabeza y hacia la izquierda del paciente',
+  "toward the head and the patient's right": 'hacia la cabeza y hacia la derecha del paciente',
+  "toward the feet and the patient's left": 'hacia los pies y hacia la izquierda del paciente',
+  "toward the feet and the patient's right": 'hacia los pies y hacia la derecha del paciente',
+};
+function translatePractice(value) {
+  const movement = value.replaceAll('’', "'").match(/^(Slide|Move the tail) (.+)$/);
+  if (movement && practiceDirections[movement[2]]) return `${movement[1] === 'Slide' ? 'Desliza' : 'Mueve el extremo'} ${practiceDirections[movement[2]]}`;
+  const rotation = value.match(/^Rotate (clockwise|anticlockwise) to (1[0-2]|[1-9])(?:(:30)| o['’]clock)$/);
+  if (rotation) return `Gira en sentido ${rotation[1] === 'clockwise' ? 'horario' : 'antihorario'} hasta ${rotation[2] === '1' ? 'la' : 'las'} ${rotation[2]}${rotation[3] ?? ''}`;
+  if (value.startsWith('Aim ')) return `Objetivo: ${translate(value.slice(4))}`;
+  if (value.startsWith('Practice target · ')) return `Objetivo de práctica · ${translate(value.slice(18))}`;
+  if (value.startsWith('Practice · ')) return `Práctica · ${translate(value.slice(11))}`;
+  const contact = value.match(/^Contact (.+) cm · Tilt (.+)° · Marker (.+)°$/);
+  if (contact) return `Contacto ${contact[1]} cm · Inclinación ${contact[2]}° · Marcador ${contact[3]}°`;
+  const assetError = value.match(/^Sim asset (.+) unavailable$/);
+  if (assetError) return `No está disponible el recurso ${assetError[1]} de la simulación`;
+  if (/^The probe lab could not load\..*Reload to try again\.$/.test(value)) return 'No se pudo cargar el laboratorio de ecocardiografía. Recarga la página para volver a intentarlo.';
+}
 function translate(value) {
   if (localizedValues.has(value)) return value;
   const normalized = value.replace(/\s+/g, ' ').trim();
+  const practice = translatePractice(normalized);
+  if (practice) {
+    return value.replace(value.trim(), practice);
+  }
+  const segment = normalized.match(/^(\d+)\. (.+?): (.+?)\. Activate to cycle score; Delete marks not visualized\.$/);
+  if (segment) {
+    const translated = `${segment[1]}. ${translate(segment[2])}: ${translate(segment[3])}. Activa para cambiar la puntuación; Suprimir marca el segmento como no visualizado.`;
+    localizedValues.add(translated);
+    return value.replace(value.trim(), translated);
+  }
   if (translatedPhrases[normalized]) {
     const translated = value.replace(value.trim(), translatedPhrases[normalized]);
     localizedValues.add(translated);
     return translated;
   }
+  for (const template of templatePhrases) {
+    const match = normalized.match(template.pattern);
+    if (!match) continue;
+    const translated = template.spanish.replace(/\{(\d+)\}/g, (_, index) => {
+      const captured = match[template.slots.indexOf(Number(index)) + 1];
+      const result = translate(captured);
+      return result === captured && captured.includes(', ') ? captured.split(', ').map(translate).join(', ') : result;
+    });
+    return value.replace(value.trim(), translated);
+  }
+  if (normalized.startsWith('Next: ')) return value.replace(value.trim(), `Siguiente: ${translate(normalized.slice(6))}`);
+  const sentences = value.split(/((?<=[.!?])\s+(?=[A-Z]))/);
+  if (sentences.length > 1) return sentences.map((part, index) => index % 2 ? part : translate(part)).join('');
   let result = value;
+  if (normalized.startsWith('How to obtain ')) return value.replace(value.trim(), `Cómo obtener ${translate(normalized.slice(14))}`);
   result = result.replace(/^Add (.+) to favorites$/, (_, name) => `Añadir ${translate(name)} a favoritos`).replace(/^Remove (.+) from favorites$/, (_, name) => `Quitar ${translate(name)} de favoritos`).replace(/^(.+), (\d+) calculators$/, (_, name, count) => `${translate(name)}, ${count} calculadoras`).replace(/\b(\d+) calculators\b/g, '$1 calculadoras');
   result = result.replace(fragmentPattern, source => phrases[source]);
   return result.replace(/\bLoading anatomy\b/g, 'Cargando anatomía').replace(/\bof 3 files ready\b/g, 'de 3 archivos listos').replace(/\bChecking anatomy…/g, 'Comprobando anatomía…').replace(/\bPreparing the 3D probe…/g, 'Preparando la sonda 3D…').replace(/\bOpening the first clinical cine…/g, 'Abriendo la primera secuencia clínica…').replace(/simulated echo image at/g, 'imagen ecográfica simulada a').replace(/centimetres/g, 'centímetros').replace(/degrees/g, 'grados').replace(/\bfan\b/g, 'inclinación').replace(/\brock\b/g, 'balanceo').replace(/normal clinical cine/g, 'secuencia clínica normal');
@@ -98,7 +160,7 @@ function localize(root) {
     return;
   }
   if (root.nodeType !== Node.ELEMENT_NODE) return;
-  for (const attribute of ['aria-label', 'title', 'placeholder', 'alt']) {
+  for (const attribute of ['aria-label', 'aria-description', 'aria-valuetext', 'title', 'placeholder', 'alt']) {
     if (!root.hasAttribute(attribute)) continue;
     const value = root.getAttribute(attribute);
     const translated = translate(value);
@@ -119,7 +181,7 @@ function initialize() {
       if (record.type === 'childList') record.addedNodes.forEach(localize);
       else localize(record.target);
     }
-  }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['aria-label','title','placeholder','alt'] });
+  }).observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['aria-label','aria-description','aria-valuetext','title','placeholder','alt'] });
   window.parent.postMessage({ type: 'uma-echo-ready' }, window.location.origin);
 }
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initialize, { once: true }); else initialize();

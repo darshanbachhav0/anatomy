@@ -8,6 +8,18 @@ Drizzle support.
 
 Nueva pestaña con la adaptación autorizada del simulador original, recursos locales, identidad UMA y localización española. Consulte [integración y validación](docs/echo-integration.md) y [procedencia y licencias](public/echo/ADAPTACION-UMA.md). Ejecutar `npm run test:echo` para las comprobaciones del módulo.
 
+## Copyright and release records
+
+See [COPYRIGHT.md](COPYRIGHT.md) and [the remediation record](COPYRIGHT_REMEDIATION.md). The existing audit reports retain their original findings; corrected notices do not supply missing author permissions.
+
+- `npm run licenses:generate`: prepare original notices for the installed lockfile, offline. Also runs before normal development/builds.
+- `npm run licenses:check`: detect stale or missing generated notices.
+- `npm run test:compliance`: verify notice coverage, unchanged decoders and credit access.
+- `npm run copyright:status`: show unresolved rights evidence without blocking development.
+- `npm run check:copyright:release`: explicitly check release readiness; currently fails because permissions remain unverified.
+- `npm run licenses:sync-sources` / `npm run licenses:sync-packages`: explicit network maintenance of upstream license evidence. Review and retain the generated records; these commands do not run during builds.
+- `python scripts/package-echo-notices.py`: attach notices to the existing local partial Echo ZIP, preserving its original source entries. Does not authorize redistribution.
+
 ## Prerequisites
 
 - Node.js `>=22.13.0`

@@ -17,12 +17,13 @@ async function scan(directory) {
   for (const file of await readdir(directory, { withFileTypes: true })) {
     const filename = path.join(directory, file.name);
     if (file.isDirectory()) { await scan(filename); continue; }
+    if (['spanish-overrides.json', 'spanish-templates.json'].includes(file.name)) continue;
     if (/three-|meshopt|anatomy-wire|uma-es|translations-es/.test(file.name)) continue;
     if (file.name.endsWith('.js')) {
       const tree = ts.createSourceFile(filename, await readFile(filename, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.JS);
       function visit(node) {
         if (ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node) || ts.isTemplateHead(node) || ts.isTemplateMiddle(node) || ts.isTemplateTail(node)) collect(node.text);
-        if (ts.isNoSubstitutionTemplateLiteral(node) && /^[\[{]/.test(node.text)) {
+        if ((ts.isStringLiteral(node) || ts.isNoSubstitutionTemplateLiteral(node)) && /^[\[{]/.test(node.text)) {
           try { collectData(JSON.parse(node.text)); } catch {}
         }
         ts.forEachChild(node, visit);
@@ -76,7 +77,10 @@ for (const [source, spanish] of Object.entries(translations)) {
   if (/\bMR\b/.test(source)) corrected = corrected.replace(/\bRM\b/g, 'IM');
   translations[source] = corrected;
 }
-await writeFile(path.join(root, 'translations-es.js'), `window.UMA_ECHO_TRANSLATIONS=${JSON.stringify(translations)};\n`);
+// Keep reviewed terminology and runtime-only labels when refreshing automated translations.
+Object.assign(translations, JSON.parse(await readFile(path.join(root, 'spanish-overrides.json'), 'utf8')));
+const templates = JSON.parse(await readFile(path.join(root, 'spanish-templates.json'), 'utf8'));
+await writeFile(path.join(root, 'translations-es.js'), `window.UMA_ECHO_TRANSLATIONS=${JSON.stringify(translations)};\nwindow.UMA_ECHO_TEMPLATES=${JSON.stringify(templates)};\n`);
 await writeFile('outputs/echo-translation-pending.json', JSON.stringify(failures, null, 2));
 console.log(JSON.stringify({ translated: Object.keys(translations).length, pending: failures.length }));
 if (failures.length) process.exitCode = 1;

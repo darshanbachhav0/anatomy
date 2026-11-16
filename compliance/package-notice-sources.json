@@ -1,0 +1,344 @@
+{
+  "schemaVersion": 1,
+  "scope": "Original upstream texts tied to npm version metadata and lockfile integrity. Does not certify complete transitive native-library rights.",
+  "records": [
+    {
+      "location": "node_modules/@cloudflare/workerd-windows-64",
+      "name": "@cloudflare/workerd-windows-64",
+      "version": "1.20260515.1",
+      "integrity": "sha512-WmV/iv+MHjYsvkcMVzpM2B5/mf06UUkdpVhZrtMfV9graWjBGPYFvE/eab8748RPVGKh1Xe1vXofLzDSwc08lA==",
+      "metadataURL": "https://registry.npmjs.org/%40cloudflare%2Fworkerd-windows-64/1.20260515.1",
+      "gitHead": "e8c16f4875b5228047f081beadbfe5d7aadb5b5d",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594.txt",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+          "source": "https://raw.githubusercontent.com/cloudflare/workerd/e8c16f4875b5228047f081beadbfe5d7aadb5b5d/LICENSE"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/@cloudflare/workers-types",
+      "name": "@cloudflare/workers-types",
+      "version": "4.20260702.1",
+      "integrity": "sha512-mOhf5TUEB1m2vPrxtqoIGfz0fUC9xyxRDx5gWHy5s+OCo6dcV+g7wI1R7gYCMFohhqF/2y2xeKVwMwCJjfn/WA==",
+      "metadataURL": "https://registry.npmjs.org/%40cloudflare%2Fworkers-types/4.20260702.1",
+      "gitHead": "d63f9a84796dcd238cf8d4318d823c0b401914dd",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594.txt",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+          "source": "https://raw.githubusercontent.com/cloudflare/workerd/d63f9a84796dcd238cf8d4318d823c0b401914dd/LICENSE"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/@esbuild-kit/core-utils/node_modules/@esbuild/win32-x64",
+      "name": "@esbuild/win32-x64",
+      "version": "0.18.20",
+      "integrity": "sha512-kTdfRcSiDfQca/y9QIkng02avJ+NCaQvrMejlsB3RRv5sE9rRoeBPISaZpKxHELzRxZyLvNts1P27W3wV+8geQ==",
+      "metadataURL": "https://registry.npmjs.org/%40esbuild%2Fwin32-x64/0.18.20",
+      "gitHead": "22f0818cf81024b63752d815c51fe737612b43ec",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt",
+          "sha256": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
+          "source": "https://raw.githubusercontent.com/evanw/esbuild/22f0818cf81024b63752d815c51fe737612b43ec/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/@esbuild/win32-x64",
+      "name": "@esbuild/win32-x64",
+      "version": "0.28.0",
+      "integrity": "sha512-pEl1bO9mfAmIC+tW5btTmrKaujg3zGtUmWNdCw/xs70FBjwAL3o9OEKNHvNmnyylD6ubxUERiEhdsL0xBQ9efw==",
+      "metadataURL": "https://registry.npmjs.org/%40esbuild%2Fwin32-x64/0.28.0",
+      "gitHead": "6a794dff68e6a43539f6da671e3080efdf11ca70",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt",
+          "sha256": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
+          "source": "https://raw.githubusercontent.com/evanw/esbuild/6a794dff68e6a43539f6da671e3080efdf11ca70/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/@next/env",
+      "name": "@next/env",
+      "version": "16.2.6",
+      "integrity": "sha512-gd8HoHN4ufj73WmR3JmVolrpJR47ILK6LouP5xElPglaVxir6e1a7VzvTvDWkOoPXT9rkkTzyCxBu4yeZfZwcw==",
+      "metadataURL": "https://registry.npmjs.org/%40next%2Fenv/16.2.6",
+      "gitHead": "ee6e79b1792a4d401ddf2480f40a83549fe8e722",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/ee765244e2d59f5234d474f62e0766fa0c8b99af967fdd4c0cb8dcb0c76ea224.txt",
+          "sha256": "ee765244e2d59f5234d474f62e0766fa0c8b99af967fdd4c0cb8dcb0c76ea224",
+          "source": "https://raw.githubusercontent.com/vercel/next.js/ee6e79b1792a4d401ddf2480f40a83549fe8e722/license.md"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/@next/eslint-plugin-next",
+      "name": "@next/eslint-plugin-next",
+      "version": "16.2.6",
+      "integrity": "sha512-Z8l6o4JWKUl755x4R+wogD86KPeU+Ckw4K+SYG4kHeOJtRenDeK+OSbGcqZpDtbwn9DsJVdir2UxmwXuinUbUw==",
+      "metadataURL": "https://registry.npmjs.org/%40next%2Feslint-plugin-next/16.2.6",
+      "gitHead": "ee6e79b1792a4d401ddf2480f40a83549fe8e722",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/ee765244e2d59f5234d474f62e0766fa0c8b99af967fdd4c0cb8dcb0c76ea224.txt",
+          "sha256": "ee765244e2d59f5234d474f62e0766fa0c8b99af967fdd4c0cb8dcb0c76ea224",
+          "source": "https://raw.githubusercontent.com/vercel/next.js/ee6e79b1792a4d401ddf2480f40a83549fe8e722/license.md"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/@next/swc-win32-x64-msvc",
+      "name": "@next/swc-win32-x64-msvc",
+      "version": "16.2.6",
+      "integrity": "sha512-F0+4i0h9J6C4eE3EAPWsoCk7UW/dbzOjyzxY0qnDUOYFu6FFmdZ6l97/XdV3/Nz3VYyO7UWjyEJUXkGqcoXfMA==",
+      "metadataURL": "https://registry.npmjs.org/%40next%2Fswc-win32-x64-msvc/16.2.6",
+      "gitHead": "ee6e79b1792a4d401ddf2480f40a83549fe8e722",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/ee765244e2d59f5234d474f62e0766fa0c8b99af967fdd4c0cb8dcb0c76ea224.txt",
+          "sha256": "ee765244e2d59f5234d474f62e0766fa0c8b99af967fdd4c0cb8dcb0c76ea224",
+          "source": "https://raw.githubusercontent.com/vercel/next.js/ee6e79b1792a4d401ddf2480f40a83549fe8e722/license.md"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/@resvg/resvg-wasm",
+      "name": "@resvg/resvg-wasm",
+      "version": "2.4.0",
+      "integrity": "sha512-C7c51Nn4yTxXFKvgh2txJFNweaVcfUPQxwEUFw4aWsCmfiBDJsTSwviIF8EcwjQ6k8bPyMWCl1vw4BdxE569Cg==",
+      "metadataURL": "https://registry.npmjs.org/%40resvg%2Fresvg-wasm/2.4.0",
+      "gitHead": "30ac8d830d44802df7e967569c92edabbbcec017",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/4b89d4518bd135ab4ee154a7bce722246b57a98c3d7efc1a09409898160c2bd1.txt",
+          "sha256": "4b89d4518bd135ab4ee154a7bce722246b57a98c3d7efc1a09409898160c2bd1",
+          "source": "https://raw.githubusercontent.com/yisibl/resvg-js/30ac8d830d44802df7e967569c92edabbbcec017/LICENSE"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/@rolldown/binding-win32-x64-msvc",
+      "name": "@rolldown/binding-win32-x64-msvc",
+      "version": "1.0.1",
+      "integrity": "sha512-INAycaWuhlOK3wk4mRHGsdgwYWmd9cChdPdE9bwWmy6rn9VqVNYNFGhOdXrofXUxwHIncSiPNb8tNm8knDVIeQ==",
+      "metadataURL": "https://registry.npmjs.org/%40rolldown%2Fbinding-win32-x64-msvc/1.0.1",
+      "gitHead": "27779450b5986931e7c798184ec3aa82e60e7090",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/23ecfff35a5a2e80d92142f75228912c3b1abc4b5a8337a821ff4397e2f9f734.txt",
+          "sha256": "23ecfff35a5a2e80d92142f75228912c3b1abc4b5a8337a821ff4397e2f9f734",
+          "source": "https://raw.githubusercontent.com/rolldown/rolldown/27779450b5986931e7c798184ec3aa82e60e7090/LICENSE"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/@unrs/resolver-binding-win32-x64-msvc",
+      "name": "@unrs/resolver-binding-win32-x64-msvc",
+      "version": "1.11.1",
+      "integrity": "sha512-lrW200hZdbfRtztbygyaq/6jP6AKE8qQN2KvPcJ+x7wiD038YtnYtZ82IMNJ69GJibV7bwL3y9FgK+5w/pYt6g==",
+      "metadataURL": "https://registry.npmjs.org/%40unrs%2Fresolver-binding-win32-x64-msvc/1.11.1",
+      "gitHead": "9480a90b081f2afcaeb6ca0e882d191c138dd7a3",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f.txt",
+          "sha256": "a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f",
+          "source": "https://raw.githubusercontent.com/unrs/unrs-resolver/9480a90b081f2afcaeb6ca0e882d191c138dd7a3/LICENSE"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/@vitejs/plugin-rsc",
+      "name": "@vitejs/plugin-rsc",
+      "version": "0.5.26",
+      "integrity": "sha512-T8W8ODEutblw9qXQB512LDPyv1tAbJRD/Gf0QEGsAoydl4nxEtIrghnhoI9oLY9R+7aw+cLk1ZEltxWHWf4aHw==",
+      "metadataURL": "https://registry.npmjs.org/%40vitejs%2Fplugin-rsc/0.5.26",
+      "gitHead": "65d378fc4d9bd8d383dc7598817261b3bdcb0861",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/29b68325fe026047d13e187b44c33b2acacf7dc647dec4583702e59f235e13b5.txt",
+          "sha256": "29b68325fe026047d13e187b44c33b2acacf7dc647dec4583702e59f235e13b5",
+          "source": "https://raw.githubusercontent.com/vitejs/vite-plugin-react/65d378fc4d9bd8d383dc7598817261b3bdcb0861/LICENSE"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/drizzle-kit/node_modules/@esbuild/win32-x64",
+      "name": "@esbuild/win32-x64",
+      "version": "0.25.12",
+      "integrity": "sha512-alJC0uCZpTFrSL0CCDjcgleBXPnCrEAhTBILpeAp7M/OFgoqtAetfBzX0xM00MUsVVPpVjlPuMbREqnZCXaTnA==",
+      "metadataURL": "https://registry.npmjs.org/%40esbuild%2Fwin32-x64/0.25.12",
+      "gitHead": "208f539945b145e7c9d6d844290f81c3fe5af320",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt",
+          "sha256": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
+          "source": "https://raw.githubusercontent.com/evanw/esbuild/208f539945b145e7c9d6d844290f81c3fe5af320/LICENSE.md"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/eslint-config-next",
+      "name": "eslint-config-next",
+      "version": "16.2.6",
+      "integrity": "sha512-z2ELYSkyrrJ6cuunTU8vhsT/RpouPkjaSah06nVW6Rg2Hpg0Vs8s497/e5s8G8qtdp4ccsiovz5P1rv+5VSW2Q==",
+      "metadataURL": "https://registry.npmjs.org/eslint-config-next/16.2.6",
+      "gitHead": "ee6e79b1792a4d401ddf2480f40a83549fe8e722",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/ee765244e2d59f5234d474f62e0766fa0c8b99af967fdd4c0cb8dcb0c76ea224.txt",
+          "sha256": "ee765244e2d59f5234d474f62e0766fa0c8b99af967fdd4c0cb8dcb0c76ea224",
+          "source": "https://raw.githubusercontent.com/vercel/next.js/ee6e79b1792a4d401ddf2480f40a83549fe8e722/license.md"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/unrs-resolver",
+      "name": "unrs-resolver",
+      "version": "1.11.1",
+      "integrity": "sha512-bSjt9pjaEBnNiGgc9rUiHGKv5l4/TGzDmYw3RhnkJGtLhbnnA/5qJj7x3dNDCRx/PJxu774LlH8lCOlB4hEfKg==",
+      "metadataURL": "https://registry.npmjs.org/unrs-resolver/1.11.1",
+      "gitHead": "9480a90b081f2afcaeb6ca0e882d191c138dd7a3",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f.txt",
+          "sha256": "a9e35996693bd619302922c731fa2f620ad12d5f50b19a37c8a3e0e078c9bd2f",
+          "source": "https://raw.githubusercontent.com/unrs/unrs-resolver/9480a90b081f2afcaeb6ca0e882d191c138dd7a3/LICENSE"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/workerd",
+      "name": "workerd",
+      "version": "1.20260515.1",
+      "integrity": "sha512-MjKOJLcvU45xXedQowvuiHtJTxu4WTHYQeIlF7YmjuqhiI6dImTFxWCEoRQHiskztxuVSNEmdO7/0UfDu6OMnQ==",
+      "metadataURL": "https://registry.npmjs.org/workerd/1.20260515.1",
+      "gitHead": "e8c16f4875b5228047f081beadbfe5d7aadb5b5d",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594.txt",
+          "sha256": "0d542e0c8804e39aa7f37eb00da5a762149dc682d7829451287e11b938e94594",
+          "source": "https://raw.githubusercontent.com/cloudflare/workerd/e8c16f4875b5228047f081beadbfe5d7aadb5b5d/LICENSE"
+        }
+      ]
+    },
+    {
+      "location": "node_modules/wrangler/node_modules/@esbuild/win32-x64",
+      "name": "@esbuild/win32-x64",
+      "version": "0.27.3",
+      "integrity": "sha512-4uJGhsxuptu3OcpVAzli+/gWusVGwZZHTlS63hh++ehExkVT8SgiEf7/uC/PclrPPkLhZqGgCTjd0VWLo6xMqA==",
+      "metadataURL": "https://registry.npmjs.org/%40esbuild%2Fwin32-x64/0.27.3",
+      "gitHead": "9129e00e6c36a3e374820cb5e3fc2cd319c8ab85",
+      "notices": [
+        {
+          "file": "compliance/upstream-package-notices/b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681.txt",
+          "sha256": "b40ec5baec7bb34fa5b1c09521fa3cd52d5fad7adafed74932a2010d3612a681",
+          "source": "https://raw.githubusercontent.com/evanw/esbuild/9129e00e6c36a3e374820cb5e3fc2cd319c8ab85/LICENSE.md"
+        }
+      ]
+    }
+  ],
+  "pending": [
+    {
+      "location": "node_modules/@cloudflare/kv-asset-handler",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/@cloudflare/unenv-preset",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/@cloudflare/vite-plugin",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/@drizzle-team/brocli",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/@humanfs/types",
+      "reason": "No original notice found at tested paths in exact published commit"
+    },
+    {
+      "location": "node_modules/@types/json5",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/@unpic/core",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/client-only",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/css-box-shadow",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/drizzle-kit",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/drizzle-orm",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/esrecurse",
+      "reason": "No original notice found at tested paths in exact published commit"
+    },
+    {
+      "location": "node_modules/glob-to-regexp",
+      "reason": "No original notice found at tested paths in exact published commit"
+    },
+    {
+      "location": "node_modules/imurmurhash",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/keyv",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/language-subtag-registry",
+      "reason": "No original notice found at tested paths in exact published commit"
+    },
+    {
+      "location": "node_modules/language-tags",
+      "reason": "No original notice found at tested paths in exact published commit"
+    },
+    {
+      "location": "node_modules/miniflare",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/natural-compare",
+      "reason": "No original notice found at tested paths in exact published commit"
+    },
+    {
+      "location": "node_modules/stable-hash",
+      "reason": "No original notice found at tested paths in exact published commit"
+    },
+    {
+      "location": "node_modules/unpic",
+      "reason": "No original notice found at tested paths in exact published commit"
+    },
+    {
+      "location": "node_modules/wrangler",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "node_modules/yoga-layout",
+      "reason": "No exact published Git commit/repository in version metadata"
+    },
+    {
+      "location": "vendor/dental-scope/node_modules/@rolldown/binding-win32-x64-msvc",
+      "reason": "No exact published Git commit/repository in version metadata"
+    }
+  ]
+}
