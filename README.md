@@ -14,7 +14,7 @@ An interactive learning platform for the students of **Universidad María Auxili
 ![Three.js](https://img.shields.io/badge/Three.js-000000?style=flat-square&logo=threedotjs&logoColor=white)
 ![Interface in Spanish](https://img.shields.io/badge/Interface-Espa%C3%B1ol-E5154F?style=flat-square)
 
-[Overview](#overview) · [Learning modules](#learning-modules) · [Getting started](#getting-started) · [Deployment](#deployment) · [Credits](#credits-and-usage)
+[Overview](#overview) · [Learning modules](#learning-modules) · [Getting started](#getting-started) · [Deployment](#deployment) · [Credits](#credits-and-licenses)
 
 </div>
 
@@ -164,17 +164,9 @@ tests/                  Application and integration verification
 compliance/             Provenance and rights evidence records
 ```
 
-## Credits and usage
+## Credits and licenses
 
-This platform brings together original application work and third-party software, anatomical resources, and educational media. Acknowledgements and licenses remain available in the application and in the repository:
-
-- [Body atlas: sources and attribution](public/atlas/ATRIBUCION.md)
-- [Dental Scope: credits](vendor/dental-scope/CREDITS.md) and [UMA integration](vendor/dental-scope/UMA-INTEGRATION.md)
-- [Echocardiography: provenance and adaptation](public/echo/ADAPTACION-UMA.md)
-- [Third-party software notices](public/third-party-notices/THIRD_PARTY_NOTICES.txt)
-- [Copyright information](COPYRIGHT.md) and [rights evidence register](compliance/rights-register.json)
-
-Individual components retain their respective terms. Free educational access does not grant a blanket license to redistribute this repository or its assets. Some rights records remain unverified; review the recorded permissions and applicable conditions before public redistribution. `npm run copyright:status` displays the outstanding records, and `npm run check:copyright:release` checks their verification status.
+This project includes third-party software and educational assets under their respective licenses. See [Copyright & attribution](COPYRIGHT.md) for details.
 
 **Educational use:** The platform supports anatomy teaching and independent study. It does not replace clinical training, professional judgment, or medical advice. Educational content, translations, and calculator outputs should receive appropriate faculty review.
 
