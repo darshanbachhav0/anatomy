@@ -49,6 +49,26 @@ test('copied decoders remain unchanged and full codec/font licenses accompany th
   for (const font of ['DM-Sans', 'Cormorant-Garamond']) assert.match(await read(`public/licenses/${font}-OFL.txt`), /SIL OPEN FONT LICENSE Version 1.1/);
 });
 
+test('Git preserves checksum-verified upstream bytes across Windows and Linux', async () => {
+  const records = JSON.parse(await read('public/licenses/third-party-sources.json'));
+  const recovered = JSON.parse(await read('compliance/package-notice-sources.json'));
+  const files = new Set([
+    ...records.licenses.flatMap(record => record.files),
+    ...records.unchangedCopies.map(record => record.file),
+    ...recovered.records.flatMap(record => record.notices.map(notice => notice.file)),
+  ]);
+  for (const file of files) {
+    const bytes = await readFile(new URL(file, root));
+    const original = spawnSync('git', ['hash-object', '--stdin'], { cwd: root, input: bytes, encoding: 'utf8' });
+    assert.equal(original.status, 0, original.stderr);
+    for (const autocrlf of ['true', 'false']) {
+      const filtered = spawnSync('git', ['-c', `core.autocrlf=${autocrlf}`, 'hash-object', `--path=${file}`, '--stdin'], { cwd: root, input: bytes, encoding: 'utf8' });
+      assert.equal(filtered.status, 0, filtered.stderr);
+      assert.equal(filtered.stdout, original.stdout, `${file}: Git changed upstream bytes with core.autocrlf=${autocrlf}`);
+    }
+  }
+});
+
 test('every Echo creator, source and adaptation statement has script-free credit access', async () => {
   const credits = JSON.parse(await read('public/echo/assets/credits.json'));
   const spanish = JSON.parse(await read('public/echo/spanish-overrides.json'));

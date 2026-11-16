@@ -22,7 +22,14 @@ See [COPYRIGHT.md](COPYRIGHT.md) and [the remediation record](COPYRIGHT_REMEDIAT
 
 ## Prerequisites
 
-- Node.js `>=22.13.0`
+- Node.js `24.x` (also selected on Vercel through `package.json`)
+
+Vercel runs `npm run build:next`, including the dental build and offline notice
+generation. Commit `.gitattributes` with the license files: it preserves the
+original bytes of checksum-verified notices and decoders across Windows and
+Linux checkouts. In particular, the upstream DM Sans license uses CRLF line
+endings; converting it to LF causes the notice-generation integrity check to
+fail. Keep that check enabled.
 
 ## Quick Start
 

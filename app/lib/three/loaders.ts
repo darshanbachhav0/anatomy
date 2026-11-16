@@ -4,6 +4,7 @@ import { MeshoptDecoder } from "three/examples/jsm/libs/meshopt_decoder.module.j
 import { disposeObject } from "./dispose";
 import { stabilizeBrainDepth } from "./brain-depth";
 import { repairBrainWinding } from "./brain-geometry";
+import { repairEyeSurface } from "./eye-surface";
 
 /** Edge length of the cube every organ is normalised into, so hotspot
  *  coordinates authored in `anatomy-data` mean the same thing for each model. */
@@ -73,6 +74,24 @@ export class AnatomyAssetManager {
     });
 
     const model = gltf.scene;
+    // Correct the spurious pupil painted onto the sclera in the source texture.
+    // Repair its recessed surface as well as its color; preserve the real pupil.
+    if (url.split("?")[0] === "/models/eyeball.glb") {
+      const corrected = await new THREE.TextureLoader().loadAsync("/models/textures/eyeball-basecolor-corrected.webp");
+      corrected.flipY = false;
+      corrected.colorSpace = THREE.SRGBColorSpace;
+      const replaced = new Set<THREE.Texture>();
+      model.traverse((child) => {
+        if (!(child instanceof THREE.Mesh)) return;
+        repairEyeSurface(child);
+        this.forEachMaterial(child, (material) => {
+          if (!(material instanceof THREE.MeshStandardMaterial)) return;
+          if (material.map) replaced.add(material.map);
+          material.map = corrected;
+        });
+      });
+      replaced.forEach((texture) => texture.dispose());
+    }
     const box = new THREE.Box3().setFromObject(model);
     const size = box.getSize(new THREE.Vector3());
     const center = box.getCenter(new THREE.Vector3());

@@ -4,7 +4,7 @@
   "private": true,
   "workspaces": ["vendor/dental-scope"],
   "engines": {
-    "node": ">=22.13.0"
+    "node": "24.x"
   },
   "scripts": {
     "predev": "npm run build:dental && npm run licenses:generate",

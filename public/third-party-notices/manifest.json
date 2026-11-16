@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "lockfileSHA256": "640a21f6aa32188d44b2ae25f8509836bb1329a9a5e49f46266250425c7fdbc2",
+  "lockfileSHA256": "37fc5a24781db05dbd51e80dac3f31a7d29ba90977e33f317fd89848105014d7",
   "scope": "Conservative inventory of all installed root-workspace packages and Next embedded notices. Not a legal clearance or exact shipped-code trace.",
   "packages": [
     {

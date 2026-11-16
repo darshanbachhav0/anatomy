@@ -1,0 +1,16 @@
+# These files are verified against upstream SHA-256 hashes. Preserve their
+# original bytes (including line endings) on Windows and Linux checkouts.
+# Upstream license whitespace must also be kept verbatim.
+/public/licenses/*.txt -text -whitespace
+/public/draco/LICENSE.txt -text -whitespace
+/public/draco/draco_decoder.js -text
+/public/draco/draco_decoder.wasm -text
+/public/draco/draco_wasm_wrapper.js -text
+/public/basis/LICENSE.txt -text -whitespace
+/public/basis/basis_transcoder.js -text
+/public/basis/basis_transcoder.wasm -text
+/public/study-atlas/vendor/three/addons/libs/Meshoptimizer-LICENSE.txt -text -whitespace
+/public/study-atlas/vendor/three/addons/libs/meshopt_decoder.module.js -text
+/vendor/dental-scope/public/licenses/Meshoptimizer-LICENSE.txt -text -whitespace
+/compliance/upstream-package-notices/*.txt -text -whitespace
+/public/third-party-notices/licenses/*.txt -text -whitespace
