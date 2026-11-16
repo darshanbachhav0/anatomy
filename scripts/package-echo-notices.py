@@ -20,7 +20,7 @@ with zipfile.ZipFile(ARCHIVE) as original:
         raise SystemExit('Original ZIP failed integrity verification.')
 
 files = [
-    'COPYRIGHT.md', 'COPYRIGHT_REMEDIATION.md', 'compliance/rights-register.json',
+    'COPYRIGHT.md', 'compliance/rights-register.json',
     'public/echo/ADAPTACION-UMA.md', 'public/echo/assets/ATTRIBUTION.txt',
     'public/echo/assets/credits.json', 'public/echo/assets/media/catalog.json',
     'public/echo/assets/THREE-LICENSE.txt', 'public/echo/assets/Michroma-OFL.txt',
