@@ -13,6 +13,7 @@ const eslintConfig = defineConfig([
     "build/**",
     ".vinext/**",
     ".wrangler/**",
+    ".claude/**",
     ".atlas-reference/**",
     ".dental-reference/**",
     "vendor/dental-scope/**",

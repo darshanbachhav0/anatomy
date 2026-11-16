@@ -61,7 +61,7 @@ Study progress, quiz scores, favorites, settings, and notes are stored locally i
 | Student data | Browser `localStorage` |
 | Production targets | Next.js on Vercel; Vinext production build |
 
-The specialized viewers and their assets are hosted with the application. Optional Cloudflare D1/Drizzle scaffolding is included for future server-side features; it is not required for the current learning experience.
+The specialized viewers and their assets are hosted with the application. No database setup is required for the current learning experience.
 
 ## Getting started
 
@@ -135,13 +135,12 @@ Use the matching build and start commands for each target. For the current Vinex
 | `npm run lint` | Check application and supporting code with ESLint. |
 | `npx tsc --noEmit` | Check TypeScript types. |
 | `npm test` | Build the Vinext target and run the main verification suites. |
-| `npm run test:atlas` | Verify the body-atlas integration. |
+| `npm run test:atlas` | Verify the shared anatomy catalog and geometry used by echocardiography. |
 | `npm run test:study-atlas` | Verify exploration scenes, movement data, and model assets. |
 | `npm run test:dental` | Run the dental workspace tests. |
 | `npm run test:echo` | Verify the echocardiography integration and Spanish guidance. |
 | `npm run test:compliance` | Verify notice coverage, attribution access, and preserved upstream bytes. |
 | `npm run licenses:check` | Check that generated third-party notices are current. |
-| `npm run check:spanish` | Check the body-atlas Spanish translation data. |
 
 ### Repository guide
 

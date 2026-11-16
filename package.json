@@ -2,7 +2,9 @@
   "name": "site-creator-vinext-starter",
   "version": "0.1.0",
   "private": true,
-  "workspaces": ["vendor/dental-scope"],
+  "workspaces": [
+    "vendor/dental-scope"
+  ],
   "engines": {
     "node": "24.x"
   },
@@ -28,15 +30,11 @@
     "test": "npm run build && node --test tests/rendered-html.test.mjs tests/atlas.test.mjs tests/study-atlas.test.mjs tests/brain-depth.test.mjs tests/brain-geometry.test.mjs tests/body-geometry.test.mjs tests/copyright-compliance.test.mjs tests/echo.test.mjs tests/echo-guidance.test.mjs",
     "test:study-atlas": "node --test --test-isolation=none tests/study-atlas.test.mjs",
     "test:atlas": "node --test tests/atlas.test.mjs",
-    "atlas:translate": "node scripts/build-atlas-spanish.mjs",
-    "check:spanish": "node scripts/build-atlas-spanish.mjs --check",
     "import:atlas": "node scripts/import-human-atlas.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
-    "inspect:heart": "node scripts/inspect-glb.mjs public/models/heart.glb",
-    "db:generate": "drizzle-kit generate"
+    "inspect:heart": "node scripts/inspect-glb.mjs public/models/heart.glb"
   },
   "dependencies": {
-    "drizzle-orm": "0.45.2",
     "gsap": "^3.15.0",
     "lucide-react": "^1.28.0",
     "next": "16.2.6",
@@ -54,7 +52,6 @@
     "@types/three": "^0.185.3",
     "@vitejs/plugin-react": "6.0.2",
     "@vitejs/plugin-rsc": "0.5.26",
-    "drizzle-kit": "0.31.10",
     "eslint": "9.39.4",
     "eslint-config-next": "16.2.6",
     "react-server-dom-webpack": "19.2.6",

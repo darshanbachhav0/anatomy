@@ -1,115 +1,53 @@
-# Atlas corporal UMA
+# Anatomía compartida del atlas UMA
 
-Se agregó **Atlas 3D** a la navegación de escritorio y móvil, sin reemplazar
-el visor de órganos ni los datos del estudiante.
+El catálogo y la geometría de `public/atlas/models/` se conservan como recursos
+compartidos del módulo de ecocardiografía. `public/echo/atlas-anatomy.js` utiliza
+estos datos para añadir huesos y vasos al entorno del simulador, manteniendo la
+anatomía original empleada para el escaneo.
 
-## Uso local
+El antiguo visor React independiente dejó de formar parte de la navegación y
+se retiró durante la limpieza del proyecto. Las pestañas **Exploración** y
+**Movimientos** utilizan el visor activo de `public/study-atlas/`.
 
-Con Node.js 22.13 o posterior y las dependencias instaladas:
+## Recursos conservados
 
-```powershell
-npm run dev -- --port 3001
-```
+- Catálogo con 2.234 piezas y 3.432 conceptos anatómicos.
+- Quince bloques de geometría en versiones binarias y comprimidas con gzip.
+- Identificadores, relaciones y límites utilizados para registrar la anatomía.
+- Licencias y atribuciones en `public/atlas/ATRIBUCION.md`, `ATTRIBUTION.md`
+  y `LICENSE.txt`.
 
-Abrir `http://localhost:3001` y seleccionar **Atlas 3D**. Si ese servidor ya está
-ejecutándose, basta con actualizar la página; no hace falta iniciar otro.
+No eliminar estos recursos al retirar código de interfaz: el simulador de
+Ecocardiografía los solicita directamente por HTTP.
 
-## Funciones
-
-- 2.234 piezas seleccionables y 3.432 conceptos anatómicos.
-- Quince capas; pulsar un nombre muestra solo ese sistema y el ojo combina capas.
-- Presets Todas, Esqueleto y Órganos, y ocultamiento de todas las capas.
-- Búsqueda por nombre en español, original en inglés e identificador FMA/FJ.
-- Selección directa, ficha de estructura, listado de piezas, aislamiento y centrado.
-- Vistas frontal, lateral, posterior y tres cuartos; zoom y giro automático.
-- Despiece progresivo: ensamblado, separación por sistemas e inventario de piezas.
-  El inventario final usa vista frontal y permite desplazamiento.
-- Ocultar/restaurar piezas, deshacer/rehacer y restablecer el área de estudio.
-- Área **Corazón por piezas**, con 84 piezas; **Ver interior** oculta paredes
-  y volúmenes de cavidad para explorar las estructuras que quedan.
-- Enlace al corazón multipartes desde el panel de disección del visor anterior.
-- Herramientas WebMCP opcionales para búsqueda e inspección en navegadores compatibles.
-
-Los órganos originales, comparación, puntos de interés, lecciones, cuestionarios,
-fichas, biblioteca, apuntes, favoritos, progreso y ajustes conservan sus módulos
-y almacenamiento existentes. No se modifican claves ni se migran datos del estudiante.
-
-## Integración técnica
-
-`app/components/atlas/FullBodyAtlas.tsx` y el visor Three.js se cargan bajo demanda.
-La primera visita al atlas descarga aproximadamente 33 MB de geometría comprimida.
-Se conservan los binarios sin comprimir para navegadores sin `DecompressionStream`.
-No se necesitan cuentas, claves API, servicios de traducción ni Blender para usar
-estas piezas.
-
-Las geometrías se agrupan por sistema dentro de 15 bloques. Texturas de estado en la
-GPU controlan visibilidad, selección y desplazamiento por pieza, y mallas individuales
-permiten la selección precisa. La selección táctil distingue toque, arrastre y pellizco.
-La salida del módulo cancela descargas y libera recursos del visor.
-
-Todos los archivos se sirven desde `public/atlas/`; no hay dependencias de red con
-GitHub o BodyParts3D durante el uso. No se añadieron paquetes de ejecución.
-
-## Fuente y reproducción
+## Fuente e importación
 
 Fuente: https://github.com/ashemag/human-atlas
 
 Revisión integrada: `1c38bf35c254a891200d3cedecfd57abebe83d8d`.
 
-El código adaptado conserva la licencia MIT en `public/atlas/LICENSE.txt`.
-Los datos BodyParts3D mantienen su atribución CC BY 4.0 y las modificaciones
-están documentadas en `public/atlas/ATTRIBUTION.md`, accesible desde la interfaz.
-
-La copia de referencia `.atlas-reference` se excluye de Git, TypeScript y ESLint.
-Para reimportar esta misma revisión (no ejecutar sobre una actualización sin revisarla):
+La copia local de referencia no es necesaria para ejecutar ni compilar la
+aplicación. Para una reimportación revisada, obtener esa revisión por separado
+y proporcionar su ruta explícitamente:
 
 ```powershell
-npm run import:atlas -- .atlas-reference
+npm run import:atlas -- C:/ruta/al/human-atlas
 ```
 
-El script copia los bloques, cambia las rutas y aplica correcciones de agrupación:
-ventrículos cerebrales al sistema nervioso, músculos papilares al cardíaco,
-solo dos valvas mitrales e inclusión de la pared ventricular en el grupo del corazón.
+El importador copia los bloques, adapta las rutas y conserva las correcciones
+de agrupación anatómica documentadas. Revisar los cambios antes de reemplazar
+los recursos existentes.
 
-## Comprobaciones
+## Verificación
 
 ```powershell
-npx tsc --noEmit
-npm run lint
-npm test
+npm run test:atlas
+npm run test:echo
 ```
 
-`npm run test:atlas` ejecuta las diez pruebas del atlas. Cubren todos
-los binarios, descompresión, índices, límites, jerarquía, búsqueda, visibilidad,
-historial, despiece sin solapamiento, gestos y herramientas opcionales.
-Las cuatro pruebas originales también se mantienen.
+Las pruebas del atlas comprueban el catálogo, las relaciones, los límites,
+los índices de triángulos y la equivalencia de los bloques binarios y gzip.
+Las pruebas de ecocardiografía verifican la integración con el simulador,
+incluida la preservación de las mallas de escaneo y las poses originales.
 
-Si el entorno bloquea subprocesos del ejecutor de pruebas, ejecutar directamente
-`node tests/atlas.test.mjs` y, después de compilar, `node tests/rendered-html.test.mjs`.
-
-Se validaron compilación, tipos, lint, pruebas automatizadas y entrega HTTP local.
-No se realizó una prueba visual en navegador ni en dispositivos táctiles físicos.
-
-## Límites del recurso
-
-- Referencia adulta masculina; no representa todas las estructuras ni variaciones.
-- Interfaz en español de Perú y catálogo local con traducciones para los 3.432
-  nombres únicos. Los originales se conservan en los datos y el índice de búsqueda,
-  pero no se muestran como nombres de estructuras. Se admiten sinónimos como
-  peroné/fíbula, cúbito/ulna y escápula/omóplato.
-- `npm run atlas:translate` regenera las etiquetas desde el léxico anatómico explícito
-  de `scripts/atlas-spanish.mjs`; `npm run check:spanish` comprueba su vigencia.
-  Las pruebas verifican cobertura, lateralidad, concordancia y búsquedas. Se recomienda
-  revisión docente de la terminología antes de emplearla en evaluaciones formales.
-- Las cavidades son volúmenes de referencia, no tejido. Ocultar paredes no produce
-  cortes, deformaciones ni una simulación quirúrgica.
-- Las descripciones genéricas se identifican como contexto del sistema.
-- Requiere WebGL y memoria suficiente para geometría anatómica completa. Los errores
-  de carga y pérdida de contexto muestran la opción de reintentar.
-- Uso educativo complementario; no se ha realizado validación clínica.
-
-## Publicación
-
-Se conserva `.openai/hosting.json` sin cambios. El conector Sites devolvió
-«Sites project not found» para el proyecto existente durante esta integración;
-no se creó otro sitio ni se publicó una versión. El cambio está disponible localmente.
+Recurso educativo complementario; no constituye validación clínica.

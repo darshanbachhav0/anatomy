@@ -1,4 +1,4 @@
-import { readFile, writeFile, readdir } from 'node:fs/promises';
+import { readFile, writeFile, readdir, mkdir } from 'node:fs/promises';
 import path from 'node:path';
 import ts from 'typescript';
 const root = path.resolve('public/echo');
@@ -40,6 +40,7 @@ async function scan(directory) {
   }
 }
 await scan(root);
+await mkdir('outputs', { recursive: true });
 let translations = {};
 try { translations = JSON.parse(await readFile('outputs/echo-translations.json', 'utf8')); } catch {}
 const pending = [...phrases].filter(phrase => !translations[phrase]);

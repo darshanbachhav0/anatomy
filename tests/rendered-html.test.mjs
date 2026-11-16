@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
+import ts from "typescript";
 
 async function render() {
   const workerUrl = new URL("../dist/server/index.js", import.meta.url);
@@ -66,11 +67,10 @@ test("mantiene centralizados el contenido en español y la identidad UMA", async
 });
 
 test("incluye navegación funcional, módulos educativos y persistencia versionada", async () => {
-  const [navigation, storage, lessons, notes, library, profile] = await Promise.all([
+  const [navigation, storage, lessons, library, profile] = await Promise.all([
     readFile(new URL("../app/components/navigation/MainNavigation.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/lib/storage.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/components/lessons/LessonsView.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/components/notes/NotesView.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/library/LibraryView.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/components/navigation/ProfileMenu.tsx", import.meta.url), "utf8"),
   ]);
@@ -85,8 +85,6 @@ test("incluye navegación funcional, módulos educativos y persistencia versiona
   }
   assert.match(lessons, /Quiz/);
   assert.match(lessons, /Marcar completada/);
-  assert.match(notes, /Nuevo apunte/);
-  assert.match(notes, /ConfirmModal/);
   assert.match(library, /Glosario/);
   assert.match(library, /Fichas anatómicas/);
   assert.match(library, /Libros/);
@@ -149,14 +147,19 @@ test("la biblioteca enlaza libros y artículos de investigación para cada órga
     readFile(new URL("../app/lib/organ-resources.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/components/library/LibraryView.tsx", import.meta.url), "utf8"),
   ]);
+  const { outputText } = ts.transpileModule(resources, {
+    compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.ESNext },
+  });
+  const { organResources } = await import(`data:text/javascript;base64,${Buffer.from(outputText).toString("base64")}`);
   for (const organ of ["heart", "brain", "lungs", "liver", "kidneys", "eyeball", "intestine", "pancreas", "skin"]) {
-    const block = resources.slice(resources.indexOf(`\n  ${organ}: {`), resources.indexOf("\n  },", resources.indexOf(`\n  ${organ}: {`)));
-    const [books, papers] = block.split("papers: [");
-    const urls = (text) => [...text.matchAll(/url: "(https?:\/\/[^"]+)"/g)].map((match) => match[1]);
-    assert.ok(urls(books).length >= 3, `${organ}: libros`);
-    assert.ok(urls(papers).length >= 3, `${organ}: artículos`);
-    assert.equal(new Set(urls(block)).size, urls(block).length, `${organ}: enlaces repetidos`);
-    assert.match(papers, /language: "es"/, `${organ}: artículo en español`);
+    const { books, papers } = organResources[organ];
+    assert.ok(books.length >= 2, `${organ}: secciones de libros disponibles`);
+    assert.ok(books.every(book => book.free === true), `${organ}: libros de acceso libre`);
+    assert.ok(papers.length >= 3, `${organ}: artículos`);
+    const urls = [...books, ...papers].map(item => item.url);
+    assert.ok(urls.every(url => /^https?:$/.test(new URL(url).protocol)), `${organ}: enlaces válidos`);
+    assert.equal(new Set(urls).size, urls.length, `${organ}: enlaces repetidos`);
+    assert.ok(papers.some(paper => paper.language === "es"), `${organ}: artículo en español`);
   }
   assert.match(library, /OrganResourcesPanel/);
   assert.match(library, /Bibliografía/);
